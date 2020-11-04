@@ -34,7 +34,7 @@ public interface RunService {
     //necesarios, recibe como entrada un e-mail para identificar al usuario, y un número de tarjeta de crédito. En caso de ejecutarse con éxito,
     //devuelve un código que será necesario para recoger el dorsal, y se almacena la inscripción, quedando registrado el número de dorsal
     //asignado al participante y la fecha y hora a la que se hizo la inscripción
-    public int inscribe(int raceID, String email, String creditCardNumber) throws InputValidationException, InscriptionClosedException;
+    public Inscription inscribe(int raceID, String email, String creditCardNumber) throws InputValidationException, InscriptionClosedException;
 
     //Será posible obtener todas las inscripciones que un usuario ha realizado a lo largo del tiempo. Deben devolverse todos los datos
     //almacenados para cada inscripción

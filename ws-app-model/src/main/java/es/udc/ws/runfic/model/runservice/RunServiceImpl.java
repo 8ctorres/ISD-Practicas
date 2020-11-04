@@ -17,6 +17,9 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static es.udc.ws.runfic.utils.RunficPropertyValidator.validateEmail;
+import static es.udc.ws.util.validation.PropertyValidator.validateCreditCard;
+
 public class RunServiceImpl implements RunService{
 
     private DataSource datasource;
@@ -50,15 +53,44 @@ public class RunServiceImpl implements RunService{
     }
 
     @Override
-    public int inscribe(int raceID, String email, String creditCardNumber) throws InputValidationException, InscriptionClosedException {
-        throw new UnsupportedOperationException();
+    public Inscription inscribe(int raceID, String email, String creditCardNumber) throws InputValidationException, InscriptionClosedException {
+        try (Connection connection = datasource.getConnection()) {
+            validateEmail(email);
+            validateCreditCard(creditCardNumber);
+
+            Race thisrace = raceDao.find(connection, raceID);
+
+            if ((LocalDateTime.now().plusDays(1).compareTo(thisrace.getStartDateTime())) > 0)
+                throw new InscriptionClosedException("Inscriptions close 24 hours before the race starts");
+
+            try {
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                Inscription newinsc = new Inscription(
+                        -1, email, creditCardNumber, raceID, LocalDateTime.now(), thisrace.getParticipants() + 1);
+                //IDs are -1 because the database will create them
+
+                Inscription createdinsc = inscriptionDao.create(connection, newinsc);
+
+                connection.commit();
+
+                return createdinsc;
+
+            }catch(SQLException | RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
+
+        }
+        catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<Inscription> findAllFromUser(String email) throws InputValidationException {
-        if (false){ //Pendiente implementar en la clase PropertyValidators, un método para validar emails
-            throw new InputValidationException("Invalid email. Must be in the form user@domain.tld");
-        }
+        validateEmail(email);
         try(Connection connection = this.datasource.getConnection()){
             return this.inscriptionDao.findByUser(connection, email);
         }
