@@ -21,6 +21,8 @@ public class Race {
         this.startDateTime = startDateTime;
         this.price = price;
         this.maxParticipants = maxParticipants;
+        this.participants = -1;
+        this.addedDateTime = null;
     }
 
     public Race(Long raceID, String city, String description, LocalDateTime startDateTime, BigDecimal price,

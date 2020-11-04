@@ -2,7 +2,6 @@ package es.udc.ws.runfic.model.runservice;
 
 import static es.udc.ws.runfic.utils.ModelConstants.MAX_PRICE;
 import static es.udc.ws.runfic.utils.ModelConstants.MAX_PARTICIPANTS;
-//import static es.udc.ws.runfic.utils.ModelConstants.RACE_DATA_SOURCE;
 
 import es.udc.ws.runfic.model.inscription.Inscription;
 import es.udc.ws.runfic.model.inscription.SqlInscriptionDao;
@@ -13,7 +12,6 @@ import es.udc.ws.runfic.model.runservice.exceptions.InvalidUserException;
 import es.udc.ws.runfic.model.runservice.exceptions.NumberTakenException;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
-import es.udc.ws.util.sql.DataSourceLocator;
 import es.udc.ws.util.validation.PropertyValidator;
 
 import javax.sql.DataSource;
@@ -37,40 +35,45 @@ public class RunServiceImpl implements RunService{
         //Falta asignar el datasource
         //datasource = DataSourceLocator.getDataSource(RACE_DATA_SOURCE)
         //Falta asignar los daos
+        //raceDao =
+        //inscriptionDao =
     }
 
     @Override
     public Race addRace(String city, String description, LocalDateTime startDateTime, BigDecimal price, int maxParticipants) throws InputValidationException {
-        throw new UnsupportedOperationException();
-/*
         PropertyValidator.validateMandatoryString("city", city);
         PropertyValidator.validateMandatoryString("description", description);
         validateBigDecimal("price", price, 0, MAX_PRICE);
         PropertyValidator.validateDouble("maxParticipants", maxParticipants, 0, MAX_PARTICIPANTS);
 
-        try (Connection connection = dataSource.getConnection()){
+        try (Connection connection = datasource.getConnection()) {
 
-            //Prepare connection.
-            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-            connection.setAutoCommit(false);
+            try {
+                //Prepare connection.
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
 
-            //Do work.
-            Race createdRace = SqlRaceDao.create(connection, race);
+                Race race = new Race(null, city, description, startDateTime, price, maxParticipants);
 
-            //Commit.
-            connection.commit();
+                //Do work.
+                Race createdRace = raceDao.create(connection, race);
 
-            return createdRace;
+                //Commit.
+                connection.commit();
 
+                return createdRace;
+
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
         }catch (SQLException e){
-            connection.rollback();
             throw new RuntimeException(e);
-        } catch (RuntimeException | Error e) {
-            connection.rollback();
-            throw e;
         }
- */
-
     }
 
     @Override
@@ -80,26 +83,20 @@ public class RunServiceImpl implements RunService{
 
     @Override
     public List<Race> findByDate(LocalDateTime date) {
-        throw new UnsupportedOperationException();
-/*
-        try (Connection connection = dataSource.getConnection()) {
-            return SqlRaceDao.findByDate(connection, date);
+        try (Connection connection = datasource.getConnection()) {
+            return raceDao.findByDate(connection, date);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
- */
     }
 
     @Override
     public List<Race> findByDate(LocalDateTime date, String city) {
-        throw new UnsupportedOperationException();
-/*
-        try (Connection connection = dataSource.getConnection()) {
-            return SqlRaceDao.findByDateCity(connection, date, city);
+        try (Connection connection = datasource.getConnection()) {
+            return raceDao.findByDateCity(connection, date, city);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
- */
     }
 
     @Override
