@@ -5,7 +5,7 @@ import es.udc.ws.util.exceptions.InputValidationException;
 import java.math.BigDecimal;
 
 public class RunficPropertyValidator{
-    private RunficPropertyValidator(){};
+    private RunficPropertyValidator(){}
 
     public static void validateEmail(String input) throws InputValidationException {
         int arroba = input.indexOf('@');

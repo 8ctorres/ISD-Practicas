@@ -77,8 +77,8 @@ public class Inscription {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Inscription that = (Inscription) o;
-        return inscriptionID == that.inscriptionID &&
-                raceID == that.raceID &&
+        return inscriptionID.equals(that.inscriptionID) &&
+                raceID.equals(that.raceID) &&
                 runnerNumber == that.runnerNumber &&
                 user.equals(that.user) &&
                 creditCardNumber.equals(that.creditCardNumber) &&

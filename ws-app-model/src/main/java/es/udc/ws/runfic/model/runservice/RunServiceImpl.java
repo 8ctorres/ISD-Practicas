@@ -59,24 +59,24 @@ public class RunServiceImpl implements RunService{
             validateEmail(email);
             validateCreditCard(creditCardNumber);
 
-            Race thisrace = raceDao.find(connection, raceID);
+            Race thisRace = raceDao.find(connection, raceID);
 
-            if ((LocalDateTime.now().plusDays(1).compareTo(thisrace.getStartDateTime())) > 0)
+            if ((LocalDateTime.now().plusDays(1).compareTo(thisRace.getStartDateTime())) > 0)
                 throw new InscriptionClosedException("Inscriptions close 24 hours before the race starts");
 
             try {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
 
-                Inscription newinsc = new Inscription(
-                        null, email, creditCardNumber, raceID, LocalDateTime.now(), thisrace.getParticipants() + 1);
+                Inscription newInscription = new Inscription(
+                        null, email, creditCardNumber, raceID, LocalDateTime.now(), thisRace.getParticipants() + 1);
                 //IDs are null because the database will create them
 
-                Inscription createdinsc = inscriptionDao.create(connection, newinsc);
+                Inscription createdInscription = inscriptionDao.create(connection, newInscription);
 
                 connection.commit();
 
-                return createdinsc;
+                return createdInscription;
 
             }catch(SQLException | RuntimeException | Error e) {
                 connection.rollback();

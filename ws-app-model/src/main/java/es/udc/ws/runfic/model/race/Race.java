@@ -99,7 +99,7 @@ public class Race {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Race race = (Race) o;
-        return raceID == race.raceID &&
+        return raceID.equals(race.raceID) &&
                 participants == race.participants &&
                 maxParticipants == race.maxParticipants &&
                 city.equals(race.city) &&
