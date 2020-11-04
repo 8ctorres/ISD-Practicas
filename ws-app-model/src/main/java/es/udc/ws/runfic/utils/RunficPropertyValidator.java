@@ -2,6 +2,8 @@ package es.udc.ws.runfic.utils;
 
 import es.udc.ws.util.exceptions.InputValidationException;
 
+import java.math.BigDecimal;
+
 public class RunficPropertyValidator{
     private RunficPropertyValidator(){};
 
@@ -20,5 +22,19 @@ public class RunficPropertyValidator{
 
         if(punto == -1) //Si no hay un punto después de la arroba
             throw new InputValidationException(err_msg);
+    }
+
+    public static void validateBigDecimal(String propertyName, BigDecimal input, double lowerValidLimit, double upperValidLimit)
+            throws InputValidationException{
+        BigDecimal lower = new BigDecimal(lowerValidLimit);
+        BigDecimal upper = new BigDecimal(upperValidLimit);
+
+        int cmplow = input.compareTo(lower);
+        int cmpup = input.compareTo(upper);
+        if ((cmplow < 0) || (cmpup > 0))
+            throw new InputValidationException("Invalid " + propertyName +
+                    " value (it must be gtrater than " + lowerValidLimit +
+                    " and lower than " + upperValidLimit + "): " +
+                    input);
     }
 }
