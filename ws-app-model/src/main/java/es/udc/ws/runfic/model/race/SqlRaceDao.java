@@ -1,5 +1,7 @@
 package es.udc.ws.runfic.model.race;
 
+import es.udc.ws.util.exceptions.InstanceNotFoundException;
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.LocalDateTime;
@@ -10,7 +12,7 @@ public interface SqlRaceDao {
     public Race create(Connection connection, Race race);
 
     //Encuentra una carrera según el ID
-    public Race find(Connection connection, int raceID);
+    public Race find(Connection connection, Long raceID) throws InstanceNotFoundException;
 
     //Encuentra una carrera según fecha y/o ciudad
     public List<Race> findByDate(Connection connection, LocalDateTime date);

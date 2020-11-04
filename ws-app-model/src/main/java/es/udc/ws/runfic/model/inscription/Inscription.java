@@ -4,31 +4,31 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Inscription {
-    private int inscriptionID;
+    private Long inscriptionID;
     private String user;
     private String creditCardNumber;
-    private int raceID;
+    private Long raceID;
     private LocalDateTime inscriptionDateTime;
     private int runnerNumber;
 
-    public Inscription(String user, String creditCardNumber, int raceID) {
+    public Inscription(String user, String creditCardNumber, Long raceID) {
         this.user = user;
         this.creditCardNumber = creditCardNumber;
         this.raceID = raceID;
     }
 
-    public Inscription(int inscriptionID, String user, String creditCardNumber, int raceID, LocalDateTime inscriptionDateTime, int runnerNumber) {
+    public Inscription(Long inscriptionID, String user, String creditCardNumber, Long raceID, LocalDateTime inscriptionDateTime, int runnerNumber) {
         this(user, creditCardNumber, raceID);
         this.inscriptionID = inscriptionID;
         this.inscriptionDateTime = inscriptionDateTime;
         this.runnerNumber = runnerNumber;
     }
 
-    public int getInscriptionID() {
+    public Long getInscriptionID() {
         return inscriptionID;
     }
 
-    public void setInscriptionID(int inscriptionID) {
+    public void setInscriptionID(Long inscriptionID) {
         this.inscriptionID = inscriptionID;
     }
 
@@ -48,11 +48,11 @@ public class Inscription {
         this.creditCardNumber = creditCardNumber;
     }
 
-    public int getRaceID() {
+    public Long getRaceID() {
         return raceID;
     }
 
-    public void setRaceID(int raceID) {
+    public void setRaceID(Long raceID) {
         this.raceID = raceID;
     }
 

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Race {
-    private int raceID;
+    private Long raceID;
     private String city;
     private String description;
     private LocalDateTime startDateTime;

@@ -37,7 +37,7 @@ public class RunServiceImpl implements RunService{
     }
 
     @Override
-    public Race findRace(int raceID) throws InstanceNotFoundException {
+    public Race findRace(Long raceID) throws InstanceNotFoundException {
         throw new UnsupportedOperationException();
     }
 
@@ -53,7 +53,8 @@ public class RunServiceImpl implements RunService{
     }
 
     @Override
-    public Inscription inscribe(int raceID, String email, String creditCardNumber) throws InputValidationException, InscriptionClosedException {
+    public Inscription inscribe(Long raceID, String email, String creditCardNumber)
+            throws InputValidationException, InscriptionClosedException, InstanceNotFoundException {
         try (Connection connection = datasource.getConnection()) {
             validateEmail(email);
             validateCreditCard(creditCardNumber);
@@ -68,8 +69,8 @@ public class RunServiceImpl implements RunService{
                 connection.setAutoCommit(false);
 
                 Inscription newinsc = new Inscription(
-                        -1, email, creditCardNumber, raceID, LocalDateTime.now(), thisrace.getParticipants() + 1);
-                //IDs are -1 because the database will create them
+                        null, email, creditCardNumber, raceID, LocalDateTime.now(), thisrace.getParticipants() + 1);
+                //IDs are null because the database will create them
 
                 Inscription createdinsc = inscriptionDao.create(connection, newinsc);
 

@@ -21,7 +21,7 @@ public interface RunService {
 
     //Será posible buscar carreras por su identificador. La información devuelta de la carrera incluirá, además de la información proporcionada
     //al darla de alta, el número de inscritos en ella
-    public Race findRace(int raceID) throws InstanceNotFoundException;
+    public Race findRace(Long raceID) throws InstanceNotFoundException;
 
     // Será posible buscar carreras que se celebren antes de una fecha (debe ser una fecha futura y el resultado contendrá únicamente las carreras
     //que aún no se han celebrado). Opcionalmente, se podrá indicar el nombre de una ciudad, en cuyo caso se devolverán solamente las carreras que se
@@ -34,7 +34,7 @@ public interface RunService {
     //necesarios, recibe como entrada un e-mail para identificar al usuario, y un número de tarjeta de crédito. En caso de ejecutarse con éxito,
     //devuelve un código que será necesario para recoger el dorsal, y se almacena la inscripción, quedando registrado el número de dorsal
     //asignado al participante y la fecha y hora a la que se hizo la inscripción
-    public Inscription inscribe(int raceID, String email, String creditCardNumber) throws InputValidationException, InscriptionClosedException;
+    public Inscription inscribe(Long raceID, String email, String creditCardNumber) throws InputValidationException, InscriptionClosedException, InstanceNotFoundException;
 
     //Será posible obtener todas las inscripciones que un usuario ha realizado a lo largo del tiempo. Deben devolverse todos los datos
     //almacenados para cada inscripción
