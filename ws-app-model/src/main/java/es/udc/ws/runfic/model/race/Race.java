@@ -14,7 +14,7 @@ public class Race {
     private int maxParticipants;
     private LocalDateTime addedDateTime;
 
-    public Race(int raceID, String city, String description, LocalDateTime startDateTime, BigDecimal price, int maxParticipants) {
+    public Race(Long raceID, String city, String description, LocalDateTime startDateTime, BigDecimal price, int maxParticipants) {
         this.raceID = raceID;
         this.city = city;
         this.description = description;
@@ -23,18 +23,18 @@ public class Race {
         this.maxParticipants = maxParticipants;
     }
 
-    public Race(int raceID, String city, String description, LocalDateTime startDateTime, BigDecimal price,
+    public Race(Long raceID, String city, String description, LocalDateTime startDateTime, BigDecimal price,
                 int participants, int maxParticipants, LocalDateTime addedDateTime) {
         this(raceID, city, description, startDateTime, price, maxParticipants);
         this.participants = participants;
         this.addedDateTime = addedDateTime;
     }
 
-    public int getRaceID() {
+    public Long getRaceID() {
         return raceID;
     }
 
-    public void setRaceID(int raceID) {
+    public void setRaceID(Long raceID) {
         this.raceID = raceID;
     }
 
