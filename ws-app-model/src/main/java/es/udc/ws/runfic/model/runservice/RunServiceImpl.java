@@ -39,6 +39,7 @@ public class RunServiceImpl implements RunService{
         //inscriptionDao =
     }
 
+    //Caso de Uso 1 - Brais
     @Override
     public Race addRace(String city, String description, LocalDateTime startDateTime, BigDecimal price, int maxParticipants) throws InputValidationException {
         PropertyValidator.validateMandatoryString("city", city);
@@ -76,11 +77,13 @@ public class RunServiceImpl implements RunService{
         }
     }
 
+    //Caso de Uso 2 - Isma
     @Override
     public Race findRace(Long raceID) throws InstanceNotFoundException {
         throw new UnsupportedOperationException();
     }
 
+    //Caso de Uso 3 - Brais
     @Override
     public List<Race> findByDate(LocalDateTime date) {
         try (Connection connection = datasource.getConnection()) {
@@ -90,6 +93,7 @@ public class RunServiceImpl implements RunService{
         }
     }
 
+    //Caso de Uso 3 - Isma
     @Override
     public List<Race> findByDate(LocalDateTime date, String city) {
         try (Connection connection = datasource.getConnection()) {
@@ -99,6 +103,7 @@ public class RunServiceImpl implements RunService{
         }
     }
 
+    //Caso de Uso 4 - Carlos
     @Override
     public Inscription inscribe(Long raceID, String email, String creditCardNumber)
             throws InputValidationException, InscriptionClosedException, InstanceNotFoundException {
@@ -136,6 +141,7 @@ public class RunServiceImpl implements RunService{
         }
     }
 
+    //Caso de Uso 5 - Carlos
     @Override
     public List<Inscription> findAllFromUser(String email) throws InputValidationException {
         validateEmail(email);
@@ -147,6 +153,7 @@ public class RunServiceImpl implements RunService{
         }
     }
 
+    //Caso de Uso 6 - Brais
     @Override
     public int getRunnerNumber(String email, int inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
         throw new UnsupportedOperationException();

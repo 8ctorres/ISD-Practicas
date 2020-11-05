@@ -1,5 +1,7 @@
 package es.udc.ws.runfic.model.inscription;
 
+import es.udc.ws.util.exceptions.InstanceNotFoundException;
+
 import java.sql.Connection;
 import java.util.List;
 
@@ -8,7 +10,7 @@ public interface SqlInscriptionDao {
     Inscription create(Connection connection, Inscription inscription);
 
     //Recuperar una inscripción de la BBDD
-    Inscription find(Connection connection, int inscriptionID);
+    Inscription find(Connection connection, Long inscriptionID) throws InstanceNotFoundException;
 
     //Recuperar todas las inscripciones de un usuario
     List<Inscription> findByUser(Connection connection, String email);
