@@ -80,7 +80,15 @@ public class RunServiceImpl implements RunService{
     //Caso de Uso 2 - Isma
     @Override
     public Race findRace(Long raceID) throws InstanceNotFoundException {
-        throw new UnsupportedOperationException();
+
+        try (Connection connection = dataSource.getConnection()) {
+
+            Race thisrace = raceDao.find(connection, raceID);
+            return(thisrace.getCity() + thisrace.getDescription() + thisrace.getStartDateTime() + thisrace.getPrice() + getMaxParticipants() + getParticipants());
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //Caso de Uso 3 - Brais
@@ -93,7 +101,7 @@ public class RunServiceImpl implements RunService{
         }
     }
 
-    //Caso de Uso 3 - Isma
+    //Caso de Uso 3 - Brais
     @Override
     public List<Race> findByDate(LocalDateTime date, String city) {
         try (Connection connection = datasource.getConnection()) {
@@ -153,7 +161,7 @@ public class RunServiceImpl implements RunService{
         }
     }
 
-    //Caso de Uso 6 - Brais
+    //Caso de Uso 6 - Isma
     @Override
     public int getRunnerNumber(String email, int inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
         throw new UnsupportedOperationException();
