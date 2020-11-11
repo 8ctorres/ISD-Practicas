@@ -84,7 +84,8 @@ public class RunServiceImpl implements RunService{
         try (Connection connection = dataSource.getConnection()) {
 
             Race thisrace = raceDao.find(connection, raceID);
-            return(thisrace.getCity() + thisrace.getDescription() + thisrace.getStartDateTime() + thisrace.getPrice() + getMaxParticipants() + getParticipants());
+            return new Race(thisrace.getCity(), thisrace.getDescription(), thisrace.getStartDateTime(),
+                    thisrace.getPrice(), getMaxParticipants(), getParticipants());
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -164,6 +165,29 @@ public class RunServiceImpl implements RunService{
     //Caso de Uso 6 - Isma
     @Override
     public int getRunnerNumber(String email, int inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
-        throw new UnsupportedOperationException();
+
+        try (Connection connection = this.datasource.getConnection()) {
+            validateEmail(email);
+            validateCreditCard(creditCardNumber);
+
+            Inscription thisInscription = this.inscriptionDao.find(connection, inscriptionID);
+
+            //Comprueba que los datos del usuario se corresponden con la inscripción
+            if((thisInscription.getCreditCardNumber() == creditCardNumber) && (thisInscription.getUser() == email)){
+                //Comprueba que el número de inscripción no ha sido entregado previamente, aun no está hecho
+                if(true) {
+                    return thisInscription.getRunnerNumber();
+                }
+                else {
+                    throw new NumberTakenException("This runner number is already taken");
+                }
+            }
+            else {
+                throw new InvalidUserException("This user code and credit card don't match with the inscription");
+            }
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 }
