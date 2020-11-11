@@ -36,7 +36,7 @@ public class Race {
         return raceID;
     }
 
-    public void setRaceID(Long raceID) {
+    private void setRaceID(Long raceID) {
         this.raceID = raceID;
     }
 
@@ -44,7 +44,7 @@ public class Race {
         return city;
     }
 
-    public void setCity(String city) {
+    private void setCity(String city) {
         this.city = city;
     }
 
@@ -52,7 +52,7 @@ public class Race {
         return description;
     }
 
-    public void setDescription(String description) {
+    private void setDescription(String description) {
         this.description = description;
     }
 
@@ -60,7 +60,7 @@ public class Race {
         return startDateTime;
     }
 
-    public void setStartDateTime(LocalDateTime startDateTime) {
+    private void setStartDateTime(LocalDateTime startDateTime) {
         this.startDateTime = startDateTime;
     }
 
@@ -68,7 +68,7 @@ public class Race {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    private void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -76,7 +76,7 @@ public class Race {
         return participants;
     }
 
-    public void setParticipants(int participants) {
+    private void setParticipants(int participants) {
         this.participants = participants;
     }
 
@@ -84,7 +84,7 @@ public class Race {
         return maxParticipants;
     }
 
-    public void setMaxParticipants(int maxParticipants) {
+    private void setMaxParticipants(int maxParticipants) {
         this.maxParticipants = maxParticipants;
     }
 
@@ -92,7 +92,7 @@ public class Race {
         return addedDateTime;
     }
 
-    public void setAddedDateTime(LocalDateTime addedDateTime) {
+    private void setAddedDateTime(LocalDateTime addedDateTime) {
         this.addedDateTime = addedDateTime;
     }
 

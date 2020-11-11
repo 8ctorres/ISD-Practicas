@@ -28,7 +28,7 @@ public class Inscription {
         return inscriptionID;
     }
 
-    public void setInscriptionID(Long inscriptionID) {
+    private void setInscriptionID(Long inscriptionID) {
         this.inscriptionID = inscriptionID;
     }
 
@@ -36,7 +36,7 @@ public class Inscription {
         return user;
     }
 
-    public void setUser(String user) {
+    private void setUser(String user) {
         this.user = user;
     }
 
@@ -44,7 +44,7 @@ public class Inscription {
         return creditCardNumber;
     }
 
-    public void setCreditCardNumber(String creditCardNumber) {
+    private void setCreditCardNumber(String creditCardNumber) {
         this.creditCardNumber = creditCardNumber;
     }
 
@@ -52,7 +52,7 @@ public class Inscription {
         return raceID;
     }
 
-    public void setRaceID(Long raceID) {
+    private void setRaceID(Long raceID) {
         this.raceID = raceID;
     }
 
@@ -60,7 +60,7 @@ public class Inscription {
         return inscriptionDateTime;
     }
 
-    public void setInscriptionDateTime(LocalDateTime inscriptionDateTime) {
+    private void setInscriptionDateTime(LocalDateTime inscriptionDateTime) {
         this.inscriptionDateTime = inscriptionDateTime;
     }
 
@@ -68,7 +68,7 @@ public class Inscription {
         return runnerNumber;
     }
 
-    public void setRunnerNumber(int runnerNumber) {
+    private void setRunnerNumber(int runnerNumber) {
         this.runnerNumber = runnerNumber;
     }
 
