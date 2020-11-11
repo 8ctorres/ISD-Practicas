@@ -1,17 +1,17 @@
 package es.udc.ws.runfic.model.runservice;
 
-import static es.udc.ws.runfic.utils.ModelConstants.MAX_PRICE;
-import static es.udc.ws.runfic.utils.ModelConstants.MAX_PARTICIPANTS;
-
 import es.udc.ws.runfic.model.inscription.Inscription;
 import es.udc.ws.runfic.model.inscription.SqlInscriptionDao;
+import es.udc.ws.runfic.model.inscription.SqlInscriptionDaoFactory;
 import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.runfic.model.race.SqlRaceDao;
+import es.udc.ws.runfic.model.race.SqlRaceDaoFactory;
 import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
 import es.udc.ws.runfic.model.runservice.exceptions.InvalidUserException;
 import es.udc.ws.runfic.model.runservice.exceptions.NumberTakenException;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
+import es.udc.ws.util.sql.DataSourceLocator;
 import es.udc.ws.util.validation.PropertyValidator;
 
 import javax.sql.DataSource;
@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static es.udc.ws.runfic.utils.ModelConstants.*;
 import static es.udc.ws.runfic.utils.RunficPropertyValidator.validateBigDecimal;
 import static es.udc.ws.runfic.utils.RunficPropertyValidator.validateEmail;
 import static es.udc.ws.util.validation.PropertyValidator.validateCreditCard;
@@ -32,11 +33,9 @@ public class RunServiceImpl implements RunService{
     private SqlInscriptionDao inscriptionDao;
 
     public RunServiceImpl(){
-        //Falta asignar el datasource
-        //datasource = DataSourceLocator.getDataSource(RACE_DATA_SOURCE)
-        //Falta asignar los daos
-        //raceDao =
-        //inscriptionDao =
+        datasource = DataSourceLocator.getDataSource(RACE_DATA_SOURCE);
+        raceDao = SqlRaceDaoFactory.getDao();
+        inscriptionDao = SqlInscriptionDaoFactory.getDao();
     }
 
     //Caso de Uso 1 - Brais
@@ -81,7 +80,7 @@ public class RunServiceImpl implements RunService{
     @Override
     public Race findRace(Long raceID) throws InstanceNotFoundException {
 
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = datasource.getConnection()) {
 
             Race thisrace = raceDao.find(connection, raceID);
             return new Race(thisrace.getCity(), thisrace.getDescription(), thisrace.getStartDateTime(),

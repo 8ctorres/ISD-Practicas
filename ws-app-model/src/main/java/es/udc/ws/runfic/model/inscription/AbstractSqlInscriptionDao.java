@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
+    //Carlos
     @Override
     public Inscription find(Connection connection, Long inscriptionID)
             throws InstanceNotFoundException {
@@ -45,6 +46,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
         }
     }
 
+    //Carlos
     @Override
     public List<Inscription> findByUser(Connection connection, String email) {
 
