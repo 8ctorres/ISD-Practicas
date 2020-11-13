@@ -45,6 +45,6 @@ public interface RunService {
     //de crédito utilizada para pagarla. A partir de esos datos, un empleado de RunFic podrá indicar que el dorsal correspondiente a esa inscripción
     //se ha entregado. Es necesario contemplar todos los posibles casos de error, como que el código de inscripción y el número de tarjeta no se
     //correspondan con ninguna inscripción, o que el dorsal correspondiente a esa inscripción ya ha sido entregado previamente
-    int getRunnerNumber(String email, int inscriptionID, String creditCardNumber) throws InputValidationException,
+    int getRunnerNumber(String email, Long inscriptionID, String creditCardNumber) throws InputValidationException,
             InstanceNotFoundException, NumberTakenException, InvalidUserException;
 }

@@ -32,6 +32,9 @@ public class Race {
         this.addedDateTime = addedDateTime;
     }
 
+    public Race(String description, LocalDateTime startDateTime, BigDecimal price, int maxParticipants, int participants) {
+    }
+
     public Long getRaceID() {
         return raceID;
     }

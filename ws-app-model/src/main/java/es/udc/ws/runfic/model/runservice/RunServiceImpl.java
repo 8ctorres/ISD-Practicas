@@ -82,9 +82,9 @@ public class RunServiceImpl implements RunService{
 
         try (Connection connection = datasource.getConnection()) {
 
-            Race thisrace = raceDao.find(connection, raceID);
-            return new Race(thisrace.getCity(), thisrace.getDescription(), thisrace.getStartDateTime(),
-                    thisrace.getPrice(), getMaxParticipants(), getParticipants());
+            Race trace = raceDao.find(connection, raceID);
+            return new Race(trace.getDescription(), trace.getStartDateTime(),
+                    trace.getPrice(), trace.getMaxParticipants(), trace.getParticipants());
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -163,7 +163,7 @@ public class RunServiceImpl implements RunService{
 
     //Caso de Uso 6 - Isma
     @Override
-    public int getRunnerNumber(String email, int inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
+    public int getRunnerNumber(String email, Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
 
         try (Connection connection = this.datasource.getConnection()) {
             validateEmail(email);
@@ -172,7 +172,7 @@ public class RunServiceImpl implements RunService{
             Inscription thisInscription = this.inscriptionDao.find(connection, inscriptionID);
 
             //Comprueba que los datos del usuario se corresponden con la inscripción
-            if((thisInscription.getCreditCardNumber() == creditCardNumber) && (thisInscription.getUser() == email)){
+            if((thisInscription.getCreditCardNumber().equals(creditCardNumber)) && (thisInscription.getUser().equals(email))){
                 //Comprueba que el número de inscripción no ha sido entregado previamente, aun no está hecho
                 if(true) {
                     return thisInscription.getRunnerNumber();
