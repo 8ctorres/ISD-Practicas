@@ -1,5 +1,6 @@
 package es.udc.ws.runfic.model.race;
 
+import es.udc.ws.runfic.model.inscription.Inscription;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
 import java.math.BigDecimal;
@@ -8,7 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.sql.Timestamp;
 
 public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     protected AbstractSqlRaceDao(){}
@@ -48,9 +51,41 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
         }
     }
 
+    //Isma
     @Override
     public List<Race> findByDate(Connection connection, LocalDateTime date) {
-        return null;
+        String queryStr =
+                "SELECT raceID, city, description, startDateTime, price, maxParticipants" +
+                        "FROM race WHERE date = ?";
+
+        Timestamp timestamp = Timestamp.valueOf(date);
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
+            preparedStatement.setTimestamp(1,timestamp);
+
+            ResultSet results = preparedStatement.executeQuery();
+
+            List<Race> list = new ArrayList<>();
+
+            while (results.next()) {
+                int i = 1;
+
+                Long id = results.getLong(i++);
+                String city = results.getString(i++);
+                String description = results.getString(i++);
+                LocalDateTime startDateTime = results.getTimestamp(i++).toLocalDateTime();
+                BigDecimal price = results.getBigDecimal(i++);
+                int maxParticipants = results.getInt(i);
+
+                Race race = new Race(id, city, description, startDateTime, price, maxParticipants);
+                list.add(race);
+            }
+
+            return list;
+
+        }catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

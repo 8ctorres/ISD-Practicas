@@ -10,6 +10,7 @@ public class Inscription {
     private Long raceID;
     private LocalDateTime inscriptionDateTime;
     private int runnerNumber;
+    private boolean isNumberTaken;
 
     public Inscription(String user, String creditCardNumber, Long raceID) {
         this.user = user;
@@ -22,6 +23,7 @@ public class Inscription {
         this.inscriptionID = inscriptionID;
         this.inscriptionDateTime = inscriptionDateTime;
         this.runnerNumber = runnerNumber;
+        this.isNumberTaken = true;
     }
 
     public Long getInscriptionID() {
@@ -70,6 +72,14 @@ public class Inscription {
 
     private void setRunnerNumber(int runnerNumber) {
         this.runnerNumber = runnerNumber;
+    }
+
+    public boolean isNumberTaken() {
+        return isNumberTaken;
+    }
+
+    public void setNumberTaken(boolean numberTaken) {
+        isNumberTaken = numberTaken;
     }
 
     @Override

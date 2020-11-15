@@ -25,6 +25,7 @@ CREATE TABLE Inscription (inscriptionID BIGINT NOT NULL AUTO_INCREMENT,
                          raceID BIGINT NOT NULL,
                          inscriptionDateTime DATETIME NOT NULL,
                          runnerNumber INT NOT NULL,
+                         isNumberTaken boolean,
                          CONSTRAINT InscriptionPK PRIMARY KEY (inscriptionID),
                          CONSTRAINT RaceFK foreign key (raceID)
                             REFERENCES Race(raceID) ON DELETE CASCADE);
