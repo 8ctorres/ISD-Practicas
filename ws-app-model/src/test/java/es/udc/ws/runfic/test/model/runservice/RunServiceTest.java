@@ -24,7 +24,7 @@ public class RunServiceTest {
 
         /*
          * Create a simple data source and add it to "DataSourceLocator" (this
-         * is needed to test "es.udc.ws.movies.model.movieservice.MovieService"
+         * is needed to test "es.udc.ws.runfic.model.runservice.RunService"
          */
         DataSource dataSource = new SimpleDataSource();
 
