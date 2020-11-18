@@ -18,12 +18,12 @@ public class Inscription {
         this.raceID = raceID;
     }
 
-    public Inscription(Long inscriptionID, String user, String creditCardNumber, Long raceID, LocalDateTime inscriptionDateTime, int runnerNumber) {
+    public Inscription(Long inscriptionID, String user, String creditCardNumber, Long raceID, LocalDateTime inscriptionDateTime, int runnerNumber, boolean numberTaken) {
         this(user, creditCardNumber, raceID);
         this.inscriptionID = inscriptionID;
         this.inscriptionDateTime = inscriptionDateTime;
         this.runnerNumber = runnerNumber;
-        this.isNumberTaken = true;
+        this.isNumberTaken = numberTaken;
     }
 
     public Long getInscriptionID() {

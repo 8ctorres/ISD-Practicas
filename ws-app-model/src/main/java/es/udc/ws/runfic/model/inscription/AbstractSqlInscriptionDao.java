@@ -17,7 +17,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
             throws InstanceNotFoundException {
 
         String queryStr =
-            "SELECT inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber"
+            "SELECT inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, isNumberTaken"
             + "FROM inscription WHERE inscriptionID = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
@@ -37,9 +37,10 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
             String creditCardNumber = results.getString(i++);
             Long raceId = results.getLong(i++);
             LocalDateTime inscriptionDateTime = results.getTimestamp(i++).toLocalDateTime();
-            int runnerNumber = results.getInt(i);
+            int runnerNumber = results.getInt(i++);
+            boolean numberTaken = results.getBoolean(i);
 
-            return new Inscription(inscriptionID, user, creditCardNumber, raceId, inscriptionDateTime, runnerNumber);
+            return new Inscription(inscriptionID, user, creditCardNumber, raceId, inscriptionDateTime, runnerNumber, numberTaken);
 
         }catch(SQLException e){
             throw new RuntimeException(e);
@@ -51,7 +52,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
     public List<Inscription> findByUser(Connection connection, String email) {
 
         String queryStr =
-                "SELECT inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber"
+                "SELECT inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, isNumberTaken"
                         + "FROM inscription WHERE user = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
@@ -70,9 +71,10 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
                 String creditCardNumber = results.getString(i++);
                 Long raceId = results.getLong(i++);
                 LocalDateTime inscriptionDateTime = results.getTimestamp(i++).toLocalDateTime();
-                int runnernumber = results.getInt(i);
+                int runnerNumber = results.getInt(i++);
+                boolean numberTaken = results.getBoolean(i);
 
-                Inscription inscription = new Inscription(inscriptionID, user, creditCardNumber, raceId, inscriptionDateTime, runnernumber);
+                Inscription inscription = new Inscription(inscriptionID, user, creditCardNumber, raceId, inscriptionDateTime, runnerNumber, numberTaken);
                 list.add(inscription);
             }
 

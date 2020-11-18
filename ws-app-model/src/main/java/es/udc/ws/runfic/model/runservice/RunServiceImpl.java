@@ -129,7 +129,7 @@ public class RunServiceImpl implements RunService{
                 connection.setAutoCommit(false);
 
                 Inscription newInscription = new Inscription(
-                        null, email, creditCardNumber, raceID, LocalDateTime.now(), thisRace.getParticipants() + 1);
+                        null, email, creditCardNumber, raceID, LocalDateTime.now(), thisRace.getParticipants() + 1, false);
                 //IDs are null because the database will create them
 
                 Inscription createdInscription = inscriptionDao.create(connection, newInscription);
@@ -174,7 +174,8 @@ public class RunServiceImpl implements RunService{
             //Comprueba que los datos del usuario se corresponden con la inscripción
             if((thisInscription.getCreditCardNumber().equals(creditCardNumber)) && (thisInscription.getUser().equals(email))){
                 //Comprueba que el número de inscripción no ha sido entregado previamente, aun no está hecho
-                if(true) {
+                if(!thisInscription.isNumberTaken()) {
+                    thisInscription.setNumberTaken(true);
                     return thisInscription.getRunnerNumber();
                 }
                 else {
