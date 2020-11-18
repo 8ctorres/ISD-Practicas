@@ -8,7 +8,7 @@ public class Jdbc3CcSqlInscriptionDao extends AbstractSqlInscriptionDao{
     public Inscription create(Connection connection, Inscription inscription) {
         //Create SQL Insert statement
         String queryStr = "INSERT into Inscription" +
-                "(user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber)" +
+                "(user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, isNumberTaken)" +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
         try(PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
@@ -18,7 +18,8 @@ public class Jdbc3CcSqlInscriptionDao extends AbstractSqlInscriptionDao{
             preparedStatement.setString(i++, inscription.getCreditCardNumber());
             preparedStatement.setLong(i++, inscription.getRaceID());
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(inscription.getInscriptionDateTime()));
-            preparedStatement.setInt(i, inscription.getRunnerNumber());
+            preparedStatement.setInt(i++, inscription.getRunnerNumber());
+            preparedStatement.setBoolean(i, inscription.isNumberTaken());
 
             //Execute Query
             int modifiedRows = preparedStatement.executeUpdate();
@@ -35,7 +36,7 @@ public class Jdbc3CcSqlInscriptionDao extends AbstractSqlInscriptionDao{
 
             //Returns an Inscription object with the new ID
             return new Inscription(newID, inscription.getUser(), inscription.getCreditCardNumber(),
-                    inscription.getRaceID(), inscription.getInscriptionDateTime(), inscription.getRunnerNumber());
+                    inscription.getRaceID(), inscription.getInscriptionDateTime(), inscription.getRunnerNumber(), inscription.isNumberTaken());
 
         } catch (SQLException e){
             throw new RuntimeException(e);
