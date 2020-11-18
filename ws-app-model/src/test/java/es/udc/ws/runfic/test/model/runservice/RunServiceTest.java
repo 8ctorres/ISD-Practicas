@@ -135,22 +135,29 @@ public class RunServiceTest {
 
     }
 
-    private Race getValidRace(){
+    private Race getValidRace() {
         return null;
     }
 
+    //Brais
     @Test
     public void testAddMovieAndFindMovie() throws InputValidationException, InstanceNotFoundException {
 
         Race race = getValidRace();
         Race addedRace = null;
 
+        String city = race.getCity();
+        String description = race.getDescription();
+        int maxParticipants = race.getMaxParticipants();
+        BigDecimal price = race.getPrice();
+        LocalDateTime startDateTime = race.getStartDateTime();
+
         try {
 
             // Create Movie
             LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
 
-            addedRace = runService.addRace(race);
+            addedRace = runService.addRace(city, description, startDateTime, price, maxParticipants);
 
             LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
 
