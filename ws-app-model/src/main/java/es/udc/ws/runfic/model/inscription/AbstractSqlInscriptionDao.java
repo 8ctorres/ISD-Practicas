@@ -82,4 +82,18 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
             throw new RuntimeException(e);
         }
     }
+
+    //Carlos
+    @Override
+    public int remove(Connection connection, Long inscriptionID) {
+        String queryStr = "DELETE FROM inscription WHERE inscriptionID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
+            preparedStatement.setLong(1, inscriptionID);
+            return preparedStatement.executeUpdate();
+            //We dont check if it actually deleted something because we don't really care
+            //If it deleted nothing, it's not a problem
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

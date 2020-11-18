@@ -93,5 +93,17 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
         return null;
     }
 
-
+    //Carlos
+    @Override
+    public int remove(Connection connection, Long raceID) {
+        String queryStr = "DELETE FROM race WHERE raceID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
+            preparedStatement.setLong(1, raceID);
+            return preparedStatement.executeUpdate();
+            //We dont check if it actually deleted something because we don't really care
+            //If it deleted nothing, it's not a problem
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

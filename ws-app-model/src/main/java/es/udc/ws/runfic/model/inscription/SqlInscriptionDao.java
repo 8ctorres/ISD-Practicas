@@ -14,4 +14,7 @@ public interface SqlInscriptionDao {
 
     //Recuperar todas las inscripciones de un usuario
     List<Inscription> findByUser(Connection connection, String email);
+
+    //Borrar una inscripción según su ID
+    int remove(Connection connection, Long inscriptionID);
 }
