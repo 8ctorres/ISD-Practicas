@@ -1,15 +1,19 @@
 package es.udc.ws.runfic.test.model.runservice;
 
+import es.udc.ws.runfic.model.inscription.Inscription;
+import es.udc.ws.runfic.model.inscription.SqlInscriptionDao;
+import es.udc.ws.runfic.model.inscription.SqlInscriptionDaoFactory;
 import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.runfic.model.runservice.RunService;
 import es.udc.ws.runfic.model.runservice.RunServiceImpl;
 import es.udc.ws.runfic.model.runservice.RunServiceFactory;
 import es.udc.ws.runfic.model.race.SqlRaceDao;
 import es.udc.ws.runfic.model.race.SqlRaceDaoFactory;
-import static es.udc.ws.runfic.utils.ModelConstants.RACE_DATA_SOURCE;
+import static es.udc.ws.runfic.utils.ModelConstants.RUNFIC_DATA_SOURCE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,29 +24,95 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.List;
 
 public class RunServiceTest {
 
-    private static RunService runService = null;
-    private static SqlRaceDao raceDao = null;
+    //This class stores the implementation of the service to test and the daos
+    private static DataSource dataSource;
+    private static RunService runService;
+    private static SqlRaceDao raceDao;
+    private static SqlInscriptionDao inscriptionDao;
+
 
     @BeforeAll
     public static void init() {
+        //Creates SimpleDataSource and assigns it
 
-        /*
-         * Create a simple data source and add it to "DataSourceLocator" (this
-         * is needed to test "es.udc.ws.runfic.model.runservice.RunService"
-         */
-        DataSource dataSource = new SimpleDataSource();
+        dataSource = new SimpleDataSource();
 
-        /* Add "dataSource" to "DataSourceLocator". */
-        DataSourceLocator.addDataSource(RACE_DATA_SOURCE, dataSource);
+        //Add it to DataSourceLocator so the methods can access it
+        DataSourceLocator.addDataSource(RUNFIC_DATA_SOURCE, dataSource);
 
-        runService = RunServiceFactory.getService();
+        RunService runService = RunServiceFactory.getService();
+        SqlRaceDao raceDao = SqlRaceDaoFactory.getDao();
+        SqlInscriptionDao inscriptionDao = SqlInscriptionDaoFactory.getDao();
+    }
 
-        raceDao = SqlRaceDaoFactory.getDao();
+    private void removeRace(Long raceID) {
+        try (Connection connection = dataSource.getConnection()) {
+            try {
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+                raceDao.remove(connection, raceID);
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            }
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
 
+    private void removeInscription(Long inscriptionID) {
+        try (Connection connection = dataSource.getConnection()) {
+            try {
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+                inscriptionDao.remove(connection, inscriptionID);
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            }
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Carlos
+    @Test
+    public void testFindOnlyOneFromUser() throws InputValidationException, InstanceNotFoundException, InscriptionClosedException {
+        //Calls findAllFromUser on a user that only has one inscription
+        //and it should return only that one
+
+
+        //First insert a Race
+        LocalDateTime inicioCarrera = LocalDateTime.of(2021, Month.APRIL, 14, 17, 30);
+        Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, BigDecimal.valueOf(8.50), 400);
+
+        //Inscribe the User in that Race
+        Inscription addedInscription = runService.inscribe(addedRace.getRaceID(), "carlos.torres@udc.es", "1234 2345 3456 4567");
+
+        try {
+            //Try and find the inscription
+            List<Inscription> found = runService.findAllFromUser("carlos.torres@udc.es");
+
+            //There should be only one Inscription
+            assertEquals(found.size(), 1);
+            //And it should be the one we added
+            assertEquals(addedInscription, found.get(0));
+
+        } finally {
+            //Remove everything from the DB
+            removeRace(addedRace.getRaceID());
+            removeInscription(addedInscription.getInscriptionID());
+        }
     }
 
     //Brais
@@ -63,6 +133,10 @@ public class RunServiceTest {
         }
         return addedRace;
 
+    }
+
+    private Race getValidRace(){
+        return null;
     }
 
     @Test

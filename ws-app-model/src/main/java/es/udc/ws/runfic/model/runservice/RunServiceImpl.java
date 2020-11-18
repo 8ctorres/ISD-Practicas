@@ -33,7 +33,7 @@ public class RunServiceImpl implements RunService{
     private SqlInscriptionDao inscriptionDao;
 
     public RunServiceImpl(){
-        datasource = DataSourceLocator.getDataSource(RACE_DATA_SOURCE);
+        datasource = DataSourceLocator.getDataSource(RUNFIC_DATA_SOURCE);
         raceDao = SqlRaceDaoFactory.getDao();
         inscriptionDao = SqlInscriptionDaoFactory.getDao();
     }
