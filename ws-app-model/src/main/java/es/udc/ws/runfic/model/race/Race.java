@@ -79,7 +79,7 @@ public class Race {
         return participants;
     }
 
-    private void setParticipants(int participants) {
+    public void setParticipants(int participants) {
         this.participants = participants;
     }
 

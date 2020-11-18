@@ -10,10 +10,10 @@ import es.udc.ws.runfic.model.runservice.RunServiceFactory;
 import es.udc.ws.runfic.model.race.SqlRaceDao;
 import es.udc.ws.runfic.model.race.SqlRaceDaoFactory;
 import static es.udc.ws.runfic.utils.ModelConstants.RUNFIC_DATA_SOURCE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
+import es.udc.ws.runfic.model.runservice.exceptions.RaceFullException;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,11 +48,12 @@ public class RunServiceTest {
         //Add it to DataSourceLocator so the methods can access it
         DataSourceLocator.addDataSource(RUNFIC_DATA_SOURCE, dataSource);
 
-        RunService runService = RunServiceFactory.getService();
-        SqlRaceDao raceDao = SqlRaceDaoFactory.getDao();
-        SqlInscriptionDao inscriptionDao = SqlInscriptionDaoFactory.getDao();
+        runService = RunServiceFactory.getService();
+        raceDao = SqlRaceDaoFactory.getDao();
+        inscriptionDao = SqlInscriptionDaoFactory.getDao();
     }
 
+    //Carlos
     private void removeRace(Long raceID) {
         try (Connection connection = dataSource.getConnection()) {
             try {
@@ -69,6 +70,7 @@ public class RunServiceTest {
         }
     }
 
+    //Carlos
     private void removeInscription(Long inscriptionID) {
         try (Connection connection = dataSource.getConnection()) {
             try {
@@ -82,36 +84,6 @@ public class RunServiceTest {
             }
         }catch(SQLException e){
             throw new RuntimeException(e);
-        }
-    }
-
-    //Carlos
-    @Test
-    public void testFindOnlyOneFromUser() throws InputValidationException, InstanceNotFoundException, InscriptionClosedException {
-        //Calls findAllFromUser on a user that only has one inscription
-        //and it should return only that one
-
-
-        //First insert a Race
-        LocalDateTime inicioCarrera = LocalDateTime.of(2021, Month.APRIL, 14, 17, 30);
-        Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, BigDecimal.valueOf(8.50), 400);
-
-        //Inscribe the User in that Race
-        Inscription addedInscription = runService.inscribe(addedRace.getRaceID(), "carlos.torres@udc.es", "1234 2345 3456 4567");
-
-        try {
-            //Try and find the inscription
-            List<Inscription> found = runService.findAllFromUser("carlos.torres@udc.es");
-
-            //There should be only one Inscription
-            assertEquals(found.size(), 1);
-            //And it should be the one we added
-            assertEquals(addedInscription, found.get(0));
-
-        } finally {
-            //Remove everything from the DB
-            removeRace(addedRace.getRaceID());
-            removeInscription(addedInscription.getInscriptionID());
         }
     }
 
@@ -180,4 +152,301 @@ public class RunServiceTest {
         }
     }
 
+    /*
+    Casos de prueba Carlos
+
+    Relativos al CU 4 - Inscribir un usuario
+
+        CP 1 - Inscribir un usuario con email inválido
+        CP 2 - Inscribir un usuario con tarjeta de crédito inválida
+        CP 3 - Inscribir un usuario en una carrera que no existe
+        CP 4 - Inscribir un usuario en una carrera que ya está llena
+        CP 5 - Inscribir un usuario en una carrera que empieza en menos de 24h
+        CP 6 - Inscribir un usuario en una carrera que ya pasó
+        CP 7 - Realizar una inscripción y el inscriptionID es correcto
+    */
+
+    //Caso de Prueba 1
+    @Test
+    public void testInscribeInvalidEmail() throws InputValidationException{
+
+        //Creates a Race
+        Race createdRace = runService.addRace("Betanzos", "Carrera de san valentín", LocalDateTime.of(2021, Month.FEBRUARY, 14, 12, 30), BigDecimal.valueOf(6.50), 800);
+
+        assertThrows(InputValidationException.class, () -> {
+            runService.inscribe(createdRace.getRaceID(), "unemailquenosirve", "1233 4566 7899 7410");
+        });
+
+        //Clear
+        removeRace(createdRace.getRaceID());
+    }
+
+    //Caso de prueba 2
+    @Test
+    public void testInscribeInvalidCard() throws InputValidationException{
+        //Creates a Race
+        Race createdRace = runService.addRace("Betanzos", "Carrera de san valentín", LocalDateTime.of(2021, Month.FEBRUARY, 14, 12, 30), BigDecimal.valueOf(6.50), 800);
+
+        assertThrows(InputValidationException.class, () -> {
+            runService.inscribe(createdRace.getRaceID(), "carlos.torres@udc.es", "te pago con dinero del monopoly");
+        });
+
+        //Clear Database
+        removeRace(createdRace.getRaceID());
+    }
+
+    //Caso de Prueba 3
+    @Test
+    public void testInscribeNonexistentRace(){
+        //Does NOT create a Race
+        assertThrows(InstanceNotFoundException.class, () -> {
+            runService.inscribe(Long.getLong("143956"), "carlos.torres@udc.es", "1233 4566 7899 8520");
+        });
+    }
+
+    //Caso de Prueba 4
+    @Test
+    public void testInscribeRaceFull() throws InputValidationException, InstanceNotFoundException, InscriptionClosedException, RaceFullException{
+        //Creates a Race with a maximum of 2 participants
+        Race createdRace = runService.addRace("Ferrol", "Carrera muy exclusiva", LocalDateTime.of(2021, Month.JUNE, 29, 17, 15), BigDecimal.valueOf(800), 2);
+
+        //Se inscribe a los primeros dos corredores
+        Inscription ins1 = runService.inscribe(createdRace.getRaceID(), "ricachon1@udc.es", "7899 4566 1233 0258");
+        Inscription ins2 = runService.inscribe(createdRace.getRaceID(), "ricachon2@usc.gal", "7410 8520 9630 4568");
+
+        assertThrows(RaceFullException.class, () -> {
+            //Se intenta inscribir un tercer corredor
+            runService.inscribe(createdRace.getRaceID(), "ricachon3@uvigo.es", "9874 6520 3214 8529");
+        });
+
+        //Borramos las dos inscripciones anteriores, y la carrera
+
+        removeInscription(ins1.getInscriptionID());
+        removeInscription(ins2.getInscriptionID());
+        removeRace(createdRace.getRaceID());
+    }
+
+    //Caso de Prueba 5
+    @Test
+    public void testInscribeLate() throws InputValidationException{
+        //Creates a Race that starts in three hours
+        LocalDateTime starttime = LocalDateTime.now().plusHours(3);
+        Race createdRace = runService.addRace("Moaña", "Carrera pa ya mismo", starttime, BigDecimal.valueOf(5.50), 200);
+
+        assertThrows(InscriptionClosedException.class, () -> {
+            runService.inscribe(createdRace.getRaceID(), "carlos.torres@udc.es", "9632 8521 7412 8547");
+        });
+
+        //Remove the Race
+        removeRace(createdRace.getRaceID());
+
+    }
+
+    //Caso de Prueba 6
+    @Test
+    public void testInscribePassed() throws InputValidationException{
+        //Creates a Race that already ended
+        Race createdRace = runService.addRace("Arteixo", "Carrera sin coronavirus", LocalDateTime.of(2019, Month.AUGUST, 21, 20, 30), BigDecimal.valueOf(9.00), 1200);
+
+        assertThrows(InscriptionClosedException.class, () -> {
+            runService.inscribe(createdRace.getRaceID(), "carlos.torres@udc.es", "7896 4563 1230 9510");
+        });
+
+        //Remove the Race
+        removeRace(createdRace.getRaceID());
+    }
+
+    @Test
+    public void testSuccessfullInscription() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
+        //Creates a valid Race
+        Race createdRace = runService.addRace("Ribeira", "Carreira popular do veran", LocalDateTime.of(2021, Month.JULY, 10, 10, 00), BigDecimal.valueOf(5.00), 2500);
+        Inscription inscription = runService.inscribe(createdRace.getRaceID(), "carlos.torres@udc.es", "9856 6523 8745 5412");
+
+        //Get the Race from the DB
+        Race readRace = runService.findRace(createdRace.getRaceID());
+
+        //Check it has an inscriptionID
+        assertNotNull(inscription.getInscriptionID());
+        //Check the participant was registered
+        assertEquals(1, readRace.getParticipants());
+
+        //Removes Race from DB
+        removeRace(readRace.getRaceID());
+    }
+
+    /*
+
+        Casos de Prueba Carlos
+
+        Relativos al CU 5 - Recuperar las inscripciones de un usuario
+
+        CP 1 - Si la BBDD está vacia
+        CP 2 - Si no hay ninguna de ese usuario pero hay de otros
+        CP 3 - Si hay solo una de ese usuario y nada más
+        CP 4 - Si hay solo una de ese usuario, mezclada con otros
+        CP 5 - Si todas son de ese usuario
+        CP 6 - Si hay varias de ese usuario, mezcladas con otras
+
+    */
+
+    //Caso de Prueba 1
+    @Test
+    public void testFindOnEmpty() throws InputValidationException {
+        //Try to find the Inscription
+        List<Inscription> found = runService.findAllFromUser("carlos.torres@udc.es");
+
+        //Should contain nothing
+        assertEquals(0, found.size());
+    }
+
+    //Caso de Prueba 2
+    @Test
+    public void testFindOnOthers() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
+        //First insert a Race
+        LocalDateTime inicioCarrera = LocalDateTime.of(2021, Month.APRIL, 14, 17, 30);
+        Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, BigDecimal.valueOf(8.50), 400);
+
+        //Inscribe some users
+        Inscription ins1 = runService.inscribe(addedRace.getRaceID(), "usuario1@udc.es", "1231 4564 7897 8585");
+        Inscription ins2 = runService.inscribe(addedRace.getRaceID(), "usuario2@udc.es", "3211 6544 9877 9969");
+
+        //Find all from a different user
+        List<Inscription> found = runService.findAllFromUser("carlos.torres@udc.es");
+
+        //Should contain nothing
+        assertEquals(0, found.size());
+
+        //Remove everything from DB
+        removeInscription(ins1.getInscriptionID());
+        removeInscription(ins2.getInscriptionID());
+        removeRace(addedRace.getRaceID());
+    }
+
+    //Caso de Prueba 3
+    @Test
+    public void testFindOnlyOneFromUser() throws InputValidationException, InstanceNotFoundException, InscriptionClosedException, RaceFullException {
+        //First insert a Race
+        LocalDateTime inicioCarrera = LocalDateTime.of(2021, Month.APRIL, 14, 17, 30);
+        Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, BigDecimal.valueOf(8.50), 400);
+
+        //Inscribe the User in that Race
+        Inscription addedInscription = runService.inscribe(addedRace.getRaceID(), "carlos.torres@udc.es", "1234 2345 3456 4567");
+
+        //Try and find the inscription
+        List<Inscription> found = runService.findAllFromUser("carlos.torres@udc.es");
+
+        //There should be only one Inscription
+        assertEquals(found.size(), 1);
+        //And it should be the one we added
+        assertEquals(addedInscription, found.get(0));
+
+        //Remove everything from the DB
+        removeRace(addedRace.getRaceID());
+        removeInscription(addedInscription.getInscriptionID());
+    }
+
+    //Caso de Prueba 4
+    @Test
+    public void testFindOnlyOneAmongOthers() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
+        //First insert a Race
+        LocalDateTime inicioCarrera = LocalDateTime.of(2021, Month.APRIL, 14, 17, 30);
+        Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, BigDecimal.valueOf(8.50), 400);
+
+        //Inscribe some users
+        Inscription ins1 = runService.inscribe(addedRace.getRaceID(), "usuario1@udc.es", "1231 4564 7897 8585");
+        Inscription ins2 = runService.inscribe(addedRace.getRaceID(), "usuario2@udc.es", "3211 6544 9877 9969");
+        //Inscribe the User in that Race
+        Inscription addedInscription = runService.inscribe(addedRace.getRaceID(), "carlos.torres@udc.es", "1234 2345 3456 4567");
+        //Inscribe some more users
+        Inscription ins3 = runService.inscribe(addedRace.getRaceID(), "usuario3@udc.es", "1231 4564 7897 8585");
+        Inscription ins4 = runService.inscribe(addedRace.getRaceID(), "usuario4@udc.es", "3211 6544 9877 9969");
+
+        //Try and find the inscription
+        List<Inscription> found = runService.findAllFromUser("carlos.torres@udc.es");
+
+        //There should be only one Inscription
+        assertEquals(found.size(), 1);
+        //And it should be the one we added
+        assertEquals(addedInscription, found.get(0));
+
+        //Remove everything from DB
+        removeInscription(ins1.getInscriptionID());
+        removeInscription(ins2.getInscriptionID());
+        removeInscription(ins3.getInscriptionID());
+        removeInscription(ins4.getInscriptionID());
+        removeInscription(addedInscription.getInscriptionID());
+        removeRace(addedRace.getRaceID());
+    }
+
+    //Caso de Prueba 5
+    @Test
+    public void testFindAllFromUser() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
+        //Create some Races
+        Race race1 = runService.addRace("Coruña", "Carrera popular semana santa", LocalDateTime.of(2021, Month.APRIL, 14, 17, 30), BigDecimal.valueOf(8.50), 400);
+        Race race2 = runService.addRace("Ribeira", "Carreira popular do veran", LocalDateTime.of(2021, Month.JULY, 10, 10, 00), BigDecimal.valueOf(5.00), 2500);
+        Race race3 = runService.addRace("Arteixo", "Carrera sin coronavirus", LocalDateTime.of(2019, Month.AUGUST, 21, 20, 30), BigDecimal.valueOf(9.00), 1200);
+        Race race4 = runService.addRace("Betanzos", "Carrera de san valentín", LocalDateTime.of(2021, Month.FEBRUARY, 14, 12, 30), BigDecimal.valueOf(6.50), 800);
+
+        //Inscribe one user in some of those Races
+        Inscription ins1 = runService.inscribe(race1.getRaceID(), "carlos.torres@udc.es", "1231 4564 7897 8585");
+        Inscription ins2 = runService.inscribe(race3.getRaceID(), "carlos.torres@udc.es", "3211 6544 9877 9969");
+        Inscription ins3 = runService.inscribe(race4.getRaceID(), "carlos.torres@udc.es", "1231 4564 7897 8585");
+
+        List<Inscription> found = runService.findAllFromUser("carlos.torres@udc.es");
+
+        //There are 3 inscriptions
+        assertEquals(3, found.size());
+        //The three are right
+        assertTrue(found.contains(ins1));
+        assertTrue(found.contains(ins2));
+        assertTrue(found.contains(ins3));
+
+        //Remove everything
+        removeInscription(ins1.getInscriptionID());
+        removeInscription(ins2.getInscriptionID());
+        removeInscription(ins3.getInscriptionID());
+        removeRace(race1.getRaceID());
+        removeRace(race2.getRaceID());
+        removeRace(race3.getRaceID());
+        removeRace(race4.getRaceID());
+    }
+
+    //Caso de prueba 6
+    @Test
+    public void testFindAllAmongMany() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
+        //Create some Races
+        Race race1 = runService.addRace("Coruña", "Carrera popular semana santa", LocalDateTime.of(2021, Month.APRIL, 14, 17, 30), BigDecimal.valueOf(8.50), 400);
+        Race race2 = runService.addRace("Ribeira", "Carreira popular do veran", LocalDateTime.of(2021, Month.JULY, 10, 10, 00), BigDecimal.valueOf(5.00), 2500);
+        Race race3 = runService.addRace("Arteixo", "Carrera sin coronavirus", LocalDateTime.of(2019, Month.AUGUST, 21, 20, 30), BigDecimal.valueOf(9.00), 1200);
+        Race race4 = runService.addRace("Betanzos", "Carrera de san valentín", LocalDateTime.of(2021, Month.FEBRUARY, 14, 12, 30), BigDecimal.valueOf(6.50), 800);
+
+        //Inscribe some users in some Races
+        Inscription ins1 = runService.inscribe(race1.getRaceID(), "carlos.torres@udc.es", "1231 4564 7897 8585");
+        Inscription ins2 = runService.inscribe(race3.getRaceID(), "carlos.torres@udc.es", "3211 6544 9877 9969");
+        Inscription ins3 = runService.inscribe(race4.getRaceID(), "carlos.torres@udc.es", "1231 4564 7897 8585");
+
+        Inscription ins4 = runService.inscribe(race1.getRaceID(), "usuario2@udc.es", "1231 4564 7897 8585");
+        Inscription ins5 = runService.inscribe(race2.getRaceID(), "usuario2@udc.es", "3211 6544 9877 9969");
+        Inscription ins6 = runService.inscribe(race4.getRaceID(), "usuario2@udc.es", "1231 4564 7897 8585");
+
+        Inscription ins7 = runService.inscribe(race2.getRaceID(), "usuario3@udc.es", "1231 4564 7897 8585");
+        Inscription ins8 = runService.inscribe(race3.getRaceID(), "usuario4@udc.es", "3211 6544 9877 9969");
+        Inscription ins9 = runService.inscribe(race4.getRaceID(), "usuario5@udc.es", "1231 4564 7897 8585");
+
+        //Get all from user carlos.torres
+        List<Inscription> found = runService.findAllFromUser("carlos.torres@udc.es");
+
+        //There are 3 inscriptions
+        assertEquals(3, found.size());
+        //The three are right
+        assertTrue(found.contains(ins1));
+        assertTrue(found.contains(ins2));
+        assertTrue(found.contains(ins3));
+
+        //Remove everything
+        removeRace(race1.getRaceID());
+        removeRace(race2.getRaceID());
+        removeRace(race3.getRaceID());
+        removeRace(race4.getRaceID());
+    }
 }

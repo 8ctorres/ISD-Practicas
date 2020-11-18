@@ -9,6 +9,7 @@ import es.udc.ws.runfic.model.race.SqlRaceDaoFactory;
 import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
 import es.udc.ws.runfic.model.runservice.exceptions.InvalidUserException;
 import es.udc.ws.runfic.model.runservice.exceptions.NumberTakenException;
+import es.udc.ws.runfic.model.runservice.exceptions.RaceFullException;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.sql.DataSourceLocator;
@@ -113,16 +114,24 @@ public class RunServiceImpl implements RunService{
 
     //Caso de Uso 4 - Carlos
     @Override
-    public Inscription inscribe(Long raceID, String email, String creditCardNumber)
-            throws InputValidationException, InscriptionClosedException, InstanceNotFoundException {
+    public Inscription inscribe(Long raceID, String email, String creditCard)
+            throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
+        String creditCardNumber =  creditCard.replaceAll("\\s+", ""); //Removes all spaces inside
         try (Connection connection = datasource.getConnection()) {
             validateEmail(email);
             validateCreditCard(creditCardNumber);
 
             Race thisRace = raceDao.find(connection, raceID);
 
-            if ((LocalDateTime.now().plusDays(1).compareTo(thisRace.getStartDateTime())) > 0)
+            //Comprobamos que esté en plazo para inscribirse
+            if ((LocalDateTime.now().plusDays(1).compareTo(thisRace.getStartDateTime())) > 0) {
                 throw new InscriptionClosedException("Inscriptions close 24 hours before the race starts");
+            }
+
+            //Comprobamos que la carrera no esté llena
+            if (thisRace.getParticipants() == thisRace.getMaxParticipants()){
+                throw new RaceFullException("Race is full");
+            }
 
             try {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
@@ -134,8 +143,11 @@ public class RunServiceImpl implements RunService{
 
                 Inscription createdInscription = inscriptionDao.create(connection, newInscription);
 
-                connection.commit();
+                //After the inscription was created succesfully, update the Race so it has one more participant
+                thisRace.setParticipants(thisRace.getParticipants()+1);
+                raceDao.update(connection, thisRace.getRaceID(), thisRace);
 
+                connection.commit();
                 return createdInscription;
 
             }catch(SQLException | RuntimeException | Error e) {
@@ -163,8 +175,8 @@ public class RunServiceImpl implements RunService{
 
     //Caso de Uso 6 - Isma
     @Override
-    public int getRunnerNumber(String email, Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
-
+    public int getRunnerNumber(String email, Long inscriptionID, String creditCard) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
+        String creditCardNumber =  creditCard.replaceAll("\\s+", ""); //Removes all spaces inside
         try (Connection connection = this.datasource.getConnection()) {
             validateEmail(email);
             validateCreditCard(creditCardNumber);

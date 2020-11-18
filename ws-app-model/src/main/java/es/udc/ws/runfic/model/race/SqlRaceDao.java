@@ -17,6 +17,9 @@ public interface SqlRaceDao {
     List<Race> findByDate(Connection connection, LocalDateTime date);
     List<Race> findByDateCity(Connection connection, LocalDateTime date, String city);
 
+    //Actualiza los datos de una carrera
+    int update(Connection connection, Long raceID, Race newrace);
+
     //Borra una carrera por su ID
     int remove(Connection connection, Long raceID);
 }

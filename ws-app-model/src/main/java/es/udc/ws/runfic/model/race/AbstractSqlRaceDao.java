@@ -95,6 +95,26 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
 
     //Carlos
     @Override
+    public int update(Connection connection, Long raceID, Race newRace){
+        String queryStr = "UPDATE race SET city = ?, description = ?, startDateTime = ?, price = ?, participants = ?, maxParticipants = ? WHERE raceID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
+            int i = 1;
+            preparedStatement.setString(i++, newRace.getCity());
+            preparedStatement.setString(i++, newRace.getDescription());
+            preparedStatement.setTimestamp(i++, Timestamp.valueOf(newRace.getStartDateTime()));
+            preparedStatement.setBigDecimal(i++, newRace.getPrice());
+            preparedStatement.setInt(i++, newRace.getParticipants());
+            preparedStatement.setInt(i++, newRace.getMaxParticipants());
+            preparedStatement.setLong(i, raceID);
+
+            return preparedStatement.executeUpdate();
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Carlos
+    @Override
     public int remove(Connection connection, Long raceID) {
         String queryStr = "DELETE FROM race WHERE raceID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
