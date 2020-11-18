@@ -7,12 +7,16 @@ import es.udc.ws.runfic.model.runservice.RunServiceFactory;
 import es.udc.ws.runfic.model.race.SqlRaceDao;
 import es.udc.ws.runfic.model.race.SqlRaceDaoFactory;
 import static es.udc.ws.runfic.utils.ModelConstants.RACE_DATA_SOURCE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import es.udc.ws.util.exceptions.InputValidationException;
+import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 
 import es.udc.ws.util.sql.DataSourceLocator;
 import es.udc.ws.util.sql.SimpleDataSource;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -59,6 +63,40 @@ public class RunServiceTest {
         }
         return addedRace;
 
+    }
+
+    @Test
+    public void testAddMovieAndFindMovie() throws InputValidationException, InstanceNotFoundException {
+
+        Race race = getValidRace();
+        Race addedRace = null;
+
+        try {
+
+            // Create Movie
+            LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
+
+            addedRace = runService.addRace(race);
+
+            LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
+
+            // Find Movie
+            Race foundRace = runService.findRace(addedRace.getRaceID());
+
+            assertEquals(addedRace, foundRace);
+            assertEquals(foundRace.getCity(),race.getCity());
+            assertEquals(foundRace.getDescription(),race.getDescription());
+            assertEquals(foundRace.getMaxParticipants(),race.getMaxParticipants());
+            assertEquals(foundRace.getPrice(),race.getPrice());
+            assertTrue((foundRace.getAddedDateTime().compareTo(beforeCreationDate) >= 0)
+                    && (foundRace.getAddedDateTime().compareTo(afterCreationDate) <= 0));
+
+        } finally {
+            // Clear Database
+            if (addedRace!=null) {
+                removeRace(addedRace.getRaceID());
+            }
+        }
     }
 
 }
