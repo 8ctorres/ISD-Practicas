@@ -88,10 +88,43 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
         }
     }
 
+    //Brais
     @Override
     public List<Race> findByDateCity(Connection connection, LocalDateTime date, String city) {
-        return null;
-    }
+        String queryStr =
+                "SELECT raceID, city, description, startDateTime, price, maxParticipants" +
+                        "FROM race WHERE date = ? AND city = ?";
 
+        Timestamp timestamp = Timestamp.valueOf(date);
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
+            preparedStatement.setTimestamp(1, timestamp);
+
+            ResultSet results = preparedStatement.executeQuery();
+
+            List<Race> list = new ArrayList<>();
+
+            while (results.next()) {
+                int i = 1;
+
+                if(results.getString(i++).equals(city)) {
+                    Long id = results.getLong(i++);
+                    String city2 = results.getString(i++);
+                    String description = results.getString(i++);
+                    LocalDateTime startDateTime = results.getTimestamp(i++).toLocalDateTime();
+                    BigDecimal price = results.getBigDecimal(i++);
+                    int maxParticipants = results.getInt(i);
+
+                    Race race = new Race(id, city2, description, startDateTime, price, maxParticipants);
+                    list.add(race);
+                }
+            }
+
+            return list;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
