@@ -37,6 +37,7 @@ public class RunServiceTest {
     private static RunService runService;
     private static SqlRaceDao raceDao;
     private static SqlInscriptionDao inscriptionDao;
+    private final long NON_EXISTENT_RACE_ID = -1;
 
 
     @BeforeAll
@@ -113,7 +114,7 @@ public class RunServiceTest {
 
     //Brais
     @Test
-    public void testAddMovieAndFindMovie() throws InputValidationException, InstanceNotFoundException {
+    public void testAddRaceAndFindRace() throws InputValidationException, InstanceNotFoundException {
 
         Race race = getValidRace();
         Race addedRace = null;
@@ -126,14 +127,14 @@ public class RunServiceTest {
 
         try {
 
-            // Create Movie
+            // Create Race
             LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
 
             addedRace = runService.addRace(city, description, startDateTime, price, maxParticipants);
 
             LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
 
-            // Find Movie
+            // Find Race
             Race foundRace = runService.findRace(addedRace.getRaceID());
 
             assertEquals(addedRace, foundRace);
@@ -464,20 +465,29 @@ public class RunServiceTest {
     //Caso de prueba 1
     @Test
     public void testNotFound() throws InstanceNotFoundException {
-
+        assertThrows(InstanceNotFoundException.class, () -> runService.findRace(NON_EXISTENT_RACE_ID));
     }
 
     //Caso de prueba 2
     @Test
-    public void testFound() throws InstanceNotFoundException {
+    public void testFound() throws InstanceNotFoundException, InputValidationException {
         //Se añade una carrera
-        Race race1 = runService.addRace("Vigo", "Carrera Abel Caballero", LocalDateTime.of(2021, Month.FEBRUARY, 23, 12, 30), BigDecimal.valueOf(5.50), 600);
+        Race race = runService.addRace("Vigo", "Carrera Abel Caballero", LocalDateTime.of(2021, Month.FEBRUARY, 23, 12, 30), BigDecimal.valueOf(5.50), 600);
 
         //Se busca y encuentra la carrera
-        Race foundRace = runService.findRace(1);
+        Race foundRace = runService.findRace(race1.getRaceID());
 
-        //There are 3 inscriptions
-        assertEquals(race1, foundRace);
+        //Se comprueba que todos los parámetros sean iguales
+        assertEquals(race, foundRace);
+        assertEquals(foundRace.getCity(),race.getCity());
+        assertEquals(foundRace.getDescription(),race.getDescription());
+        assertEquals(foundRace.getMaxParticipants(),race.getMaxParticipants());
+        assertEquals(foundRace.getPrice(),race.getPrice());
+        assertTrue((foundRace.getAddedDateTime().compareTo(beforeCreationDate) >= 0)
+                && (foundRace.getAddedDateTime().compareTo(afterCreationDate) <= 0));
+
+        //Se borra la carrera creada
+        removeRace(race.getRaceID());
     }
 
     /*
@@ -494,4 +504,25 @@ public class RunServiceTest {
         CP 6 - Recoge el dorsal y todo en orden
 
     */
+
+
+    //Caso de Prueba 1
+    @Test
+    public void testGetDorsalWithInvalidEmail()
+            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException {
+
+        //Creamos una carrera
+        Race createdRace = runService.addRace("Domaio", "Carrera espacial", LocalDateTime.of(2021, Month.JULY, 24, 17, 30), BigDecimal.valueOf(8.50), 700);
+
+        //Inscribimos a una persona
+        Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
+
+        //Intenta obtener el dorsal
+        assertThrows(InvalidUserException.class, () -> runService.getRunnerNumber("notismael.verdec@udc.es", createdRace.getRaceID(), "4944 9485 4849 8426"));
+
+        //Borramos los elementos creados
+        removeInscription(createdIns.getInscriptionID());
+        removeRace(createdRace.getRaceID());
+    }
+
 }
