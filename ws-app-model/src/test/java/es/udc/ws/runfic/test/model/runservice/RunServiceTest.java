@@ -449,4 +449,49 @@ public class RunServiceTest {
         removeRace(race3.getRaceID());
         removeRace(race4.getRaceID());
     }
+
+    /*
+
+        Casos de Prueba Isma
+
+        Relativos al CU 2 - Buscar carreras por su identificador
+
+        CP 1 - Si no hay ninguna carrera con ese identificador
+        CP 2 - Si hay una carrera con ese identificador
+
+    */
+
+    //Caso de prueba 1
+    @Test
+    public void testNotFound() throws InstanceNotFoundException {
+
+    }
+
+    //Caso de prueba 2
+    @Test
+    public void testFound() throws InstanceNotFoundException {
+        //Se añade una carrera
+        Race race1 = runService.addRace("Vigo", "Carrera Abel Caballero", LocalDateTime.of(2021, Month.FEBRUARY, 23, 12, 30), BigDecimal.valueOf(5.50), 600);
+
+        //Se busca y encuentra la carrera
+        Race foundRace = runService.findRace(1);
+
+        //There are 3 inscriptions
+        assertEquals(race1, foundRace);
+    }
+
+    /*
+
+        Casos de Prueba Isma
+
+        Relativos al CU 6 - Indicar que usuario ha recogido un dorsal correspondiente a una inscripción
+
+        CP 1 - Recoger dorsal con email inválido
+        CP 2 - Recoger dorsal con tarjeta de crédito inválida
+        CP 3 - Recoger dorsal de una carrera que no existe
+        CP 4 - Los datos del usuario no se corresponden con la inscripción
+        CP 5 - El dorsal ya ha sido entregado
+        CP 6 - Recoge el dorsal y todo en orden
+
+    */
 }

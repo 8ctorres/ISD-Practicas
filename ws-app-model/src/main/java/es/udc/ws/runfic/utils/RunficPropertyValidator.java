@@ -33,7 +33,7 @@ public class RunficPropertyValidator{
         int cmpup = input.compareTo(upper);
         if ((cmplow < 0) || (cmpup > 0))
             throw new InputValidationException("Invalid " + propertyName +
-                    " value (it must be gtrater than " + lowerValidLimit +
+                    " value (it must be greater than " + lowerValidLimit +
                     " and lower than " + upperValidLimit + "): " +
                     input);
     }
