@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
 import es.udc.ws.runfic.model.runservice.exceptions.RaceFullException;
+import es.udc.ws.runfic.model.runservice.exceptions.InvalidUserException;
+import es.udc.ws.runfic.model.runservice.exceptions.NumberTakenException;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
@@ -475,7 +477,7 @@ public class RunServiceTest {
         Race race = runService.addRace("Vigo", "Carrera Abel Caballero", LocalDateTime.of(2021, Month.FEBRUARY, 23, 12, 30), BigDecimal.valueOf(5.50), 600);
 
         //Se busca y encuentra la carrera
-        Race foundRace = runService.findRace(race1.getRaceID());
+        Race foundRace = runService.findRace(race.getRaceID());
 
         //Se comprueba que todos los parámetros sean iguales
         assertEquals(race, foundRace);
@@ -483,8 +485,7 @@ public class RunServiceTest {
         assertEquals(foundRace.getDescription(),race.getDescription());
         assertEquals(foundRace.getMaxParticipants(),race.getMaxParticipants());
         assertEquals(foundRace.getPrice(),race.getPrice());
-        assertTrue((foundRace.getAddedDateTime().compareTo(beforeCreationDate) >= 0)
-                && (foundRace.getAddedDateTime().compareTo(afterCreationDate) <= 0));
+        assertEquals(foundRace.getStartDateTime(),race.getStartDateTime());
 
         //Se borra la carrera creada
         removeRace(race.getRaceID());
@@ -499,9 +500,8 @@ public class RunServiceTest {
         CP 1 - Recoger dorsal con email inválido
         CP 2 - Recoger dorsal con tarjeta de crédito inválida
         CP 3 - Recoger dorsal de una carrera que no existe
-        CP 4 - Los datos del usuario no se corresponden con la inscripción
-        CP 5 - El dorsal ya ha sido entregado
-        CP 6 - Recoge el dorsal y todo en orden
+        CP 4 - El dorsal ya ha sido entregado
+        CP 5 - Recoge el dorsal y todo en orden
 
     */
 
@@ -517,8 +517,87 @@ public class RunServiceTest {
         //Inscribimos a una persona
         Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
 
-        //Intenta obtener el dorsal
+        //Intenta obtener el dorsal pero se equivoca de correo
         assertThrows(InvalidUserException.class, () -> runService.getRunnerNumber("notismael.verdec@udc.es", createdRace.getRaceID(), "4944 9485 4849 8426"));
+
+        //Borramos los elementos creados
+        removeInscription(createdIns.getInscriptionID());
+        removeRace(createdRace.getRaceID());
+    }
+
+    //Caso de Prueba 2
+    @Test
+    public void testGetDorsalWithInvalidCreditCard()
+            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException {
+
+        //Creamos una carrera
+        Race createdRace = runService.addRace("Coruña", "Marineda City Race", LocalDateTime.of(2021, Month.JULY, 24, 17, 30), BigDecimal.valueOf(8.50), 700);
+
+        //Inscribimos a una persona
+        Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
+
+        //Intenta obtener el dorsal pero se equivoca de tarjeta
+        assertThrows(InvalidUserException.class, () -> runService.getRunnerNumber("ismael.verdec@udc.es", createdRace.getRaceID(), "tarjeta metropolitana"));
+
+        //Borramos los elementos creados
+        removeInscription(createdIns.getInscriptionID());
+        removeRace(createdRace.getRaceID());
+    }
+
+    //Caso de Prueba 3
+    @Test
+    public void testGetDorsalOfNonExistentRace()
+            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException {
+
+        //Creamos una carrera
+        Race createdRace = runService.addRace("Moaña", "Carrera Iago Aspas", LocalDateTime.of(2021, Month.JUNE, 18, 12, 30), BigDecimal.valueOf(6.50), 800);
+
+        //Inscribimos a una persona
+        Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
+
+        //Intenta obtener el dorsal pero se equivoca de codigo de carrera
+        assertThrows(InputValidationException.class, () -> runService.getRunnerNumber("ismael.verdec@udc.es", NON_EXISTENT_RACE_ID, "4944 9485 4849 8426"));
+
+        //Borramos los elementos creados
+        removeInscription(createdIns.getInscriptionID());
+        removeRace(createdRace.getRaceID());
+    }
+
+    //Caso de Prueba 4
+    @Test
+    public void testDorsalHasBeenTaken()
+            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException {
+
+        //Creamos una carrera
+        Race createdRace = runService.addRace("Cangas", "Carrera Moaña es mejor que Cangas", LocalDateTime.of(2021, Month.MAY, 12, 16, 30), BigDecimal.valueOf(6.50), 600);
+
+        //Inscribimos a una persona
+        Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
+
+        //Obtiene el dorsal y luego vuelve a por otro para colar a su primo en la carrera
+        runService.getRunnerNumber("ismael.verdec@udc.es", createdRace.getRaceID(), "4944 9485 4849 8426");
+        assertThrows(NumberTakenException.class, () -> runService.getRunnerNumber("ismael.verdec@udc.es", createdRace.getRaceID(), "4944 9485 4849 8426"));
+
+        //Borramos los elementos creados
+        removeInscription(createdIns.getInscriptionID());
+        removeRace(createdRace.getRaceID());
+    }
+
+    //Caso de Prueba 5
+    @Test
+    public void testGetRunnerNumber()
+            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException {
+
+        //Creamos una carrera
+        Race createdRace = runService.addRace("Bueu", "Carrera Bueu es incluso peor que Cangas", LocalDateTime.of(2021, Month.SEPTEMBER, 21, 17, 30), BigDecimal.valueOf(7.50), 700);
+
+        //Inscribimos a una persona
+        Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
+
+        //Obtiene el dorsal y luego vuelve a por otro para colar a su primo en la carrera
+        runService.getRunnerNumber("ismael.verdec@udc.es", createdRace.getRaceID(), "4944 9485 4849 8426");
+        assertEquals(1, createdIns.getRunnerNumber());
+        assertTrue(createdIns.isNumberTaken());
 
         //Borramos los elementos creados
         removeInscription(createdIns.getInscriptionID());
