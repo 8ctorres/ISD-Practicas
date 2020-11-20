@@ -594,7 +594,7 @@ public class RunServiceTest {
         //Inscribimos a una persona
         Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
 
-        //Obtiene el dorsal y luego vuelve a por otro para colar a su primo en la carrera
+        //Obtiene el dorsal 1 de la carrera y este aparece como recogido
         runService.getRunnerNumber("ismael.verdec@udc.es", createdRace.getRaceID(), "4944 9485 4849 8426");
         assertEquals(1, createdIns.getRunnerNumber());
         assertTrue(createdIns.isNumberTaken());
