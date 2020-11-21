@@ -110,15 +110,11 @@ public class RunServiceTest {
 
     }
 
-    private Race getValidRace() {
-        return null;
-    }
-
-    //Brais
+    //Brais CU1
     @Test
     public void testAddRaceAndFindRace() throws InputValidationException, InstanceNotFoundException {
 
-        Race race = getValidRace();
+        Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
         Race addedRace = null;
 
         String city = race.getCity();
@@ -140,12 +136,91 @@ public class RunServiceTest {
             Race foundRace = runService.findRace(addedRace.getRaceID());
 
             assertEquals(addedRace, foundRace);
-            assertEquals(foundRace.getCity(),race.getCity());
-            assertEquals(foundRace.getDescription(),race.getDescription());
-            assertEquals(foundRace.getMaxParticipants(),race.getMaxParticipants());
-            assertEquals(foundRace.getPrice(),race.getPrice());
+            assertEquals(foundRace.getCity(),city);
+            assertEquals(foundRace.getDescription(),description);
+            assertEquals(foundRace.getMaxParticipants(),maxParticipants);
+            assertEquals(foundRace.getPrice(),price);
             assertTrue((foundRace.getAddedDateTime().compareTo(beforeCreationDate) >= 0)
                     && (foundRace.getAddedDateTime().compareTo(afterCreationDate) <= 0));
+
+        } finally {
+            // Clear Database
+            if (addedRace!=null) {
+                removeRace(addedRace.getRaceID());
+            }
+        }
+    }
+
+    //Brais CU3
+    @Test
+    public void testFindByDate() throws InputValidationException, InstanceNotFoundException {
+
+        Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
+        Race addedRace = null;
+
+        String city = race.getCity();
+        String description = race.getDescription();
+        int maxParticipants = race.getMaxParticipants();
+        BigDecimal price = race.getPrice();
+        LocalDateTime startDateTime = race.getStartDateTime();
+
+        LocalDateTime date = LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30);
+
+        try {
+
+            // Create Race
+            LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
+
+            addedRace = runService.addRace(city, description, startDateTime, price, maxParticipants);
+
+            LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
+
+            // Find Race
+            List<Race> list = runService.findByDate(date);
+
+            for(Race foundRace: list){
+                assertTrue(foundRace.getAddedDateTime().compareTo(date) <= 0);
+            }
+
+        } finally {
+            // Clear Database
+            if (addedRace!=null) {
+                removeRace(addedRace.getRaceID());
+            }
+        }
+    }
+
+    //Brais CU3
+    @Test
+    public void testFindByDateCity() throws InputValidationException, InstanceNotFoundException {
+
+        Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
+        Race addedRace = null;
+
+        String city = race.getCity();
+        String description = race.getDescription();
+        int maxParticipants = race.getMaxParticipants();
+        BigDecimal price = race.getPrice();
+        LocalDateTime startDateTime = race.getStartDateTime();
+
+        LocalDateTime date = LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30);
+
+        try {
+
+            // Create Race
+            LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
+
+            addedRace = runService.addRace(city, description, startDateTime, price, maxParticipants);
+
+            LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
+
+            // Find Race
+            List<Race> list = runService.findByDate(date, city);
+
+            for(Race foundRace: list){
+                assertEquals(foundRace.getCity(), city);
+                assertTrue(foundRace.getAddedDateTime().compareTo(date) <= 0);
+            }
 
         } finally {
             // Clear Database
