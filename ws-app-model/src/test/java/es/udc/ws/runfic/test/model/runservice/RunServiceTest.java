@@ -144,7 +144,6 @@ public class RunServiceTest {
             // Find Race
             Race foundRace = runService.findRace(addedRace.getRaceID());
 
-            assertEquals(addedRace, foundRace);
             assertEquals(foundRace.getCity(),city);
             assertEquals(foundRace.getDescription(),description);
             assertEquals(foundRace.getMaxParticipants(),maxParticipants);

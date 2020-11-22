@@ -56,7 +56,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     public List<Race> findByDate(Connection connection, LocalDateTime date) {
         String queryStr =
                 "SELECT idrace, city, description, startDateTime, price, maxParticipants" +
-                        " FROM Race WHERE date = ?";
+                        " FROM Race WHERE startDateTime = ?";
 
         Timestamp timestamp = Timestamp.valueOf(date);
 
@@ -93,7 +93,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     public List<Race> findByDateCity(Connection connection, LocalDateTime date, String city) {
         String queryStr =
                 "SELECT idrace, city, description, startDateTime, price, maxParticipants" +
-                        " FROM Race WHERE date = ? AND city = ?";
+                        " FROM Race WHERE startDateTime = ? AND city = ?";
 
         Timestamp timestamp = Timestamp.valueOf(date);
 
