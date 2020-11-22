@@ -20,7 +20,7 @@ public class Jbdc3CcSqlRaceDao extends AbstractSqlRaceDao {
             preparedStatement.setString(i++, race.getCity());
             preparedStatement.setString(i++, race.getDescription());
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(race.getStartDateTime()));
-            preparedStatement.setBigDecimal(i++, race.getPrice());
+            preparedStatement.setFloat(i++, race.getPrice());
             preparedStatement.setInt(i++, race.getParticipants());
             preparedStatement.setInt(i++, race.getMaxParticipants());
             preparedStatement.setTimestamp(i, Timestamp.valueOf(LocalDateTime.now()));
