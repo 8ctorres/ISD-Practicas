@@ -123,7 +123,7 @@ public class RunServiceTest {
     @Test
     public void testAddRaceAndFindRace() throws InputValidationException, InstanceNotFoundException {
 
-        Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(5), 1000);
+        Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), 5, 1000);
         Race addedRace = null;
 
         String city = race.getCity();
@@ -156,7 +156,7 @@ public class RunServiceTest {
     @Test
     public void testAddRaceAndFindRaceInvalidDate() throws InputValidationException {
         assertThrows(InputValidationException.class, () -> {
-                runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(1956, Month.JANUARY, 6, 10, 30),4.99, 1000);
+                runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(1956, Month.JANUARY, 6, 10, 30), 5, 1000);
             });
     }
 
@@ -174,7 +174,7 @@ public class RunServiceTest {
     @Test
     public void testFindByDate() throws InputValidationException {
 
-        Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
+        Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), 5, 1000);
         Race addedRace = null;
 
         String city = race.getCity();
@@ -212,7 +212,7 @@ public class RunServiceTest {
     @Test
     public void testFindByDateCity() throws InputValidationException {
 
-        Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
+        Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), 5, 1000);
         Race addedRace = null;
 
         String city = race.getCity();
@@ -264,7 +264,7 @@ public class RunServiceTest {
     public void testInscribeInvalidEmail() throws InputValidationException{
 
         //Creates a Race
-        Race createdRace = runService.addRace("Betanzos", "Carrera de san valentín", LocalDateTime.of(2021, Month.FEBRUARY, 14, 12, 30), BigDecimal.valueOf(6.50), 800);
+        Race createdRace = runService.addRace("Betanzos", "Carrera de san valentín", LocalDateTime.of(2021, Month.FEBRUARY, 14, 12, 30), 6.5, 800);
 
         assertThrows(InputValidationException.class, () -> {
             runService.inscribe(createdRace.getRaceID(), "unemailquenosirve", "1233 4566 7899 7410");
@@ -278,7 +278,7 @@ public class RunServiceTest {
     @Test
     public void testInscribeInvalidCard() throws InputValidationException{
         //Creates a Race
-        Race createdRace = runService.addRace("Betanzos", "Carrera de san valentín", LocalDateTime.of(2021, Month.FEBRUARY, 14, 12, 30), BigDecimal.valueOf(6.50), 800);
+        Race createdRace = runService.addRace("Betanzos", "Carrera de san valentín", LocalDateTime.of(2021, Month.FEBRUARY, 14, 12, 30), 6.5, 800);
 
         assertThrows(InputValidationException.class, () -> {
             runService.inscribe(createdRace.getRaceID(), "carlos.torres@udc.es", "te pago con dinero del monopoly");
@@ -301,7 +301,7 @@ public class RunServiceTest {
     @Test
     public void testInscribeRaceFull() throws InputValidationException, InstanceNotFoundException, InscriptionClosedException, RaceFullException{
         //Creates a Race with a maximum of 2 participants
-        Race createdRace = runService.addRace("Ferrol", "Carrera muy exclusiva", LocalDateTime.of(2021, Month.JUNE, 29, 17, 15), BigDecimal.valueOf(800), 2);
+        Race createdRace = runService.addRace("Ferrol", "Carrera muy exclusiva", LocalDateTime.of(2021, Month.JUNE, 29, 17, 15), 800, 2);
 
         //Se inscribe a los primeros dos corredores
         Inscription ins1 = runService.inscribe(createdRace.getRaceID(), "ricachon1@udc.es", "7899 4566 1233 0258");
@@ -339,7 +339,7 @@ public class RunServiceTest {
     @Test
     public void testSuccessfullInscription() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
         //Creates a valid Race
-        Race createdRace = runService.addRace("Ribeira", "Carreira popular do veran", LocalDateTime.of(2021, Month.JULY, 10, 10, 00), BigDecimal.valueOf(5.00), 2500);
+        Race createdRace = runService.addRace("Ribeira", "Carreira popular do veran", LocalDateTime.of(2021, Month.JULY, 10, 10, 00), 5, 2500);
         Inscription inscription = runService.inscribe(createdRace.getRaceID(), "carlos.torres@udc.es", "9856 6523 8745 5412");
 
         //Get the Race from the DB
@@ -384,7 +384,7 @@ public class RunServiceTest {
     public void testFindOnOthers() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
         //First insert a Race
         LocalDateTime inicioCarrera = LocalDateTime.of(2021, Month.APRIL, 14, 17, 30);
-        Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, BigDecimal.valueOf(8.50), 400);
+        Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, 8.5, 400);
 
         //Inscribe some users
         Inscription ins1 = runService.inscribe(addedRace.getRaceID(), "usuario1@udc.es", "1231 4564 7897 8585");
@@ -407,7 +407,7 @@ public class RunServiceTest {
     public void testFindOnlyOneFromUser() throws InputValidationException, InstanceNotFoundException, InscriptionClosedException, RaceFullException {
         //First insert a Race
         LocalDateTime inicioCarrera = LocalDateTime.of(2021, Month.APRIL, 14, 17, 30);
-        Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, BigDecimal.valueOf(8.50), 400);
+        Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, 8.5, 400);
 
         //Inscribe the User in that Race
         Inscription addedInscription = runService.inscribe(addedRace.getRaceID(), "carlos.torres@udc.es", "1234 2345 3456 4567");
@@ -430,7 +430,7 @@ public class RunServiceTest {
     public void testFindOnlyOneAmongOthers() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
         //First insert a Race
         LocalDateTime inicioCarrera = LocalDateTime.of(2021, Month.APRIL, 14, 17, 30);
-        Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, BigDecimal.valueOf(8.50), 400);
+        Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, 8.5, 400);
 
         //Inscribe some users
         Inscription ins1 = runService.inscribe(addedRace.getRaceID(), "usuario1@udc.es", "1231 4564 7897 8585");
@@ -462,10 +462,10 @@ public class RunServiceTest {
     @Test
     public void testFindAllFromUser() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
         //Create some Races
-        Race race1 = runService.addRace("Coruña", "Carrera popular semana santa", LocalDateTime.of(2021, Month.APRIL, 14, 17, 30), BigDecimal.valueOf(8.50), 400);
-        Race race2 = runService.addRace("Ribeira", "Carreira popular do veran", LocalDateTime.of(2021, Month.JULY, 10, 10, 00), BigDecimal.valueOf(5.00), 2500);
-        Race race3 = runService.addRace("Arteixo", "Carrera sin coronavirus", LocalDateTime.of(2021, Month.AUGUST, 21, 20, 30), BigDecimal.valueOf(9.00), 1200);
-        Race race4 = runService.addRace("Betanzos", "Carrera de san valentín", LocalDateTime.of(2021, Month.FEBRUARY, 14, 12, 30), BigDecimal.valueOf(6.50), 800);
+        Race race1 = runService.addRace("Coruña", "Carrera popular semana santa", LocalDateTime.of(2021, Month.APRIL, 14, 17, 30), 8.5, 400);
+        Race race2 = runService.addRace("Ribeira", "Carreira popular do veran", LocalDateTime.of(2021, Month.JULY, 10, 10, 00), 5, 2500);
+        Race race3 = runService.addRace("Arteixo", "Carrera sin coronavirus", LocalDateTime.of(2021, Month.AUGUST, 21, 20, 30), 9, 1200);
+        Race race4 = runService.addRace("Betanzos", "Carrera de san valentín", LocalDateTime.of(2021, Month.FEBRUARY, 14, 12, 30), 6.5, 800);
 
         //Inscribe one user in some of those Races
         Inscription ins1 = runService.inscribe(race1.getRaceID(), "carlos.torres@udc.es", "1231 4564 7897 8585");
