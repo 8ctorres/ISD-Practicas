@@ -88,8 +88,8 @@ public class RunServiceImpl implements RunService{
         try (Connection connection = datasource.getConnection()) {
 
             Race thisRace = raceDao.find(connection, idrace);
-            return new Race(thisRace.getDescription(), thisRace.getStartDateTime(),
-                    thisRace.getPrice(), thisRace.getMaxParticipants(), thisRace.getParticipants());
+            return new Race(thisRace.getRaceID(), thisRace.getCity(),  thisRace.getDescription(), thisRace.getStartDateTime(),
+                    thisRace.getPrice(), thisRace.getMaxParticipants());
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
