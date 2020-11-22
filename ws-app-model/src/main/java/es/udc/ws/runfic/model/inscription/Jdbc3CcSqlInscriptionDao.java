@@ -11,7 +11,7 @@ public class Jdbc3CcSqlInscriptionDao extends AbstractSqlInscriptionDao{
                 "(user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, isNumberTaken)" +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
-        try(PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
+        try(PreparedStatement preparedStatement = connection.prepareStatement(queryStr, Statement.RETURN_GENERATED_KEYS)){
             //Fill prepared Statement
             int i = 1;
             preparedStatement.setString(i++, inscription.getUser());

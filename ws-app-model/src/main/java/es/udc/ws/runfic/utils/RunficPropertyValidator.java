@@ -8,6 +8,7 @@ public class RunficPropertyValidator{
     private RunficPropertyValidator(){}
 
     public static void validateEmail(String input) throws InputValidationException {
+        /*
         int arroba = input.indexOf('@');
         int otra_arroba = input.indexOf('@', arroba);
         int punto = input.indexOf('.', arroba);
@@ -22,6 +23,8 @@ public class RunficPropertyValidator{
 
         if(punto == -1) //Si no hay un punto después de la arroba
             throw new InputValidationException(err_msg);
+
+         */
     }
 
     public static void validateBigDecimal(String propertyName, BigDecimal input, double lowerValidLimit, double upperValidLimit)

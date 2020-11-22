@@ -120,16 +120,11 @@ public class RunServiceTest {
 //
 //
 
-    @Test
-    public void testingTest(){
-
-        assertEquals(3,3);
-    }
-/*
     //Caso de Prueba 1
     @Test
     public void testAddRaceAndFindRace() throws InputValidationException, InstanceNotFoundException {
 
+        System.out.println("runService is at " + runService.toString());
         Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
         Race addedRace = null;
 
@@ -145,6 +140,8 @@ public class RunServiceTest {
             LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
 
             addedRace = runService.addRace(city, description, startDateTime, price, maxParticipants);
+
+            System.out.println("Added race ID :" + addedRace.getRaceID().toString());
 
             LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
 
@@ -170,26 +167,9 @@ public class RunServiceTest {
     //Caso de Prueba 2
     @Test
     public void testAddRaceAndFindRaceInvalidDate() throws InputValidationException {
-
-        Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(1956, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
-        Race addedRace = null;
-
-        String city = race.getCity();
-        String description = race.getDescription();
-        int maxParticipants = race.getMaxParticipants();
-        BigDecimal price = race.getPrice();
-        LocalDateTime startDateTime = race.getStartDateTime();
-
-        try {
-
-            assertThrows(InputValidationException.class, () -> runService.addRace(city, description, startDateTime, price,maxParticipants ));
-
-        } finally {
-            // Clear Database
-            if (addedRace!=null) {
-                removeRace(addedRace.getRaceID());
-            }
-        }
+        assertThrows(InputValidationException.class, () -> {
+                runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(1956, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
+            });
     }
 
 //
@@ -326,7 +306,7 @@ public class RunServiceTest {
     public void testInscribeNonexistentRace(){
         //Does NOT create a Race
         assertThrows(InstanceNotFoundException.class, () -> {
-            runService.inscribe(Long.getLong("143956"), "carlos.torres@udc.es", "1233 4566 7899 8520");
+            runService.inscribe(Long.valueOf("456481"), "carlos.torres@udc.es", "1233 4566 7899 8520");
         });
     }
 
@@ -725,7 +705,4 @@ public class RunServiceTest {
         removeRace(createdRace.getRaceID());
     }
 
-*/
 }
-
-

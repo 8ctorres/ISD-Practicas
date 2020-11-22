@@ -3,6 +3,7 @@ package es.udc.ws.runfic.model.race;
 import es.udc.ws.runfic.model.inscription.Inscription;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 
 public class Jbdc3CcSqlRaceDao extends AbstractSqlRaceDao {
     //Isma
@@ -13,7 +14,7 @@ public class Jbdc3CcSqlRaceDao extends AbstractSqlRaceDao {
                 "(city, description, startDateTime, price, participants, maxParticipants, addedDateTime)" +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try(PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
+        try(PreparedStatement preparedStatement = connection.prepareStatement(queryStr, Statement.RETURN_GENERATED_KEYS)){
             //Fill prepared Statement
             int i = 1;
             preparedStatement.setString(i++, race.getCity());
@@ -22,7 +23,7 @@ public class Jbdc3CcSqlRaceDao extends AbstractSqlRaceDao {
             preparedStatement.setBigDecimal(i++, race.getPrice());
             preparedStatement.setInt(i++, race.getParticipants());
             preparedStatement.setInt(i++, race.getMaxParticipants());
-            preparedStatement.setTimestamp(i, Timestamp.valueOf(race.getAddedDateTime()));
+            preparedStatement.setTimestamp(i, Timestamp.valueOf(LocalDateTime.now()));
 
             //Execute Query
             int modifiedRows = preparedStatement.executeUpdate();

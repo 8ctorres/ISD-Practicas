@@ -2,8 +2,8 @@
 -- Model
 -- -----------------------------------------------------------------------------
 
-DROP TABLE Inscription;
-DROP TABLE Race;
+DROP TABLE IF EXISTS Inscription;
+DROP TABLE IF EXISTS Race;
 
 -- Create new tables
 
@@ -16,7 +16,7 @@ CREATE TABLE Race( raceID BIGINT NOT NULL AUTO_INCREMENT,
                  maxParticipants INT NOT NULL,
                  addedDateTime DATETIME NOT NULL,
                  CONSTRAINT RacePk PRIMARY KEY (raceID),
-                 CONSTRAINT validPrice check (price>=0),
+                 CONSTRAINT validRacePrice check (price>=0),
                  CONSTRAINT validMaxPart check (maxParticipants>0));
 
 CREATE TABLE Inscription (inscriptionID BIGINT NOT NULL AUTO_INCREMENT,

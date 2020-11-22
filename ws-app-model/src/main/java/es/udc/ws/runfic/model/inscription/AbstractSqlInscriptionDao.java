@@ -18,7 +18,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
 
         String queryStr =
             "SELECT inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, isNumberTaken"
-            + "FROM inscription WHERE inscriptionID = ?";
+            + "FROM Inscription WHERE inscriptionID = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
             preparedStatement.setLong(1, inscriptionID);
@@ -53,7 +53,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
 
         String queryStr =
                 "SELECT inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, isNumberTaken"
-                        + "FROM inscription WHERE user = ?";
+                        + "FROM Inscription WHERE user = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
             preparedStatement.setString(1, email);
@@ -88,7 +88,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
     //Carlos
     @Override
     public int remove(Connection connection, Long inscriptionID) {
-        String queryStr = "DELETE FROM inscription WHERE inscriptionID = ?";
+        String queryStr = "DELETE FROM Inscription WHERE inscriptionID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
             preparedStatement.setLong(1, inscriptionID);
             return preparedStatement.executeUpdate();

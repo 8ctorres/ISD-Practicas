@@ -23,7 +23,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
 
         String queryStr =
                 "SELECT raceID, city, description, startDateTime, price, maxParticipants" +
-                        "FROM race WHERE raceID = ?";
+                        "FROM Race WHERE raceID = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
             preparedStatement.setLong(1, raceID);
@@ -56,7 +56,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     public List<Race> findByDate(Connection connection, LocalDateTime date) {
         String queryStr =
                 "SELECT raceID, city, description, startDateTime, price, maxParticipants" +
-                        "FROM race WHERE date = ?";
+                        "FROM Race WHERE date = ?";
 
         Timestamp timestamp = Timestamp.valueOf(date);
 
@@ -93,7 +93,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     public List<Race> findByDateCity(Connection connection, LocalDateTime date, String city) {
         String queryStr =
                 "SELECT raceID, city, description, startDateTime, price, maxParticipants" +
-                        "FROM race WHERE date = ? AND city = ?";
+                        "FROM Race WHERE date = ? AND city = ?";
 
         Timestamp timestamp = Timestamp.valueOf(date);
 
@@ -129,7 +129,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     //Carlos
     @Override
     public int update(Connection connection, Long raceID, Race newRace){
-        String queryStr = "UPDATE race SET city = ?, description = ?, startDateTime = ?, price = ?, participants = ?, maxParticipants = ? WHERE raceID = ?";
+        String queryStr = "UPDATE Race SET city = ?, description = ?, startDateTime = ?, price = ?, participants = ?, maxParticipants = ? WHERE raceID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
             int i = 1;
             preparedStatement.setString(i++, newRace.getCity());
@@ -149,7 +149,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     //Carlos
     @Override
     public int remove(Connection connection, Long raceID) {
-        String queryStr = "DELETE FROM race WHERE raceID = ?";
+        String queryStr = "DELETE FROM Race WHERE raceID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
             preparedStatement.setLong(1, raceID);
             return preparedStatement.executeUpdate();
