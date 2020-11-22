@@ -95,7 +95,7 @@ public class RunServiceTest {
         String city = race.getCity();
         String description = race.getDescription();
         int maxParticipants = race.getMaxParticipants();
-        BigDecimal price = race.getPrice();
+        float price = race.getPrice();
         LocalDateTime startDateTime = race.getStartDateTime();
 
         Race addedRace = null;
@@ -129,7 +129,7 @@ public class RunServiceTest {
         String city = race.getCity();
         String description = race.getDescription();
         int maxParticipants = race.getMaxParticipants();
-        BigDecimal price = race.getPrice();
+        float price = race.getPrice();
         LocalDateTime startDateTime = race.getStartDateTime();
 
         try {
@@ -156,7 +156,7 @@ public class RunServiceTest {
     @Test
     public void testAddRaceAndFindRaceInvalidDate() throws InputValidationException {
         assertThrows(InputValidationException.class, () -> {
-                runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(1956, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
+                runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(1956, Month.JANUARY, 6, 10, 30),4.99, 1000);
             });
     }
 
@@ -180,7 +180,7 @@ public class RunServiceTest {
         String city = race.getCity();
         String description = race.getDescription();
         int maxParticipants = race.getMaxParticipants();
-        BigDecimal price = race.getPrice();
+        float price = race.getPrice();
         LocalDateTime startDateTime = race.getStartDateTime();
 
         LocalDateTime date = LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30);
@@ -218,7 +218,7 @@ public class RunServiceTest {
         String city = race.getCity();
         String description = race.getDescription();
         int maxParticipants = race.getMaxParticipants();
-        BigDecimal price = race.getPrice();
+        float price = race.getPrice();
         LocalDateTime startDateTime = race.getStartDateTime();
 
         LocalDateTime date = LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30);
@@ -557,7 +557,6 @@ public class RunServiceTest {
         Race foundRace = runService.findRace(race.getRaceID());
 
         //Se comprueba que todos los parámetros sean iguales
-        assertEquals(race, foundRace);
         assertEquals(foundRace.getCity(),race.getCity());
         assertEquals(foundRace.getDescription(),race.getDescription());
         assertEquals(foundRace.getMaxParticipants(),race.getMaxParticipants());

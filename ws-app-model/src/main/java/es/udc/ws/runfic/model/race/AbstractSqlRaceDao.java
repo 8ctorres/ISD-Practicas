@@ -40,7 +40,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
             String city = results.getString(i++);
             String description = results.getString(i++);
             LocalDateTime startDateTime = results.getTimestamp(i++).toLocalDateTime();
-            BigDecimal price = results.getBigDecimal(i++);
+            float price = results.getFloat(i++);
             int maxParticipants = results.getInt(i);
 
             return new Race(id, city, description, startDateTime, price, maxParticipants);
@@ -74,7 +74,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
                 String city = results.getString(i++);
                 String description = results.getString(i++);
                 LocalDateTime startDateTime = results.getTimestamp(i++).toLocalDateTime();
-                BigDecimal price = results.getBigDecimal(i++);
+                float price = results.getFloat(i++);
                 int maxParticipants = results.getInt(i);
 
                 Race race = new Race(id, city, description, startDateTime, price, maxParticipants);
@@ -112,7 +112,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
                 String city1 = results.getString(i++);
                 String description = results.getString(i++);
                 LocalDateTime startDateTime = results.getTimestamp(i++).toLocalDateTime();
-                BigDecimal price = results.getBigDecimal(i++);
+                float price = results.getFloat(i++);
                 int maxParticipants = results.getInt(i);
 
                 Race race = new Race(id, city1, description, startDateTime, price, maxParticipants);
@@ -139,7 +139,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
                 preparedStatement.setString(i++, newRace.getCity());
                 preparedStatement.setString(i++, newRace.getDescription());
                 preparedStatement.setTimestamp(i++, Timestamp.valueOf(newRace.getStartDateTime()));
-                preparedStatement.setBigDecimal(i++, newRace.getPrice());
+                preparedStatement.setFloat(i++, newRace.getPrice());
                 preparedStatement.setInt(i++, newRace.getParticipants());
                 preparedStatement.setInt(i++, newRace.getMaxParticipants());
                 preparedStatement.setLong(i, idrace);

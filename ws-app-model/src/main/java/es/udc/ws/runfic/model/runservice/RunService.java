@@ -17,7 +17,7 @@ import java.util.List;
 public interface RunService {
     //Para dar de alta una carrera, se indicará la ciudad donde se celebra, una descripción, la fecha y hora, el  precio de la inscripción
     //y el número máximo de participantes. Además, se guardará la fecha y hora en la que se ha dado de alta la carrera.
-    Race addRace(String city, String description, LocalDateTime startDateTime, BigDecimal price, int maxParticipants)
+    Race addRace(String city, String description, LocalDateTime startDateTime, float price, int maxParticipants)
             throws InputValidationException;
 
     //Será posible buscar carreras por su identificador. La información devuelta de la carrera incluirá, además de la información proporcionada

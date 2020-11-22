@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static es.udc.ws.runfic.utils.ModelConstants.*;
-import static es.udc.ws.runfic.utils.RunficPropertyValidator.validateBigDecimal;
+import static es.udc.ws.runfic.utils.RunficPropertyValidator.validateFloat;
 import static es.udc.ws.runfic.utils.RunficPropertyValidator.validateEmail;
 import static es.udc.ws.util.validation.PropertyValidator.validateCreditCard;
 
@@ -41,10 +41,10 @@ public class RunServiceImpl implements RunService{
 
     //Caso de Uso 1 - Brais
     @Override
-    public Race addRace(String city, String description, LocalDateTime startDateTime, BigDecimal price, int maxParticipants) throws InputValidationException {
+    public Race addRace(String city, String description, LocalDateTime startDateTime, float price, int maxParticipants) throws InputValidationException {
         PropertyValidator.validateMandatoryString("city", city);
         PropertyValidator.validateMandatoryString("description", description);
-        validateBigDecimal("price", price, 0, MAX_PRICE);
+        validateFloat("price", price, 0, MAX_PRICE);
         PropertyValidator.validateDouble("maxParticipants", maxParticipants, 0, MAX_PARTICIPANTS);
 
         if (startDateTime.compareTo(LocalDateTime.now().withNano(0)) <= 0){

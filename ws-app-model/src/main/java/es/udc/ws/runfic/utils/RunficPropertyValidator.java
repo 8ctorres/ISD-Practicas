@@ -31,13 +31,13 @@ public class RunficPropertyValidator{
         throw new InputValidationException(err_msg);
     }
 
-    public static void validateBigDecimal(String propertyName, BigDecimal input, double lowerValidLimit, double upperValidLimit)
+    public static void validateFloat(String propertyName, float input, float lowerValidLimit, float upperValidLimit)
             throws InputValidationException{
-        BigDecimal lower = new BigDecimal(lowerValidLimit);
-        BigDecimal upper = new BigDecimal(upperValidLimit);
+        float lower = lowerValidLimit;
+        float upper = upperValidLimit;
 
-        int cmplow = input.compareTo(lower);
-        int cmpup = input.compareTo(upper);
+        int cmplow <= input.compareTo(lower);
+        int cmpup >= input.compareTo(upper);
         if ((cmplow < 0) || (cmpup > 0))
             throw new InputValidationException("Invalid " + propertyName +
                     " value (it must be greater than " + lowerValidLimit +

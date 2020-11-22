@@ -1,6 +1,5 @@
 package es.udc.ws.runfic.model.race;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -9,12 +8,12 @@ public class Race {
     private String city;
     private String description;
     private LocalDateTime startDateTime;
-    private BigDecimal price;
+    private float price;
     private int participants;
     private int maxParticipants;
     private LocalDateTime addedDateTime;
 
-    public Race(Long idrace, String city, String description, LocalDateTime startDateTime, BigDecimal price, int maxParticipants) {
+    public Race(Long idrace, String city, String description, LocalDateTime startDateTime, float price, int maxParticipants) {
         this.idrace = idrace;
         this.city = city;
         this.description = description;
@@ -25,14 +24,14 @@ public class Race {
         this.addedDateTime = null;
     }
 
-    public Race(Long idrace, String city, String description, LocalDateTime startDateTime, BigDecimal price,
+    public Race(Long idrace, String city, String description, LocalDateTime startDateTime, float price,
                 int participants, int maxParticipants, LocalDateTime addedDateTime) {
         this(idrace, city, description, startDateTime, price, maxParticipants);
         this.participants = participants;
         this.addedDateTime = addedDateTime;
     }
 
-    public Race(String description, LocalDateTime startDateTime, BigDecimal price, int maxParticipants, int participants) {
+    public Race(String description, LocalDateTime startDateTime, float price, int maxParticipants, int participants) {
     }
 
     public Long getRaceID() {
@@ -67,11 +66,11 @@ public class Race {
         this.startDateTime = startDateTime;
     }
 
-    public BigDecimal getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    private void setPrice(BigDecimal price) {
+    private void setPrice(float price) {
         this.price = price;
     }
 
@@ -110,7 +109,7 @@ public class Race {
                 city.equals(race.city) &&
                 description.equals(race.description) &&
                 startDateTime.equals(race.startDateTime) &&
-                price.equals(race.price) &&
+                price == race.price &&
                 addedDateTime.equals(race.addedDateTime);
     }
 
