@@ -18,20 +18,20 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
 
     //Carlos
     @Override
-    public Race find(Connection connection, Long raceID)
+    public Race find(Connection connection, Long idrace)
             throws InstanceNotFoundException {
 
         String queryStr =
-                "SELECT raceID, city, description, startDateTime, price, maxParticipants" +
-                        "FROM Race WHERE raceID = ?";
+                "SELECT idrace, city, description, startDateTime, price, maxParticipants" +
+                        " FROM Race WHERE idrace = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
-            preparedStatement.setLong(1, raceID);
+            preparedStatement.setLong(1, idrace);
 
             ResultSet results = preparedStatement.executeQuery();
 
             if (!results.next()){
-                throw new InstanceNotFoundException(raceID, Race.class.getName());
+                throw new InstanceNotFoundException(idrace, Race.class.getName());
             }
 
             //Fetch results
@@ -55,8 +55,8 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     @Override
     public List<Race> findByDate(Connection connection, LocalDateTime date) {
         String queryStr =
-                "SELECT raceID, city, description, startDateTime, price, maxParticipants" +
-                        "FROM Race WHERE date = ?";
+                "SELECT idrace, city, description, startDateTime, price, maxParticipants" +
+                        " FROM Race WHERE date = ?";
 
         Timestamp timestamp = Timestamp.valueOf(date);
 
@@ -92,8 +92,8 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     @Override
     public List<Race> findByDateCity(Connection connection, LocalDateTime date, String city) {
         String queryStr =
-                "SELECT raceID, city, description, startDateTime, price, maxParticipants" +
-                        "FROM Race WHERE date = ? AND city = ?";
+                "SELECT idrace, city, description, startDateTime, price, maxParticipants" +
+                        " FROM Race WHERE date = ? AND city = ?";
 
         Timestamp timestamp = Timestamp.valueOf(date);
 
@@ -128,8 +128,8 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
 
     //Carlos
     @Override
-    public int update(Connection connection, Long raceID, Race newRace){
-        String queryStr = "UPDATE Race SET city = ?, description = ?, startDateTime = ?, price = ?, participants = ?, maxParticipants = ? WHERE raceID = ?";
+    public int update(Connection connection, Long idrace, Race newRace){
+        String queryStr = "UPDATE Race SET city = ?, description = ?, startDateTime = ?, price = ?, participants = ?, maxParticipants = ? WHERE idrace = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
             int i = 1;
             preparedStatement.setString(i++, newRace.getCity());
@@ -138,7 +138,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
             preparedStatement.setBigDecimal(i++, newRace.getPrice());
             preparedStatement.setInt(i++, newRace.getParticipants());
             preparedStatement.setInt(i++, newRace.getMaxParticipants());
-            preparedStatement.setLong(i, raceID);
+            preparedStatement.setLong(i, idrace);
 
             return preparedStatement.executeUpdate();
         }catch(SQLException e){
@@ -148,10 +148,10 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
 
     //Carlos
     @Override
-    public int remove(Connection connection, Long raceID) {
-        String queryStr = "DELETE FROM Race WHERE raceID = ?";
+    public int remove(Connection connection, Long idrace) {
+        String queryStr = "DELETE FROM Race WHERE idrace = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
-            preparedStatement.setLong(1, raceID);
+            preparedStatement.setLong(1, idrace);
             return preparedStatement.executeUpdate();
             //We dont check if it actually deleted something because we don't really care
             //If it deleted nothing, it's not a problem

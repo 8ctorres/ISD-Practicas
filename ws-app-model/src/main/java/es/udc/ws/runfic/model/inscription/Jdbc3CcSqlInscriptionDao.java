@@ -8,8 +8,8 @@ public class Jdbc3CcSqlInscriptionDao extends AbstractSqlInscriptionDao{
     public Inscription create(Connection connection, Inscription inscription) {
         //Create SQL Insert statement
         String queryStr = "INSERT into Inscription" +
-                "(user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, isNumberTaken)" +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+                " (user, creditCardNumber, idrace, inscriptionDateTime, runnerNumber, isNumberTaken)" +
+                " VALUES (?, ?, ?, ?, ?, ?)";
 
         try(PreparedStatement preparedStatement = connection.prepareStatement(queryStr, Statement.RETURN_GENERATED_KEYS)){
             //Fill prepared Statement

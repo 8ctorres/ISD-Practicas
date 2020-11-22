@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Race {
-    private Long raceID;
+    private Long idrace;
     private String city;
     private String description;
     private LocalDateTime startDateTime;
@@ -14,20 +14,20 @@ public class Race {
     private int maxParticipants;
     private LocalDateTime addedDateTime;
 
-    public Race(Long raceID, String city, String description, LocalDateTime startDateTime, BigDecimal price, int maxParticipants) {
-        this.raceID = raceID;
+    public Race(Long idrace, String city, String description, LocalDateTime startDateTime, BigDecimal price, int maxParticipants) {
+        this.idrace = idrace;
         this.city = city;
         this.description = description;
         this.startDateTime = startDateTime;
         this.price = price;
         this.maxParticipants = maxParticipants;
-        this.participants = -1;
+        this.participants = 0;
         this.addedDateTime = null;
     }
 
-    public Race(Long raceID, String city, String description, LocalDateTime startDateTime, BigDecimal price,
+    public Race(Long idrace, String city, String description, LocalDateTime startDateTime, BigDecimal price,
                 int participants, int maxParticipants, LocalDateTime addedDateTime) {
-        this(raceID, city, description, startDateTime, price, maxParticipants);
+        this(idrace, city, description, startDateTime, price, maxParticipants);
         this.participants = participants;
         this.addedDateTime = addedDateTime;
     }
@@ -36,11 +36,11 @@ public class Race {
     }
 
     public Long getRaceID() {
-        return raceID;
+        return idrace;
     }
 
-    private void setRaceID(Long raceID) {
-        this.raceID = raceID;
+    private void setRaceID(Long idrace) {
+        this.idrace = idrace;
     }
 
     public String getCity() {
@@ -104,7 +104,7 @@ public class Race {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Race race = (Race) o;
-        return raceID.equals(race.raceID) &&
+        return idrace.equals(race.idrace) &&
                 participants == race.participants &&
                 maxParticipants == race.maxParticipants &&
                 city.equals(race.city) &&
@@ -116,6 +116,6 @@ public class Race {
 
     @Override
     public int hashCode() {
-        return Objects.hash(raceID, city, description, startDateTime, price, participants, maxParticipants, addedDateTime);
+        return Objects.hash(idrace, city, description, startDateTime, price, participants, maxParticipants, addedDateTime);
     }
 }

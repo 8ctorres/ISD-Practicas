@@ -11,8 +11,8 @@ public class Jbdc3CcSqlRaceDao extends AbstractSqlRaceDao {
     public Race create(Connection connection, Race race) {
 
         String queryStr = "INSERT into Race" +
-                "(city, description, startDateTime, price, participants, maxParticipants, addedDateTime)" +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                " (city, description, startDateTime, price, participants, maxParticipants, addedDateTime)" +
+                " VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try(PreparedStatement preparedStatement = connection.prepareStatement(queryStr, Statement.RETURN_GENERATED_KEYS)){
             //Fill prepared Statement

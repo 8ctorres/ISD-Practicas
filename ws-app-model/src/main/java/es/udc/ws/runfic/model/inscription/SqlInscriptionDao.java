@@ -10,11 +10,11 @@ public interface SqlInscriptionDao {
     Inscription create(Connection connection, Inscription inscription);
 
     //Recuperar una inscripción de la BBDD
-    Inscription find(Connection connection, Long inscriptionID) throws InstanceNotFoundException;
+    Inscription find(Connection connection, Long idinscription) throws InstanceNotFoundException;
 
     //Recuperar todas las inscripciones de un usuario
     List<Inscription> findByUser(Connection connection, String email);
 
     //Borrar una inscripción según su ID
-    int remove(Connection connection, Long inscriptionID);
+    int remove(Connection connection, Long idinscription);
 }

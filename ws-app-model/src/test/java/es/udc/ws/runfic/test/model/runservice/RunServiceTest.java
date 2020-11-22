@@ -51,18 +51,17 @@ public class RunServiceTest {
         DataSourceLocator.addDataSource(RUNFIC_DATA_SOURCE, dataSource);
 
         runService = RunServiceFactory.getService();
-        System.out.println(runService);
         raceDao = SqlRaceDaoFactory.getDao();
         inscriptionDao = SqlInscriptionDaoFactory.getDao();
     }
 
     //Carlos
-    private void removeRace(Long raceID) {
+    private void removeRace(Long idrace) {
         try (Connection connection = dataSource.getConnection()) {
             try {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
-                raceDao.remove(connection, raceID);
+                raceDao.remove(connection, idrace);
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
@@ -74,12 +73,12 @@ public class RunServiceTest {
     }
 
     //Carlos
-    private void removeInscription(Long inscriptionID) {
+    private void removeInscription(Long idinscription) {
         try (Connection connection = dataSource.getConnection()) {
             try {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
-                inscriptionDao.remove(connection, inscriptionID);
+                inscriptionDao.remove(connection, idinscription);
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
@@ -124,7 +123,6 @@ public class RunServiceTest {
     @Test
     public void testAddRaceAndFindRace() throws InputValidationException, InstanceNotFoundException {
 
-        System.out.println("runService is at " + runService.toString());
         Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
         Race addedRace = null;
 
@@ -140,8 +138,6 @@ public class RunServiceTest {
             LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
 
             addedRace = runService.addRace(city, description, startDateTime, price, maxParticipants);
-
-            System.out.println("Added race ID :" + addedRace.getRaceID().toString());
 
             LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
 
@@ -269,7 +265,7 @@ public class RunServiceTest {
 //        CP 4 - Inscribir un usuario en una carrera que ya está llena
 //        CP 5 - Inscribir un usuario en una carrera que empieza en menos de 24h
 //        CP 6 - Inscribir un usuario en una carrera que ya pasó
-//        CP 7 - Realizar una inscripción y el inscriptionID es correcto
+//        CP 7 - Realizar una inscripción y el idinscription es correcto
 //
 
     //Caso de Prueba 1
@@ -371,7 +367,7 @@ public class RunServiceTest {
         //Get the Race from the DB
         Race readRace = runService.findRace(createdRace.getRaceID());
 
-        //Check it has an inscriptionID
+        //Check it has an idinscription
         assertNotNull(inscription.getInscriptionID());
         //Check the participant was registered
         assertEquals(1, readRace.getParticipants());

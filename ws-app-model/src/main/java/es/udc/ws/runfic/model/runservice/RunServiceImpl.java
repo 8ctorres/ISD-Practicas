@@ -83,11 +83,11 @@ public class RunServiceImpl implements RunService{
 
     //Caso de Uso 2 - Isma
     @Override
-    public Race findRace(Long raceID) throws InstanceNotFoundException {
+    public Race findRace(Long idrace) throws InstanceNotFoundException {
 
         try (Connection connection = datasource.getConnection()) {
 
-            Race thisRace = raceDao.find(connection, raceID);
+            Race thisRace = raceDao.find(connection, idrace);
             return new Race(thisRace.getDescription(), thisRace.getStartDateTime(),
                     thisRace.getPrice(), thisRace.getMaxParticipants(), thisRace.getParticipants());
 
@@ -118,14 +118,14 @@ public class RunServiceImpl implements RunService{
 
     //Caso de Uso 4 - Carlos
     @Override
-    public Inscription inscribe(Long raceID, String email, String creditCard)
+    public Inscription inscribe(Long idrace, String email, String creditCard)
             throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
         String creditCardNumber =  creditCard.replaceAll("\\s+", ""); //Removes all spaces inside
         try (Connection connection = datasource.getConnection()) {
             validateEmail(email);
             validateCreditCard(creditCardNumber);
 
-            Race thisRace = raceDao.find(connection, raceID);
+            Race thisRace = raceDao.find(connection, idrace);
 
             //Comprobamos que esté en plazo para inscribirse
             if ((LocalDateTime.now().plusDays(1).compareTo(thisRace.getStartDateTime())) > 0) {
@@ -142,7 +142,7 @@ public class RunServiceImpl implements RunService{
                 connection.setAutoCommit(false);
 
                 Inscription newInscription = new Inscription(
-                        null, email, creditCardNumber, raceID, LocalDateTime.now(), thisRace.getParticipants() + 1, false);
+                        null, email, creditCardNumber, idrace, LocalDateTime.now(), thisRace.getParticipants() + 1, false);
                 //IDs are null because the database will create them
 
                 Inscription createdInscription = inscriptionDao.create(connection, newInscription);
@@ -179,13 +179,13 @@ public class RunServiceImpl implements RunService{
 
     //Caso de Uso 6 - Isma
     @Override
-    public int getRunnerNumber(String email, Long inscriptionID, String creditCard) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
+    public int getRunnerNumber(String email, Long idinscription, String creditCard) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
         String creditCardNumber =  creditCard.replaceAll("\\s+", ""); //Removes all spaces inside
         try (Connection connection = this.datasource.getConnection()) {
             validateEmail(email);
             validateCreditCard(creditCardNumber);
 
-            Inscription thisInscription = this.inscriptionDao.find(connection, inscriptionID);
+            Inscription thisInscription = this.inscriptionDao.find(connection, idinscription);
 
             //Comprueba que los datos del usuario se corresponden con la inscripción
             if((thisInscription.getCreditCardNumber().equals(creditCardNumber)) && (thisInscription.getUser().equals(email))){
