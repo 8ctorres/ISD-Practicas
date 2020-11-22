@@ -88,7 +88,8 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
         }
     }
 
-    @Override //REVISAR
+    //Brais
+    @Override
     public List<Race> findByDateCity(Connection connection, LocalDateTime date, String city) {
         String queryStr =
                 "SELECT raceID, city, description, startDateTime, price, maxParticipants" +
@@ -98,6 +99,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
             preparedStatement.setTimestamp(1,timestamp);
+            preparedStatement.setString(2, city);
 
             ResultSet results = preparedStatement.executeQuery();
 

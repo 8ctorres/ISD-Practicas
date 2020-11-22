@@ -110,7 +110,17 @@ public class RunServiceTest {
 
     }
 
-    //Brais CU1
+    /*
+    Casos de prueba Brais
+
+    Relativos al CU 1 - Añadir Carrera
+
+        CP 1 - Añadir la carrera correctamente
+        CP 2 - Añadir carrera con StartDate anterior al tiempo actual
+
+    */
+
+    //Caso de Prueba 1
     @Test
     public void testAddRaceAndFindRace() throws InputValidationException, InstanceNotFoundException {
 
@@ -151,7 +161,58 @@ public class RunServiceTest {
         }
     }
 
-    //Brais CU3
+    //Caso de Prueba 2
+    @Test
+    public void testAddRaceAndFindRaceInvalidDate() throws InputValidationException, InstanceNotFoundException {
+
+        Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(1956, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
+        Race addedRace = null;
+
+        String city = race.getCity();
+        String description = race.getDescription();
+        int maxParticipants = race.getMaxParticipants();
+        BigDecimal price = race.getPrice();
+        LocalDateTime startDateTime = race.getStartDateTime();
+
+        try {
+
+            // Create Race
+            LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
+
+            addedRace = runService.addRace(city, description, startDateTime, price, maxParticipants);
+
+            LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
+
+            // Find Race
+            Race foundRace = runService.findRace(addedRace.getRaceID());
+
+            assertEquals(addedRace, foundRace);
+            assertEquals(foundRace.getCity(),city);
+            assertEquals(foundRace.getDescription(),description);
+            assertEquals(foundRace.getMaxParticipants(),maxParticipants);
+            assertEquals(foundRace.getPrice(),price);
+            assertFalse((foundRace.getAddedDateTime().compareTo(beforeCreationDate) >= 0)
+                    && (foundRace.getAddedDateTime().compareTo(afterCreationDate) <= 0));
+
+        } finally {
+            // Clear Database
+            if (addedRace!=null) {
+                removeRace(addedRace.getRaceID());
+            }
+        }
+    }
+
+    /*
+    Casos de prueba Brais
+
+    Relativos al CU 3 - Buscar Carreras anteriores a una fecha
+
+        CP 1 - Encontrar las carreras anteriores a una fecha correctamente
+        CP 2 - Encontrar las carreras de una ciudad y anteriores a una fecha correctamente
+
+    */
+
+    //Caso de Prueba 1
     @Test
     public void testFindByDate() throws InputValidationException, InstanceNotFoundException {
 
@@ -190,7 +251,7 @@ public class RunServiceTest {
         }
     }
 
-    //Brais CU3
+    //Caso de Prueba 2
     @Test
     public void testFindByDateCity() throws InputValidationException, InstanceNotFoundException {
 
