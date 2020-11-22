@@ -10,7 +10,7 @@ public class Inscription {
     private Long idrace;
     private LocalDateTime inscriptionDateTime;
     private int runnerNumber;
-    private boolean isNumberTaken = false;
+    private boolean isNumberTaken;
 
     public Inscription(String user, String creditCardNumber, Long idrace) {
         this.user = user;
