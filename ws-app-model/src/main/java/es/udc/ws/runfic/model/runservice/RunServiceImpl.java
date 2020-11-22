@@ -47,6 +47,10 @@ public class RunServiceImpl implements RunService{
         validateBigDecimal("price", price, 0, MAX_PRICE);
         PropertyValidator.validateDouble("maxParticipants", maxParticipants, 0, MAX_PARTICIPANTS);
 
+        if (startDateTime.compareTo(LocalDateTime.now().withNano(0)) <= 0){
+            throw new InputValidationException("La fecha de inicio de la carrera no puede ser previa al momento actual");
+        }
+
         try (Connection connection = datasource.getConnection()) {
 
             try {

@@ -163,7 +163,7 @@ public class RunServiceTest {
 
     //Caso de Prueba 2
     @Test
-    public void testAddRaceAndFindRaceInvalidDate() throws InputValidationException, InstanceNotFoundException {
+    public void testAddRaceAndFindRaceInvalidDate() throws InputValidationException {
 
         Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(1956, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
         Race addedRace = null;
@@ -176,23 +176,7 @@ public class RunServiceTest {
 
         try {
 
-            // Create Race
-            LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
-
-            addedRace = runService.addRace(city, description, startDateTime, price, maxParticipants);
-
-            LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
-
-            // Find Race
-            Race foundRace = runService.findRace(addedRace.getRaceID());
-
-            assertEquals(addedRace, foundRace);
-            assertEquals(foundRace.getCity(),city);
-            assertEquals(foundRace.getDescription(),description);
-            assertEquals(foundRace.getMaxParticipants(),maxParticipants);
-            assertEquals(foundRace.getPrice(),price);
-            assertFalse((foundRace.getAddedDateTime().compareTo(beforeCreationDate) >= 0)
-                    && (foundRace.getAddedDateTime().compareTo(afterCreationDate) <= 0));
+            assertThrows(InputValidationException.class, () -> runService.addRace(city, description, startDateTime, price,maxParticipants ));
 
         } finally {
             // Clear Database
@@ -214,7 +198,7 @@ public class RunServiceTest {
 
     //Caso de Prueba 1
     @Test
-    public void testFindByDate() throws InputValidationException, InstanceNotFoundException {
+    public void testFindByDate() throws InputValidationException {
 
         Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
         Race addedRace = null;
@@ -230,17 +214,16 @@ public class RunServiceTest {
         try {
 
             // Create Race
-            LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
 
             addedRace = runService.addRace(city, description, startDateTime, price, maxParticipants);
 
-            LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
 
             // Find Race
             List<Race> list = runService.findByDate(date);
 
             for(Race foundRace: list){
-                assertTrue(foundRace.getAddedDateTime().compareTo(date) <= 0);
+                assertTrue((foundRace.getStartDateTime().compareTo(date) <= 0) &&
+                        (foundRace.getStartDateTime().compareTo(LocalDateTime.now().withNano(0)) >= 0));
             }
 
         } finally {
@@ -253,7 +236,7 @@ public class RunServiceTest {
 
     //Caso de Prueba 2
     @Test
-    public void testFindByDateCity() throws InputValidationException, InstanceNotFoundException {
+    public void testFindByDateCity() throws InputValidationException {
 
         Race race = runService.addRace("Ourense", "Carrera del turrón", LocalDateTime.of(2021, Month.JANUARY, 6, 10, 30), BigDecimal.valueOf(4.99), 1000);
         Race addedRace = null;
@@ -269,18 +252,16 @@ public class RunServiceTest {
         try {
 
             // Create Race
-            LocalDateTime beforeCreationDate = LocalDateTime.now().withNano(0);
 
             addedRace = runService.addRace(city, description, startDateTime, price, maxParticipants);
-
-            LocalDateTime afterCreationDate = LocalDateTime.now().withNano(0);
 
             // Find Race
             List<Race> list = runService.findByDate(date, city);
 
             for(Race foundRace: list){
                 assertEquals(foundRace.getCity(), city);
-                assertTrue(foundRace.getAddedDateTime().compareTo(date) <= 0);
+                assertTrue((foundRace.getStartDateTime().compareTo(date) <= 0) &&
+                        (foundRace.getStartDateTime().compareTo(LocalDateTime.now().withNano(0)) >= 0));
             }
 
         } finally {
