@@ -1,11 +1,9 @@
 package es.udc.ws.runfic.model.inscription;
 
+import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +79,26 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
             return list;
 
         }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Carlos
+    @Override
+    public int update(Connection connection, Long idinscription, Inscription newInscription){
+        String queryStr = "UPDATE Inscription SET user = ?, creditCardNumber = ?, idrace = ?, inscriptionDateTime = ?, runnerNumber = ?, isNumberTaken = ? WHERE idinscription = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
+            int i = 1;
+            preparedStatement.setString(i++, newInscription.getUser());
+            preparedStatement.setString(i++, newInscription.getCreditCardNumber());
+            preparedStatement.setLong(i++, newInscription.getRaceID());
+            preparedStatement.setTimestamp(i++, Timestamp.valueOf(newInscription.getInscriptionDateTime()));
+            preparedStatement.setInt(i++, newInscription.getRunnerNumber());
+            preparedStatement.setBoolean(i++, newInscription.getIsNumberTaken());
+
+            int alteredRows = preparedStatement.executeUpdate();
+            return alteredRows;
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }

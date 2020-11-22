@@ -13,21 +13,15 @@ public class Race {
     private int maxParticipants;
     private LocalDateTime addedDateTime;
 
-    public Race(Long idrace, String city, String description, LocalDateTime startDateTime, float price, int maxParticipants) {
+    public Race(Long idrace, String city, String description, LocalDateTime startDateTime, float price,
+                int participants, int maxParticipants, LocalDateTime addedDateTime) {
         this.idrace = idrace;
         this.city = city;
         this.description = description;
         this.startDateTime = startDateTime;
         this.price = price;
-        this.maxParticipants = maxParticipants;
-        this.participants = 0;
-        this.addedDateTime = null;
-    }
-
-    public Race(Long idrace, String city, String description, LocalDateTime startDateTime, float price,
-                int participants, int maxParticipants, LocalDateTime addedDateTime) {
-        this(idrace, city, description, startDateTime, price, maxParticipants);
         this.participants = participants;
+        this.maxParticipants = maxParticipants;
         this.addedDateTime = addedDateTime;
     }
 

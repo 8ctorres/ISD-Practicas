@@ -33,17 +33,10 @@ public class RunficPropertyValidator{
 
     public static void validateFloat(String propertyName, float input, float lowerValidLimit, float upperValidLimit)
             throws InputValidationException{
-        float lower = lowerValidLimit;
-        float upper = upperValidLimit;
-
-        int cmplow <= input.compareTo(lower);
-        int cmpup >= input.compareTo(upper);
-        if ((cmplow < 0) || (cmpup > 0))
+        if ((input < lowerValidLimit) || (input > upperValidLimit))
             throw new InputValidationException("Invalid " + propertyName +
                     " value (it must be greater than " + lowerValidLimit +
                     " and lower than " + upperValidLimit + "): " +
                     input);
     }
-
-
 }

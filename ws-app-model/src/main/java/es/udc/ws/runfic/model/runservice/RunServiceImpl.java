@@ -58,7 +58,7 @@ public class RunServiceImpl implements RunService{
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
 
-                Race race = new Race(null, city, description, startDateTime, price, maxParticipants);
+                Race race = new Race(null, city, description, startDateTime, price, 0, maxParticipants, LocalDateTime.now());
 
                 //Do work.
                 Race createdRace = raceDao.create(connection, race);
@@ -86,11 +86,7 @@ public class RunServiceImpl implements RunService{
     public Race findRace(Long idrace) throws InstanceNotFoundException {
 
         try (Connection connection = datasource.getConnection()) {
-
-            Race thisRace = raceDao.find(connection, idrace);
-            return new Race(thisRace.getRaceID(), thisRace.getCity(),  thisRace.getDescription(), thisRace.getStartDateTime(),
-                    thisRace.getPrice(), thisRace.getMaxParticipants());
-
+           return raceDao.find(connection, idrace);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -193,6 +189,7 @@ public class RunServiceImpl implements RunService{
                 //Comprueba que el número de inscripción no ha sido entregado previamente, aun no está hecho
                 if(!thisInscription.isNumberTaken()) {
                     thisInscription.setNumberTaken(true);
+                    inscriptionDao.update(connection, thisInscription.getInscriptionID(), thisInscription);
                     return thisInscription.getRunnerNumber();
                 }
                 else {

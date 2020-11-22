@@ -26,6 +26,8 @@ public class Inscription {
         this.isNumberTaken = numberTaken;
     }
 
+    public boolean getIsNumberTaken() {return isNumberTaken;}
+
     public Long getInscriptionID() {
         return idinscription;
     }
