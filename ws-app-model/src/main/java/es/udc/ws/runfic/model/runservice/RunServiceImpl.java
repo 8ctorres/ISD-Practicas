@@ -148,7 +148,8 @@ public class RunServiceImpl implements RunService{
                 Inscription createdInscription = inscriptionDao.create(connection, newInscription);
 
                 //After the inscription was created succesfully, update the Race so it has one more participant
-                thisRace.setParticipants(thisRace.getParticipants()+1);
+                int newparticipants = thisRace.getParticipants() +1;
+                thisRace.setParticipants(newparticipants);
                 raceDao.update(connection, thisRace.getRaceID(), thisRace);
 
                 connection.commit();
@@ -170,7 +171,7 @@ public class RunServiceImpl implements RunService{
     public List<Inscription> findAllFromUser(String email) throws InputValidationException {
         validateEmail(email);
         try(Connection connection = this.datasource.getConnection()){
-            return this.inscriptionDao.findByUser(connection, email);
+            return inscriptionDao.findByUser(connection, email);
         }
         catch(SQLException e){
             throw new RuntimeException(e);

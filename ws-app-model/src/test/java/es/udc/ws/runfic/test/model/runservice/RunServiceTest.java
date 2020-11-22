@@ -264,8 +264,7 @@ public class RunServiceTest {
 //        CP 3 - Inscribir un usuario en una carrera que no existe
 //        CP 4 - Inscribir un usuario en una carrera que ya está llena
 //        CP 5 - Inscribir un usuario en una carrera que empieza en menos de 24h
-//        CP 6 - Inscribir un usuario en una carrera que ya pasó
-//        CP 7 - Realizar una inscripción y el idinscription es correcto
+//        CP 6 - Realizar una inscripción y el idinscription es correcto
 //
 
     //Caso de Prueba 1
@@ -344,20 +343,7 @@ public class RunServiceTest {
 
     }
 
-    //Caso de Prueba 6
-    @Test
-    public void testInscribePassed() throws InputValidationException{
-        //Creates a Race that already ended
-        Race createdRace = runService.addRace("Arteixo", "Carrera sin coronavirus", LocalDateTime.of(2021, Month.AUGUST, 21, 20, 30), BigDecimal.valueOf(9.00), 1200);
-
-        assertThrows(InscriptionClosedException.class, () -> {
-            runService.inscribe(createdRace.getRaceID(), "carlos.torres@udc.es", "7896 4563 1230 9510");
-        });
-
-        //Remove the Race
-        removeRace(createdRace.getRaceID());
-    }
-
+    //Caso de prueba 6
     @Test
     public void testSuccessfullInscription() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
         //Creates a valid Race

@@ -8,12 +8,11 @@ public class RunficPropertyValidator{
     private RunficPropertyValidator(){}
 
     public static void validateEmail(String input) throws InputValidationException {
+        final String err_msg = "Email no válido. Debe ser del formato user@domain.ld";
         /*
         int arroba = input.indexOf('@');
         int otra_arroba = input.indexOf('@', arroba);
         int punto = input.indexOf('.', arroba);
-
-        final String err_msg = "Email no válido. Debe ser del formato user@domain.ld";
 
         if (arroba == 0) //Si la arroba es el primer caracter
             throw new InputValidationException(err_msg);
@@ -25,6 +24,11 @@ public class RunficPropertyValidator{
             throw new InputValidationException(err_msg);
 
          */
+        String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+        if (input.matches(regex)){
+            return;
+        }
+        throw new InputValidationException(err_msg);
     }
 
     public static void validateBigDecimal(String propertyName, BigDecimal input, double lowerValidLimit, double upperValidLimit)

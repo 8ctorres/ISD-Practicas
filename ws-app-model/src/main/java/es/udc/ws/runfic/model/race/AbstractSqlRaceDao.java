@@ -130,18 +130,30 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     @Override
     public int update(Connection connection, Long idrace, Race newRace){
         String queryStr = "UPDATE Race SET city = ?, description = ?, startDateTime = ?, price = ?, participants = ?, maxParticipants = ? WHERE idrace = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
-            int i = 1;
-            preparedStatement.setString(i++, newRace.getCity());
-            preparedStatement.setString(i++, newRace.getDescription());
-            preparedStatement.setTimestamp(i++, Timestamp.valueOf(newRace.getStartDateTime()));
-            preparedStatement.setBigDecimal(i++, newRace.getPrice());
-            preparedStatement.setInt(i++, newRace.getParticipants());
-            preparedStatement.setInt(i++, newRace.getMaxParticipants());
-            preparedStatement.setLong(i, idrace);
+        try {
+            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            connection.setAutoCommit(false);
 
-            return preparedStatement.executeUpdate();
-        }catch(SQLException e){
+            try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
+                int i = 1;
+                preparedStatement.setString(i++, newRace.getCity());
+                preparedStatement.setString(i++, newRace.getDescription());
+                preparedStatement.setTimestamp(i++, Timestamp.valueOf(newRace.getStartDateTime()));
+                preparedStatement.setBigDecimal(i++, newRace.getPrice());
+                preparedStatement.setInt(i++, newRace.getParticipants());
+                preparedStatement.setInt(i++, newRace.getMaxParticipants());
+                preparedStatement.setLong(i, idrace);
+
+                int alteredRows = preparedStatement.executeUpdate();
+
+                connection.commit();
+
+                return alteredRows;
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            }
+        }catch (SQLException e){
             throw new RuntimeException(e);
         }
     }
