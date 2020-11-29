@@ -95,6 +95,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(newInscription.getInscriptionDateTime()));
             preparedStatement.setInt(i++, newInscription.getRunnerNumber());
             preparedStatement.setBoolean(i++, newInscription.getIsNumberTaken());
+            preparedStatement.setLong(i, idinscription);
 
             int alteredRows = preparedStatement.executeUpdate();
             return alteredRows;

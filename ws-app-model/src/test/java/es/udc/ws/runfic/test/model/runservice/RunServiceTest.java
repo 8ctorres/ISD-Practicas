@@ -642,8 +642,15 @@ public class RunServiceTest {
 
         //Obtiene el dorsal 1 de la carrera y este aparece como recogido
         runService.getRunnerNumber("ismael.verdec@udc.es", createdIns.getInscriptionID(), "4944 9485 4849 8426");
-        assertEquals(1, createdIns.getRunnerNumber());
-        assertTrue(createdIns.isNumberTaken());
+
+        Inscription foundIns;
+        try (Connection connection = dataSource.getConnection()){
+            foundIns = inscriptionDao.find(connection, createdIns.getInscriptionID());
+            assertEquals(1, createdIns.getRunnerNumber());
+            assertTrue(foundIns.isNumberTaken());
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
 
         //Borramos los elementos creados
         removeInscription(createdIns.getInscriptionID());
