@@ -12,20 +12,20 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
 
     //Carlos
     @Override
-    public Race find(Connection connection, Long idrace)
+    public Race find(Connection connection, Long raceID)
             throws InstanceNotFoundException {
 
         String queryStr =
-                "SELECT idrace, city, description, startDateTime, price, participants, maxParticipants, addedDateTime" +
-                        " FROM Race WHERE idrace = ?";
+                "SELECT raceID, city, description, startDateTime, price, participants, maxParticipants, addedDateTime" +
+                        " FROM Race WHERE raceID = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
-            preparedStatement.setLong(1, idrace);
+            preparedStatement.setLong(1, raceID);
 
             ResultSet results = preparedStatement.executeQuery();
 
             if (!results.next()){
-                throw new InstanceNotFoundException(idrace, Race.class.getName());
+                throw new InstanceNotFoundException(raceID, Race.class.getName());
             }
 
             //Fetch results
@@ -51,7 +51,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     @Override
     public List<Race> findByDate(Connection connection, LocalDateTime date) {
         String queryStr =
-                "SELECT idrace, city, description, startDateTime, price, participants, maxParticipants, addedDateTime" +
+                "SELECT raceID, city, description, startDateTime, price, participants, maxParticipants, addedDateTime" +
                         " FROM Race WHERE startDateTime = ?";
 
         Timestamp timestamp = Timestamp.valueOf(date);
@@ -89,7 +89,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     @Override
     public List<Race> findByDateCity(Connection connection, LocalDateTime date, String city) {
         String queryStr =
-                "SELECT idrace, city, description, startDateTime, price, participants, maxParticipants, addedDateTime" +
+                "SELECT raceID, city, description, startDateTime, price, participants, maxParticipants, addedDateTime" +
                         " FROM Race WHERE startDateTime = ? AND city = ?";
 
         Timestamp timestamp = Timestamp.valueOf(date);
@@ -129,7 +129,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     public int update(Connection connection, Race newRace){
         String queryStr = "UPDATE Race" +
                 " SET city = ?, description = ?, startDateTime = ?, " +
-                " price = ?, participants = ?, maxParticipants = ? WHERE idrace = ?";
+                " price = ?, participants = ?, maxParticipants = ? WHERE raceID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
             int i = 1;
             preparedStatement.setString(i++, newRace.getCity());
@@ -149,10 +149,10 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
 
     //Carlos
     @Override
-    public int remove(Connection connection, Long idrace) {
-        String queryStr = "DELETE FROM Race WHERE idrace = ?";
+    public int remove(Connection connection, Long raceID) {
+        String queryStr = "DELETE FROM Race WHERE raceID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
-            preparedStatement.setLong(1, idrace);
+            preparedStatement.setLong(1, raceID);
             return preparedStatement.executeUpdate();
             //We dont check if it actually deleted something because we don't really care
             //If it deleted nothing, it's not a problem

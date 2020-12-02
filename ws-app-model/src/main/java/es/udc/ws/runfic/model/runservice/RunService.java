@@ -22,7 +22,7 @@ public interface RunService {
 
     //Será posible buscar carreras por su identificador. La información devuelta de la carrera incluirá, además de la información proporcionada
     //al darla de alta, el número de inscritos en ella
-    Race findRace(Long idrace) throws InstanceNotFoundException;
+    Race findRace(Long raceID) throws InstanceNotFoundException;
 
     // Será posible buscar carreras que se celebren antes de una fecha (debe ser una fecha futura y el resultado contendrá únicamente las carreras
     //que aún no se han celebrado). Opcionalmente, se podrá indicar el nombre de una ciudad, en cuyo caso se devolverán solamente las carreras que se
@@ -35,7 +35,7 @@ public interface RunService {
     //necesarios, recibe como entrada un e-mail para identificar al usuario, y un número de tarjeta de crédito. En caso de ejecutarse con éxito,
     //devuelve un código que será necesario para recoger el dorsal, y se almacena la inscripción, quedando registrado el número de dorsal
     //asignado al participante y la fecha y hora a la que se hizo la inscripción
-    Inscription inscribe(Long idrace, String email, String creditCardNumber) throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException;
+    Inscription inscribe(Long raceID, String email, String creditCardNumber) throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException;
 
     //Será posible obtener todas las inscripciones que un usuario ha realizado a lo largo del tiempo. Deben devolverse todos los datos
     //almacenados para cada inscripción
@@ -46,6 +46,6 @@ public interface RunService {
     //de crédito utilizada para pagarla. A partir de esos datos, un empleado de RunFic podrá indicar que el dorsal correspondiente a esa inscripción
     //se ha entregado. Es necesario contemplar todos los posibles casos de error, como que el código de inscripción y el número de tarjeta no se
     //correspondan con ninguna inscripción, o que el dorsal correspondiente a esa inscripción ya ha sido entregado previamente
-    int getRunnerNumber(String email, Long idinscription, String creditCardNumber) throws InputValidationException,
+    int getRunnerNumber(String email, Long inscriptionID, String creditCardNumber) throws InputValidationException,
             InstanceNotFoundException, NumberTakenException, InvalidUserException;
 }

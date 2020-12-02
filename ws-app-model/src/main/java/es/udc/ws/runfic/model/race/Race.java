@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Race {
-    private Long idrace;
+    private Long raceID;
     private String city;
     private String description;
     private LocalDateTime startDateTime;
@@ -13,9 +13,9 @@ public class Race {
     private int maxParticipants;
     private LocalDateTime addedDateTime;
 
-    public Race(Long idrace, String city, String description, LocalDateTime startDateTime, float price,
+    public Race(Long raceID, String city, String description, LocalDateTime startDateTime, float price,
                 int participants, int maxParticipants, LocalDateTime addedDateTime) {
-        this.idrace = idrace;
+        this.raceID = raceID;
         this.city = city;
         this.description = description;
         this.startDateTime = startDateTime;
@@ -29,11 +29,11 @@ public class Race {
     }
 
     public Long getRaceID() {
-        return idrace;
+        return raceID;
     }
 
-    private void setRaceID(Long idrace) {
-        this.idrace = idrace;
+    private void setRaceID(Long raceID) {
+        this.raceID = raceID;
     }
 
     public String getCity() {
@@ -97,7 +97,7 @@ public class Race {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Race race = (Race) o;
-        return idrace.equals(race.idrace) &&
+        return raceID.equals(race.raceID) &&
                 participants == race.participants &&
                 maxParticipants == race.maxParticipants &&
                 city.equals(race.city) &&
@@ -109,6 +109,6 @@ public class Race {
 
     @Override
     public int hashCode() {
-        return Objects.hash(idrace, city, description, startDateTime, price, participants, maxParticipants, addedDateTime);
+        return Objects.hash(raceID, city, description, startDateTime, price, participants, maxParticipants, addedDateTime);
     }
 }

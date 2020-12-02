@@ -4,23 +4,23 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Inscription {
-    private Long idinscription;
+    private Long inscriptionID;
     private String user;
     private String creditCardNumber;
-    private Long idrace;
+    private Long raceID;
     private LocalDateTime inscriptionDateTime;
     private int runnerNumber;
     private boolean isNumberTaken;
 
-    public Inscription(String user, String creditCardNumber, Long idrace) {
+    public Inscription(String user, String creditCardNumber, Long raceID) {
         this.user = user;
         this.creditCardNumber = creditCardNumber;
-        this.idrace = idrace;
+        this.raceID = raceID;
     }
 
-    public Inscription(Long idinscription, String user, String creditCardNumber, Long idrace, LocalDateTime inscriptionDateTime, int runnerNumber, boolean numberTaken) {
-        this(user, creditCardNumber, idrace);
-        this.idinscription = idinscription;
+    public Inscription(Long inscriptionID, String user, String creditCardNumber, Long raceID, LocalDateTime inscriptionDateTime, int runnerNumber, boolean numberTaken) {
+        this(user, creditCardNumber, raceID);
+        this.inscriptionID = inscriptionID;
         this.inscriptionDateTime = inscriptionDateTime;
         this.runnerNumber = runnerNumber;
         this.isNumberTaken = numberTaken;
@@ -29,11 +29,11 @@ public class Inscription {
     public boolean getIsNumberTaken() {return isNumberTaken;}
 
     public Long getInscriptionID() {
-        return idinscription;
+        return inscriptionID;
     }
 
-    private void setInscriptionID(Long idinscription) {
-        this.idinscription = idinscription;
+    private void setInscriptionID(Long inscriptionID) {
+        this.inscriptionID = inscriptionID;
     }
 
     public String getUser() {
@@ -53,11 +53,11 @@ public class Inscription {
     }
 
     public Long getRaceID() {
-        return idrace;
+        return raceID;
     }
 
-    private void setRaceID(Long idrace) {
-        this.idrace = idrace;
+    private void setRaceID(Long raceID) {
+        this.raceID = raceID;
     }
 
     public LocalDateTime getInscriptionDateTime() {
@@ -89,8 +89,8 @@ public class Inscription {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Inscription that = (Inscription) o;
-        return idinscription.equals(that.idinscription) &&
-                idrace.equals(that.idrace) &&
+        return inscriptionID.equals(that.inscriptionID) &&
+                raceID.equals(that.raceID) &&
                 runnerNumber == that.runnerNumber &&
                 user.equals(that.user) &&
                 creditCardNumber.equals(that.creditCardNumber) &&
@@ -99,6 +99,6 @@ public class Inscription {
 
     @Override
     public int hashCode() {
-        return Objects.hash(idinscription, user, creditCardNumber, idrace, inscriptionDateTime, runnerNumber);
+        return Objects.hash(inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber);
     }
 }

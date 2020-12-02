@@ -7,11 +7,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SqlRaceDao {
-    //Persiste una carrera a la Base de Datos. El método devuelve un objeto Race con el atributo idrace inicializado al valor correcto.
+    //Persiste una carrera a la Base de Datos. El método devuelve un objeto Race con el atributo raceID inicializado al valor correcto.
     Race create(Connection connection, Race race);
 
     //Encuentra una carrera según el ID
-    Race find(Connection connection, Long idrace) throws InstanceNotFoundException;
+    Race find(Connection connection, Long raceID) throws InstanceNotFoundException;
 
     //Encuentra una carrera según fecha y/o ciudad
     List<Race> findByDate(Connection connection, LocalDateTime date);
@@ -21,5 +21,5 @@ public interface SqlRaceDao {
     int update(Connection connection, Race newrace);
 
     //Borra una carrera por su ID
-    int remove(Connection connection, Long idrace);
+    int remove(Connection connection, Long raceID);
 }

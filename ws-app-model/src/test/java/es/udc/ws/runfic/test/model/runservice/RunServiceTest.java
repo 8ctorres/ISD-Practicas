@@ -53,12 +53,12 @@ public class RunServiceTest {
     }
 
     //Carlos
-    private void removeRace(Long idrace) {
+    private void removeRace(Long raceID) {
         try (Connection connection = dataSource.getConnection()) {
             try {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
-                raceDao.remove(connection, idrace);
+                raceDao.remove(connection, raceID);
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
@@ -70,12 +70,12 @@ public class RunServiceTest {
     }
 
     //Carlos
-    private void removeInscription(Long idinscription) {
+    private void removeInscription(Long inscriptionID) {
         try (Connection connection = dataSource.getConnection()) {
             try {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
-                inscriptionDao.remove(connection, idinscription);
+                inscriptionDao.remove(connection, inscriptionID);
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
@@ -234,7 +234,7 @@ public class RunServiceTest {
 //        CP 3 - Inscribir un usuario en una carrera que no existe
 //        CP 4 - Inscribir un usuario en una carrera que ya está llena
 //        CP 5 - Inscribir un usuario en una carrera que empieza en menos de 24h
-//        CP 6 - Realizar una inscripción y el idinscription es correcto
+//        CP 6 - Realizar una inscripción y el inscriptionID es correcto
 //
 
     //Caso de Prueba 1
@@ -323,7 +323,7 @@ public class RunServiceTest {
         //Get the Race from the DB
         Race readRace = runService.findRace(createdRace.getRaceID());
 
-        //Check it has an idinscription
+        //Check it has an inscriptionID
         assertNotNull(inscription.getInscriptionID());
         //Check the participant was registered
         assertEquals(1, readRace.getParticipants());

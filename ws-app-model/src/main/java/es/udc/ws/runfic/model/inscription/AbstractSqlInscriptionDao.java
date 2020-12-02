@@ -11,21 +11,21 @@ import java.util.List;
 public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
     //Carlos
     @Override
-    public Inscription find(Connection connection, Long idinscription)
+    public Inscription find(Connection connection, Long inscriptionID)
             throws InstanceNotFoundException {
 
         String queryStr =
-            "SELECT idinscription, user, creditCardNumber, idrace, inscriptionDateTime, runnerNumber, isNumberTaken"
-            + " FROM Inscription WHERE idinscription = ?";
+            "SELECT inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, isNumberTaken"
+            + " FROM Inscription WHERE inscriptionID = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
-            preparedStatement.setLong(1, idinscription);
+            preparedStatement.setLong(1, inscriptionID);
 
             //Execute query
             ResultSet results = preparedStatement.executeQuery();
 
             if (!results.next()){
-                throw new InstanceNotFoundException(idinscription, Inscription.class.getName());
+                throw new InstanceNotFoundException(inscriptionID, Inscription.class.getName());
             }
 
             //Fetch results
@@ -33,12 +33,12 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
             Long id = results.getLong(i++);
             String user = results.getString(i++);
             String creditCardNumber = results.getString(i++);
-            Long idrace = results.getLong(i++);
+            Long raceID = results.getLong(i++);
             LocalDateTime inscriptionDateTime = results.getTimestamp(i++).toLocalDateTime();
             int runnerNumber = results.getInt(i++);
             boolean numberTaken = results.getBoolean(i);
 
-            return new Inscription(idinscription, user, creditCardNumber, idrace, inscriptionDateTime, runnerNumber, numberTaken);
+            return new Inscription(inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, numberTaken);
 
         }catch(SQLException e){
             throw new RuntimeException(e);
@@ -50,7 +50,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
     public List<Inscription> findByUser(Connection connection, String email) {
 
         String queryStr =
-                "SELECT idinscription, user, creditCardNumber, idrace, inscriptionDateTime, runnerNumber, isNumberTaken"
+                "SELECT inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, isNumberTaken"
                         + " FROM Inscription WHERE user = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
@@ -64,15 +64,15 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
             while (results.next()) {
                 int i = 1;
 
-                Long idinscription = results.getLong(i++);
+                Long inscriptionID = results.getLong(i++);
                 String user = results.getString(i++);
                 String creditCardNumber = results.getString(i++);
-                Long idrace = results.getLong(i++);
+                Long raceID = results.getLong(i++);
                 LocalDateTime inscriptionDateTime = results.getTimestamp(i++).toLocalDateTime();
                 int runnerNumber = results.getInt(i++);
                 boolean numberTaken = results.getBoolean(i);
 
-                Inscription inscription = new Inscription(idinscription, user, creditCardNumber, idrace, inscriptionDateTime, runnerNumber, numberTaken);
+                Inscription inscription = new Inscription(inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, numberTaken);
                 list.add(inscription);
             }
 
@@ -86,7 +86,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
     //Carlos
     @Override
     public int update(Connection connection, Inscription newInscription){
-        String queryStr = "UPDATE Inscription SET user = ?, creditCardNumber = ?, idrace = ?, inscriptionDateTime = ?, runnerNumber = ?, isNumberTaken = ? WHERE idinscription = ?";
+        String queryStr = "UPDATE Inscription SET user = ?, creditCardNumber = ?, raceID = ?, inscriptionDateTime = ?, runnerNumber = ?, isNumberTaken = ? WHERE inscriptionID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
             int i = 1;
             preparedStatement.setString(i++, newInscription.getUser());
@@ -105,10 +105,10 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
 
     //Carlos
     @Override
-    public int remove(Connection connection, Long idinscription) {
-        String queryStr = "DELETE FROM Inscription WHERE idinscription = ?";
+    public int remove(Connection connection, Long inscriptionID) {
+        String queryStr = "DELETE FROM Inscription WHERE inscriptionID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
-            preparedStatement.setLong(1, idinscription);
+            preparedStatement.setLong(1, inscriptionID);
             return preparedStatement.executeUpdate();
             //We dont check if it actually deleted something because we don't really care
             //If it deleted nothing, it's not a problem
