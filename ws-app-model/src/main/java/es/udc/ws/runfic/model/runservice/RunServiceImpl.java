@@ -201,7 +201,7 @@ public class RunServiceImpl implements RunService{
 
                 connection.commit();
                 return thisInscription.getRunnerNumber();
-                
+
             }catch (SQLException | RuntimeException | Error err){
                 connection.rollback();
                 throw new RuntimeException(err);

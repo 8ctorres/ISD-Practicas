@@ -8,10 +8,7 @@ import es.udc.ws.runfic.model.race.SqlRaceDao;
 import es.udc.ws.runfic.model.race.SqlRaceDaoFactory;
 import es.udc.ws.runfic.model.runservice.RunService;
 import es.udc.ws.runfic.model.runservice.RunServiceFactory;
-import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
-import es.udc.ws.runfic.model.runservice.exceptions.InvalidUserException;
-import es.udc.ws.runfic.model.runservice.exceptions.NumberTakenException;
-import es.udc.ws.runfic.model.runservice.exceptions.RaceFullException;
+import es.udc.ws.runfic.model.runservice.exceptions.*;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.sql.DataSourceLocator;
@@ -234,7 +231,8 @@ public class RunServiceTest {
 //        CP 3 - Inscribir un usuario en una carrera que no existe
 //        CP 4 - Inscribir un usuario en una carrera que ya está llena
 //        CP 5 - Inscribir un usuario en una carrera que empieza en menos de 24h
-//        CP 6 - Realizar una inscripción y el inscriptionID es correcto
+//        CP 6 - Inscribir un usuario dos veces en la misma carrera
+//        CP 7 - Realizar una inscripción y el inscriptionID es correcto
 //
 
     //Caso de Prueba 1
@@ -277,7 +275,7 @@ public class RunServiceTest {
 
     //Caso de Prueba 4
     @Test
-    public void testInscribeRaceFull() throws InputValidationException, InstanceNotFoundException, InscriptionClosedException, RaceFullException{
+    public void testInscribeRaceFull() throws InputValidationException, InstanceNotFoundException, InscriptionClosedException, RaceFullException, AlreadyInscribedException {
         //Creates a Race with a maximum of 2 participants
         Race createdRace = runService.addRace("Ferrol", "Carrera muy exclusiva", LocalDateTime.of(2021, Month.JUNE, 29, 17, 15), 800f, 2);
 
@@ -296,7 +294,7 @@ public class RunServiceTest {
         removeInscription(ins2.getInscriptionID());
         removeRace(createdRace.getRaceID());
     }
-
+/*
     //Caso de Prueba 5
     @Test
     public void testInscribeLate() throws InputValidationException{
@@ -313,9 +311,29 @@ public class RunServiceTest {
 
     }
 
+ */
+/*
     //Caso de prueba 6
     @Test
-    public void testSuccessfullInscription() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
+    public void inscribedTwiceTest() throws InputValidationException, AlreadyInscribedException, RaceFullException, InstanceNotFoundException, InscriptionClosedException {
+        //Creates a Race
+        Race createdRace = runService.addRace("Ribeira", "Carreira popular do veran", LocalDateTime.of(2021, Month.JULY, 10, 10, 0), 5f, 2500);
+
+        //Inscribes the user once
+        Inscription inscription = runService.inscribe(createdRace.getRaceID(), "carlos.torres@udc.es", "9856 6523 8745 5412");
+
+        assertThrows(AlreadyInscribedException.class, () ->{
+            Inscription inscription2 = runService.inscribe(createdRace.getRaceID(), "carlos.torres@udc.es", "7777 5555 3333 9510");
+        });
+
+        //Removes the race
+        removeRace(createdRace.getRaceID());
+    }
+*/
+
+    //Caso de prueba 7
+    @Test
+    public void testSuccessfullInscription() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException, AlreadyInscribedException {
         //Creates a valid Race
         Race createdRace = runService.addRace("Ribeira", "Carreira popular do veran", LocalDateTime.of(2021, Month.JULY, 10, 10, 0), 5f, 2500);
         Inscription inscription = runService.inscribe(createdRace.getRaceID(), "carlos.torres@udc.es", "9856 6523 8745 5412");
@@ -359,7 +377,7 @@ public class RunServiceTest {
 
     //Caso de Prueba 2
     @Test
-    public void testFindOnOthers() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
+    public void testFindOnOthers() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException, AlreadyInscribedException {
         //First insert a Race
         LocalDateTime inicioCarrera = LocalDateTime.of(2021, Month.APRIL, 14, 17, 30);
         Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, 8f, 400);
@@ -382,7 +400,7 @@ public class RunServiceTest {
 
     //Caso de Prueba 3
     @Test
-    public void testFindOnlyOneFromUser() throws InputValidationException, InstanceNotFoundException, InscriptionClosedException, RaceFullException {
+    public void testFindOnlyOneFromUser() throws InputValidationException, InstanceNotFoundException, InscriptionClosedException, RaceFullException, AlreadyInscribedException {
         //First insert a Race
         LocalDateTime inicioCarrera = LocalDateTime.of(2021, Month.APRIL, 14, 17, 30);
         Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, 8f, 400);
@@ -405,7 +423,7 @@ public class RunServiceTest {
 
     //Caso de Prueba 4
     @Test
-    public void testFindOnlyOneAmongOthers() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
+    public void testFindOnlyOneAmongOthers() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException, AlreadyInscribedException {
         //First insert a Race
         LocalDateTime inicioCarrera = LocalDateTime.of(2021, Month.APRIL, 14, 17, 30);
         Race addedRace = runService.addRace("Coruña", "Carrera popular semana santa", inicioCarrera, 8f, 400);
@@ -438,7 +456,7 @@ public class RunServiceTest {
 
     //Caso de Prueba 5
     @Test
-    public void testFindAllFromUser() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
+    public void testFindAllFromUser() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException, AlreadyInscribedException {
         //Create some Races
         Race race1 = runService.addRace("Coruña", "Carrera popular semana santa", LocalDateTime.of(2021, Month.APRIL, 14, 17, 30), 8f, 400);
         Race race2 = runService.addRace("Ribeira", "Carreira popular do veran", LocalDateTime.of(2021, Month.JULY, 10, 10, 0), 5f, 2500);
@@ -467,7 +485,7 @@ public class RunServiceTest {
 
     //Caso de prueba 6
     @Test
-    public void testFindAllAmongMany() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
+    public void testFindAllAmongMany() throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException, AlreadyInscribedException {
         //Create some Races
         Race race1 = runService.addRace("Coruña", "Carrera popular semana santa", LocalDateTime.of(2021, Month.APRIL, 14, 17, 30), 8f, 400);
         Race race2 = runService.addRace("Ribeira", "Carreira popular do veran", LocalDateTime.of(2021, Month.JULY, 10, 10, 0), 5f, 2500);
@@ -554,7 +572,7 @@ public class RunServiceTest {
     //Caso de Prueba 1
     @Test
     public void testGetDorsalWithInvalidEmail()
-            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException {
+            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException, AlreadyInscribedException {
 
         //Creamos una carrera
         Race createdRace = runService.addRace("Domaio", "Carrera espacial", LocalDateTime.of(2021, Month.JULY, 24, 17, 30), 8f, 700);
@@ -573,7 +591,7 @@ public class RunServiceTest {
     //Caso de Prueba 2
     @Test
     public void testGetDorsalWithInvalidCreditCard()
-            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException {
+            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException, AlreadyInscribedException {
 
         //Creamos una carrera
         Race createdRace = runService.addRace("Coruña", "Marineda City Race", LocalDateTime.of(2021, Month.JULY, 24, 17, 30), 8f, 700);
@@ -592,7 +610,7 @@ public class RunServiceTest {
     //Caso de Prueba 3
     @Test
     public void testGetDorsalOfNonExistentRace()
-            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException {
+            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException, AlreadyInscribedException {
 
         //Creamos una carrera
         Race createdRace = runService.addRace("Moaña", "Carrera Iago Aspas", LocalDateTime.of(2021, Month.JUNE, 18, 12, 30), 6f, 800);
@@ -628,11 +646,11 @@ public class RunServiceTest {
         removeRace(createdRace.getRaceID());
     }
 */
-
+/*
     //Caso de Prueba 5
     @Test
     public void testGetRunnerNumber()
-            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException {
+            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException, AlreadyInscribedException {
 
         //Creamos una carrera
         Race createdRace = runService.addRace("Bueu", "Carrera Bueu es incluso peor que Cangas", LocalDateTime.of(2021, Month.SEPTEMBER, 21, 17, 30), 7f, 700);
@@ -656,5 +674,7 @@ public class RunServiceTest {
         removeInscription(createdIns.getInscriptionID());
         removeRace(createdRace.getRaceID());
     }
+
+ */
 
 }
