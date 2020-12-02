@@ -189,7 +189,7 @@ public class RunServiceImpl implements RunService{
                 //Comprueba que el número de inscripción no ha sido entregado previamente, aun no está hecho
                 if(!thisInscription.isNumberTaken()) {
                     thisInscription.setNumberTaken(true);
-                    inscriptionDao.update(connection, thisInscription.getInscriptionID(), thisInscription);
+                    inscriptionDao.update(connection, thisInscription);
                     return thisInscription.getRunnerNumber();
                 }
                 else {

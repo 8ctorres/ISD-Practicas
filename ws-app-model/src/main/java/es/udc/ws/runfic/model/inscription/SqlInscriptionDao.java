@@ -16,7 +16,7 @@ public interface SqlInscriptionDao {
     List<Inscription> findByUser(Connection connection, String email);
 
     //Actualizar una inscripción
-    public int update(Connection connection, Long idinscription, Inscription newInscription);
+    public int update(Connection connection, Inscription newInscription);
 
     //Borrar una inscripción según su ID
     int remove(Connection connection, Long idinscription);
