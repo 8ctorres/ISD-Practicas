@@ -126,8 +126,10 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
 
     //Carlos
     @Override
-    public int update(Connection connection, Long idrace, Race newRace){
-        String queryStr = "UPDATE Race SET city = ?, description = ?, startDateTime = ?, price = ?, participants = ?, maxParticipants = ? WHERE idrace = ?";
+    public int update(Connection connection, Race newRace){
+        String queryStr = "UPDATE Race" +
+                " SET city = ?, description = ?, startDateTime = ?, " +
+                " price = ?, participants = ?, maxParticipants = ? WHERE idrace = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)) {
             int i = 1;
             preparedStatement.setString(i++, newRace.getCity());
@@ -136,7 +138,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
             preparedStatement.setFloat(i++, newRace.getPrice());
             preparedStatement.setInt(i++, newRace.getParticipants());
             preparedStatement.setInt(i++, newRace.getMaxParticipants());
-            preparedStatement.setLong(i, idrace);
+            preparedStatement.setLong(i, newRace.getRaceID());
 
             int alteredRows = preparedStatement.executeUpdate();
             return alteredRows;

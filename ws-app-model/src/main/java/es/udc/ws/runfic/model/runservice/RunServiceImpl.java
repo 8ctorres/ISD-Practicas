@@ -146,7 +146,7 @@ public class RunServiceImpl implements RunService{
                 //After the inscription was created succesfully, update the Race so it has one more participant
                 int newparticipants = thisRace.getParticipants() +1;
                 thisRace.setParticipants(newparticipants);
-                raceDao.update(connection, thisRace.getRaceID(), thisRace);
+                raceDao.update(connection, thisRace);
 
                 connection.commit();
                 return createdInscription;
