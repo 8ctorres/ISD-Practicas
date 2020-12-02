@@ -192,7 +192,7 @@ public class RunServiceImpl implements RunService{
                     throw new InvalidUserException("This user code and credit card don't match with the inscription");
                 }
                 //Comprueba que el número de inscripción no ha sido entregado previamente
-                if (!thisInscription.isNumberTaken()) {
+                if (thisInscription.isNumberTaken()) {
                     throw new NumberTakenException("This runner number is already taken");
                 }
 

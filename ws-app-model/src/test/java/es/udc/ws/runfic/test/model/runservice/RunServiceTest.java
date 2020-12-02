@@ -19,7 +19,9 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.util.List;
 
@@ -294,14 +296,23 @@ public class RunServiceTest {
         removeInscription(ins2.getInscriptionID());
         removeRace(createdRace.getRaceID());
     }
-/*
+
     //Caso de Prueba 5
     @Test
     public void testInscribeLate() throws InputValidationException{
         //Creates a Race that starts in three hours
+        //I have to do this directly on the DAO because I cant normally add a race that starts in less than 24 hours
+        //This test scenario assumes the race was added correctly some time ago, and the user wants to inscribe now, when is already too late
         LocalDateTime starttime = LocalDateTime.now().plusHours(3);
-        Race createdRace = runService.addRace("Moaña", "Carrera pa ya mismo", starttime, 5f, 200);
+        Race createdRace;
+        try(Connection connection = dataSource.getConnection()) {
+            Race newRace = new Race(null, "Moaña", "Carrera pa ya mismo", starttime, 5f, 0, 200, LocalDateTime.now().minusDays(7));
+            createdRace = raceDao.create(connection, newRace);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
+        //Assuming the race was added correctly a week ago, now the inscription should not be possible
         assertThrows(InscriptionClosedException.class, () -> {
             runService.inscribe(createdRace.getRaceID(), "carlos.torres@udc.es", "9632 8521 7412 8547");
         });
@@ -311,7 +322,6 @@ public class RunServiceTest {
 
     }
 
- */
 /*
     //Caso de prueba 6
     @Test
@@ -625,11 +635,11 @@ public class RunServiceTest {
         removeInscription(createdIns.getInscriptionID());
         removeRace(createdRace.getRaceID());
     }
-/*
+
     //Caso de Prueba 4
     @Test
     public void testDorsalHasBeenTaken()
-            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException {
+            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException, AlreadyInscribedException {
 
         //Creamos una carrera
         Race createdRace = runService.addRace("Cangas", "Carrera Moaña es mejor que Cangas", LocalDateTime.of(2021, Month.MAY, 12, 16, 30), 6f, 600);
@@ -638,15 +648,15 @@ public class RunServiceTest {
         Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
 
         //Obtiene el dorsal y luego vuelve a por otro para colar a su primo en la carrera
-        runService.getRunnerNumber("ismael.verdec@udc.es", createdRace.getRaceID(), "4944 9485 4849 8426");
-        assertThrows(NumberTakenException.class, () -> runService.getRunnerNumber("ismael.verdec@udc.es", createdRace.getRaceID(), "4944 9485 4849 8426"));
+        runService.getRunnerNumber("ismael.verdec@udc.es", createdIns.getInscriptionID(), "4944 9485 4849 8426");
+        assertThrows(NumberTakenException.class, () -> runService.getRunnerNumber("ismael.verdec@udc.es", createdIns.getInscriptionID(), "4944 9485 4849 8426"));
 
         //Borramos los elementos creados
         removeInscription(createdIns.getInscriptionID());
         removeRace(createdRace.getRaceID());
     }
-*/
-/*
+
+    /*
     //Caso de Prueba 5
     @Test
     public void testGetRunnerNumber()
@@ -675,6 +685,6 @@ public class RunServiceTest {
         removeRace(createdRace.getRaceID());
     }
 
- */
+     */
 
 }
