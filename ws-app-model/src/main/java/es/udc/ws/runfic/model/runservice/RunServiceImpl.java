@@ -6,10 +6,7 @@ import es.udc.ws.runfic.model.inscription.SqlInscriptionDaoFactory;
 import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.runfic.model.race.SqlRaceDao;
 import es.udc.ws.runfic.model.race.SqlRaceDaoFactory;
-import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
-import es.udc.ws.runfic.model.runservice.exceptions.InvalidUserException;
-import es.udc.ws.runfic.model.runservice.exceptions.NumberTakenException;
-import es.udc.ws.runfic.model.runservice.exceptions.RaceFullException;
+import es.udc.ws.runfic.model.runservice.exceptions.*;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.sql.DataSourceLocator;
@@ -115,12 +112,15 @@ public class RunServiceImpl implements RunService{
     //Caso de Uso 4 - Carlos
     @Override
     public Inscription inscribe(Long raceID, String email, String creditCard)
-            throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException {
+            throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException, AlreadyInscribedException {
         String creditCardNumber =  creditCard.replaceAll("\\s+", ""); //Removes all spaces inside
+        validateEmail(email);
+        validateCreditCard(creditCardNumber);
         try (Connection connection = datasource.getConnection()) {
-            validateEmail(email);
-            validateCreditCard(creditCardNumber);
-
+            if (inscriptionDao.isUserInscribed(connection, raceID, email)){
+                throw new AlreadyInscribedException("User "+email+"already inscribed in race " + raceID.toString());
+            }
+            
             Race thisRace = raceDao.find(connection, raceID);
 
             //Comprobamos que esté en plazo para inscribirse
@@ -178,10 +178,9 @@ public class RunServiceImpl implements RunService{
     @Override
     public int getRunnerNumber(String email, Long inscriptionID, String creditCard) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
         String creditCardNumber =  creditCard.replaceAll("\\s+", ""); //Removes all spaces inside
+        validateEmail(email);
+        validateCreditCard(creditCardNumber);
         try (Connection connection = this.datasource.getConnection()) {
-            validateEmail(email);
-            validateCreditCard(creditCardNumber);
-
             Inscription thisInscription = this.inscriptionDao.find(connection, inscriptionID);
 
             //Comprueba que los datos del usuario se corresponden con la inscripción

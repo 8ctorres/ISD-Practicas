@@ -2,10 +2,7 @@ package es.udc.ws.runfic.model.runservice;
 
 import es.udc.ws.runfic.model.inscription.Inscription;
 import es.udc.ws.runfic.model.race.Race;
-import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
-import es.udc.ws.runfic.model.runservice.exceptions.InvalidUserException;
-import es.udc.ws.runfic.model.runservice.exceptions.NumberTakenException;
-import es.udc.ws.runfic.model.runservice.exceptions.RaceFullException;
+import es.udc.ws.runfic.model.runservice.exceptions.*;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
@@ -35,7 +32,7 @@ public interface RunService {
     //necesarios, recibe como entrada un e-mail para identificar al usuario, y un número de tarjeta de crédito. En caso de ejecutarse con éxito,
     //devuelve un código que será necesario para recoger el dorsal, y se almacena la inscripción, quedando registrado el número de dorsal
     //asignado al participante y la fecha y hora a la que se hizo la inscripción
-    Inscription inscribe(Long raceID, String email, String creditCardNumber) throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException;
+    Inscription inscribe(Long raceID, String email, String creditCardNumber) throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException, AlreadyInscribedException;
 
     //Será posible obtener todas las inscripciones que un usuario ha realizado a lo largo del tiempo. Deben devolverse todos los datos
     //almacenados para cada inscripción

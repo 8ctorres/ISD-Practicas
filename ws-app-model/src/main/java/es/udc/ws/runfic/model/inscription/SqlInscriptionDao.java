@@ -18,6 +18,12 @@ public interface SqlInscriptionDao {
     //Actualizar una inscripción
     public int update(Connection connection, Inscription newInscription);
 
+    //Carlos
+    /*
+    Checks if a user is already inscribed in the given race
+     */
+    boolean isUserInscribed(Connection connection, Long raceID, String user);
+
     //Borrar una inscripción según su ID
     int remove(Connection connection, Long inscriptionID);
 }

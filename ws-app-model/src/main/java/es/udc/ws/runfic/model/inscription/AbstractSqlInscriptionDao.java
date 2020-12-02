@@ -104,6 +104,25 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
     }
 
     //Carlos
+    /*
+    Checks if a user is already inscribed in the given race
+     */
+    @Override
+    public boolean isUserInscribed(Connection connection, Long raceID, String user){
+        String queryStr = "SELECT inscriptionID FROM Inscription WHERE raceID = ? AND user = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
+            preparedStatement.setLong(1, raceID);
+            preparedStatement.setString(2, user);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            return resultSet.next(); //Returns true if the query actually returned something
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Carlos
     @Override
     public int remove(Connection connection, Long inscriptionID) {
         String queryStr = "DELETE FROM Inscription WHERE inscriptionID = ?";
