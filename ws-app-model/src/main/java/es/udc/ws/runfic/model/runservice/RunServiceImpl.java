@@ -44,8 +44,8 @@ public class RunServiceImpl implements RunService{
         validateFloat("price", price, 0, MAX_PRICE);
         PropertyValidator.validateDouble("maxParticipants", maxParticipants, 0, MAX_PARTICIPANTS);
 
-        if (startDateTime.compareTo(LocalDateTime.now().withNano(0)) <= 0){
-            throw new InputValidationException("La fecha de inicio de la carrera no puede ser previa al momento actual");
+        if (startDateTime.compareTo(LocalDateTime.now().withNano(0).plusHours(24)) <= 0){
+            throw new InputValidationException("La fecha de inicio de la carrera no puede ser anterior a 24 desde ahora mismo");
         }
 
         try (Connection connection = datasource.getConnection()) {
@@ -120,7 +120,7 @@ public class RunServiceImpl implements RunService{
             if (inscriptionDao.isUserInscribed(connection, raceID, email)){
                 throw new AlreadyInscribedException("User "+email+"already inscribed in race " + raceID.toString());
             }
-            
+
             Race thisRace = raceDao.find(connection, raceID);
 
             //Comprobamos que esté en plazo para inscribirse
