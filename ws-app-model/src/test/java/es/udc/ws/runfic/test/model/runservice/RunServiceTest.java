@@ -13,11 +13,11 @@ import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.sql.DataSourceLocator;
 import es.udc.ws.util.sql.SimpleDataSource;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -103,6 +103,26 @@ public class RunServiceTest {
         }
         return addedRace;
 
+    }
+
+    @AfterEach
+    public void clearTestDB(){
+        try (Connection connection = dataSource.getConnection()) {
+            String query = "DELETE FROM Race"; //Borra todas las carreras, y en cascada las inscripciones
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)){
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                preparedStatement.executeUpdate();
+
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            }
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 
 //
@@ -322,7 +342,6 @@ public class RunServiceTest {
 
     }
 
-/*
     //Caso de prueba 6
     @Test
     public void inscribedTwiceTest() throws InputValidationException, AlreadyInscribedException, RaceFullException, InstanceNotFoundException, InscriptionClosedException {
@@ -339,7 +358,6 @@ public class RunServiceTest {
         //Removes the race
         removeRace(createdRace.getRaceID());
     }
-*/
 
     //Caso de prueba 7
     @Test
@@ -423,13 +441,13 @@ public class RunServiceTest {
 
         //There should be only one Inscription
         assertEquals(found.size(), 1);
+        //And it should be the right one
+        assertEquals(addedInscription, found.get(0));
 
         //Remove everything from the DB
         removeRace(addedRace.getRaceID());
         removeInscription(addedInscription.getInscriptionID());
     }
-
-
 
     //Caso de Prueba 4
     @Test
@@ -452,6 +470,8 @@ public class RunServiceTest {
 
         //There should be only one Inscription
         assertEquals(found.size(), 1);
+        //And it should be the one we added
+        assertEquals(addedInscription, found.get(0));
 
         //Remove everything from DB
         removeInscription(ins1.getInscriptionID());
@@ -461,8 +481,6 @@ public class RunServiceTest {
         removeInscription(addedInscription.getInscriptionID());
         removeRace(addedRace.getRaceID());
     }
-
-
 
     //Caso de Prueba 5
     @Test
@@ -482,6 +500,10 @@ public class RunServiceTest {
 
         //There are 3 inscriptions
         assertEquals(3, found.size());
+        //The three are right
+        assertTrue(found.contains(ins1));
+        assertTrue(found.contains(ins2));
+        assertTrue(found.contains(ins3));
 
         //Remove everything
         removeInscription(ins1.getInscriptionID());
@@ -520,6 +542,10 @@ public class RunServiceTest {
 
         //There are 3 inscriptions
         assertEquals(3, found.size());
+        //The three are right
+        assertTrue(found.contains(ins1));
+        assertTrue(found.contains(ins2));
+        assertTrue(found.contains(ins3));
 
         //Remove everything
         removeRace(race1.getRaceID());
@@ -656,7 +682,6 @@ public class RunServiceTest {
         removeRace(createdRace.getRaceID());
     }
 
-    /*
     //Caso de Prueba 5
     @Test
     public void testGetRunnerNumber()
@@ -684,7 +709,5 @@ public class RunServiceTest {
         removeInscription(createdIns.getInscriptionID());
         removeRace(createdRace.getRaceID());
     }
-
-     */
 
 }

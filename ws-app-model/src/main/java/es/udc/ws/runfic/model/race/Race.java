@@ -3,6 +3,8 @@ package es.udc.ws.runfic.model.race;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static es.udc.ws.runfic.utils.RunFicDateTimeUtils.roundToMinute;
+
 public class Race {
     private Long raceID;
     private String city;
@@ -32,7 +34,7 @@ public class Race {
         return raceID;
     }
 
-    private void setRaceID(Long raceID) {
+    public void setRaceID(Long raceID) {
         this.raceID = raceID;
     }
 
@@ -40,7 +42,7 @@ public class Race {
         return city;
     }
 
-    private void setCity(String city) {
+    public void setCity(String city) {
         this.city = city;
     }
 
@@ -48,7 +50,7 @@ public class Race {
         return description;
     }
 
-    private void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -56,7 +58,7 @@ public class Race {
         return startDateTime;
     }
 
-    private void setStartDateTime(LocalDateTime startDateTime) {
+    public void setStartDateTime(LocalDateTime startDateTime) {
         this.startDateTime = startDateTime;
     }
 
@@ -64,7 +66,7 @@ public class Race {
         return price;
     }
 
-    private void setPrice(float price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
@@ -80,7 +82,7 @@ public class Race {
         return maxParticipants;
     }
 
-    private void setMaxParticipants(int maxParticipants) {
+    public void setMaxParticipants(int maxParticipants) {
         this.maxParticipants = maxParticipants;
     }
 
@@ -88,7 +90,7 @@ public class Race {
         return addedDateTime;
     }
 
-    private void setAddedDateTime(LocalDateTime addedDateTime) {
+    public void setAddedDateTime(LocalDateTime addedDateTime) {
         this.addedDateTime = addedDateTime;
     }
 
@@ -97,14 +99,14 @@ public class Race {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Race race = (Race) o;
-        return raceID.equals(race.raceID) &&
+        return Float.compare(race.price, price) == 0 &&
                 participants == race.participants &&
                 maxParticipants == race.maxParticipants &&
+                Objects.equals(raceID, race.raceID) &&
                 city.equals(race.city) &&
                 description.equals(race.description) &&
-                startDateTime.equals(race.startDateTime) &&
-                price == race.price &&
-                addedDateTime.equals(race.addedDateTime);
+                roundToMinute(startDateTime).equals(roundToMinute(race.startDateTime)) &&
+                Objects.equals(roundToMinute(addedDateTime), roundToMinute(race.addedDateTime));
     }
 
     @Override

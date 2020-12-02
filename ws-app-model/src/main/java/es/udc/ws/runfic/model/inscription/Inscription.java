@@ -3,6 +3,8 @@ package es.udc.ws.runfic.model.inscription;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static es.udc.ws.runfic.utils.RunFicDateTimeUtils.roundToMinute;
+
 public class Inscription {
     private Long inscriptionID;
     private String user;
@@ -32,7 +34,7 @@ public class Inscription {
         return inscriptionID;
     }
 
-    private void setInscriptionID(Long inscriptionID) {
+    public void setInscriptionID(Long inscriptionID) {
         this.inscriptionID = inscriptionID;
     }
 
@@ -40,7 +42,7 @@ public class Inscription {
         return user;
     }
 
-    private void setUser(String user) {
+    public void setUser(String user) {
         this.user = user;
     }
 
@@ -48,7 +50,7 @@ public class Inscription {
         return creditCardNumber;
     }
 
-    private void setCreditCardNumber(String creditCardNumber) {
+    public void setCreditCardNumber(String creditCardNumber) {
         this.creditCardNumber = creditCardNumber;
     }
 
@@ -56,7 +58,7 @@ public class Inscription {
         return raceID;
     }
 
-    private void setRaceID(Long raceID) {
+    public void setRaceID(Long raceID) {
         this.raceID = raceID;
     }
 
@@ -64,7 +66,7 @@ public class Inscription {
         return inscriptionDateTime;
     }
 
-    private void setInscriptionDateTime(LocalDateTime inscriptionDateTime) {
+    public void setInscriptionDateTime(LocalDateTime inscriptionDateTime) {
         this.inscriptionDateTime = inscriptionDateTime;
     }
 
@@ -72,7 +74,7 @@ public class Inscription {
         return runnerNumber;
     }
 
-    private void setRunnerNumber(int runnerNumber) {
+    public void setRunnerNumber(int runnerNumber) {
         this.runnerNumber = runnerNumber;
     }
 
@@ -84,21 +86,23 @@ public class Inscription {
         isNumberTaken = numberTaken;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Inscription that = (Inscription) o;
-        return inscriptionID.equals(that.inscriptionID) &&
-                raceID.equals(that.raceID) &&
-                runnerNumber == that.runnerNumber &&
+        return runnerNumber == that.runnerNumber &&
+                isNumberTaken == that.isNumberTaken &&
+                Objects.equals(inscriptionID, that.inscriptionID) &&
                 user.equals(that.user) &&
                 creditCardNumber.equals(that.creditCardNumber) &&
-                inscriptionDateTime.equals(that.inscriptionDateTime);
+                raceID.equals(that.raceID) &&
+                Objects.equals(roundToMinute(inscriptionDateTime), roundToMinute(that.inscriptionDateTime));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber);
+        return Objects.hash(inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, isNumberTaken);
     }
 }
