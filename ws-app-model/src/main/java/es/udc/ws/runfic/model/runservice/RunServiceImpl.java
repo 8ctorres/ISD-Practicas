@@ -183,23 +183,30 @@ public class RunServiceImpl implements RunService{
         try (Connection connection = this.datasource.getConnection()) {
             Inscription thisInscription = this.inscriptionDao.find(connection, inscriptionID);
 
-            //Comprueba que los datos del usuario se corresponden con la inscripción
-            if((thisInscription.getCreditCardNumber().equals(creditCardNumber)) && (thisInscription.getUser().equals(email))){
-                //Comprueba que el número de inscripción no ha sido entregado previamente, aun no está hecho
-                if(!thisInscription.isNumberTaken()) {
-                    thisInscription.setNumberTaken(true);
-                    inscriptionDao.update(connection, thisInscription);
-                    return thisInscription.getRunnerNumber();
+            //Empezamos transacción
+            try {
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+                //Comprueba que los datos del usuario se corresponden con la inscripción
+                if (!((thisInscription.getCreditCardNumber().equals(creditCardNumber)) && (thisInscription.getUser().equals(email)))) {
+                    throw new InvalidUserException("This user code and credit card don't match with the inscription");
                 }
-                else {
+                //Comprueba que el número de inscripción no ha sido entregado previamente
+                if (!thisInscription.isNumberTaken()) {
                     throw new NumberTakenException("This runner number is already taken");
                 }
+
+                thisInscription.setNumberTaken(true);
+                inscriptionDao.update(connection, thisInscription);
+
+                connection.commit();
+                return thisInscription.getRunnerNumber();
+                
+            }catch (SQLException | RuntimeException | Error err){
+                connection.rollback();
+                throw new RuntimeException(err);
             }
-            else {
-                throw new InvalidUserException("This user code and credit card don't match with the inscription");
-            }
-        }
-        catch (SQLException e){
+        }catch (SQLException e){
             throw new RuntimeException(e);
         }
     }
