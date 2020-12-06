@@ -34,22 +34,52 @@ public class ExceptionToJsonConverter {
     }
 
     public static ObjectNode from(AlreadyInscribedException ex){
-        throw new UnsupportedOperationException();
+
+        ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
+
+        exceptionObject.put("errorType", "AlreadyInscribedException");
+        exceptionObject.put("message", ex.getMessage());
+
+        return exceptionObject;
     }
 
     public static ObjectNode from(InscriptionClosedException ex){
-        throw new UnsupportedOperationException();
+
+        ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
+
+        exceptionObject.put("errorType", "InscriptionClosedException");
+        exceptionObject.put("message", ex.getMessage());
+
+        return exceptionObject;
     }
 
     public static ObjectNode from(InvalidUserException ex){
-        throw new UnsupportedOperationException();
+
+        ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
+
+        exceptionObject.put("errorType", "InvalidUserException");
+        exceptionObject.put("message", ex.getMessage());
+
+        return exceptionObject;
     }
 
     public static ObjectNode from(NumberTakenException ex){
-        throw new UnsupportedOperationException();
+
+        ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
+
+        exceptionObject.put("errorType", "NumberTakenException");
+        exceptionObject.put("message", ex.getMessage());
+
+        return exceptionObject;
     }
 
     public static ObjectNode from(RaceFullException ex){
-        throw new UnsupportedOperationException();
+
+        ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
+
+        exceptionObject.put("errorType", "RaceFullException");
+        exceptionObject.put("message", ex.getMessage());
+
+        return exceptionObject;
     }
 }
