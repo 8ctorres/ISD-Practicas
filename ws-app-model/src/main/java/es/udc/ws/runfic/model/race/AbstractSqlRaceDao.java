@@ -52,7 +52,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     public List<Race> findByDate(Connection connection, LocalDateTime date) {
         String queryStr =
                 "SELECT raceID, city, description, startDateTime, price, participants, maxParticipants, addedDateTime" +
-                        " FROM Race WHERE startDateTime = ?";
+                        " FROM Race WHERE startDateTime <= ?";
 
         Timestamp timestamp = Timestamp.valueOf(date);
 
@@ -74,8 +74,10 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
                 int maxParticipants = results.getInt(i++);
                 LocalDateTime addedDateTime = results.getTimestamp(i).toLocalDateTime();
 
-                Race race = new Race(id, city, description, startDateTime, price, participants, maxParticipants, addedDateTime);
-                list.add(race);
+                if(startDateTime.compareTo(LocalDateTime.now().withNano(0)) >= 0) {
+                    Race race = new Race(id, city, description, startDateTime, price, participants, maxParticipants, addedDateTime);
+                    list.add(race);
+                }
             }
 
             return list;
@@ -90,7 +92,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
     public List<Race> findByDateCity(Connection connection, LocalDateTime date, String city) {
         String queryStr =
                 "SELECT raceID, city, description, startDateTime, price, participants, maxParticipants, addedDateTime" +
-                        " FROM Race WHERE startDateTime = ? AND city = ?";
+                        " FROM Race WHERE startDateTime <= ? AND city = ?";
 
         Timestamp timestamp = Timestamp.valueOf(date);
 
@@ -113,8 +115,10 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
                 int maxParticipants = results.getInt(i++);
                 LocalDateTime addedDateTime = results.getTimestamp(i).toLocalDateTime();
 
-                Race race = new Race(id, cityresult, description, startDateTime, price, participants, maxParticipants, addedDateTime);
-                list.add(race);
+                if(startDateTime.compareTo(LocalDateTime.now().withNano(0)) >= 0) {
+                    Race race = new Race(id, cityresult, description, startDateTime, price, participants, maxParticipants, addedDateTime);
+                    list.add(race);
+                }
             }
 
             return list;
