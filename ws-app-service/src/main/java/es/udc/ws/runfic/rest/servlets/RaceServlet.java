@@ -4,6 +4,7 @@ import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.runfic.model.runservice.RunServiceFactory;
 import es.udc.ws.runfic.model.runservice.exceptions.AlreadyInscribedException;
 import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
+import es.udc.ws.runfic.rest.dto.RaceToRestRaceDtoConversor;
 import es.udc.ws.runfic.rest.dto.RestRaceDto;
 import es.udc.ws.runfic.rest.json.ExceptionToJsonConverter;
 import es.udc.ws.runfic.rest.json.JsonToRestRaceDtoConversor;
@@ -50,10 +51,10 @@ public class RaceServlet extends HttpServlet {
             return;
         }
 
-            RestRaceDto raceDto = RestRaceDto.from(race);
+        RestRaceDto raceDto = RaceToRestRaceDtoConversor.toRestRaceDto(race);
 
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
-                    raceDto.toJson(), null);
+        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                JsonToRestRaceDtoConversor.toObjectNode(raceDto), null);
 
 
     }

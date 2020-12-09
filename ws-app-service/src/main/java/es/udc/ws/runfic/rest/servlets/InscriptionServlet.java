@@ -41,7 +41,7 @@ public class InscriptionServlet extends HttpServlet {
         }
         RestInscriptionDto inscriptionDto;
         try{
-            inscriptionDto = JsonToRestInscriptionDtoConversor.toInscriptionDto(req.getInputStream());
+            inscriptionDto = JsonToRestInscriptionDtoConversor.toServiceInscriptionDto(req.getInputStream());
         }catch (ParsingException ex){
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     ExceptionToJsonConverter.from(
