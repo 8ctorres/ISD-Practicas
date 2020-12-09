@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class RaceServlet extends HttpServlet {
+    //Isma
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
@@ -36,7 +37,7 @@ public class RaceServlet extends HttpServlet {
         } catch (NumberFormatException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     ExceptionToJsonConverter.from(
-                            new InputValidationException("Invalid Request: " + "invalid sale id '" + raceIdAsString)),
+                            new InputValidationException("Invalid Request: " + "invalid race id '" + raceIdAsString)),
                     null);
             return;
         }
@@ -83,8 +84,4 @@ public class RaceServlet extends HttpServlet {
         super.doPut(req, resp);
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doDelete(req, resp);
-    }
 }
