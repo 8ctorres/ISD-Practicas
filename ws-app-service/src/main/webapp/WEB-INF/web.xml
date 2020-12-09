@@ -10,21 +10,31 @@
     <display-name>WS App Service</display-name>
 
     <!-- REST service -->
-    <!-- Fill XXX and uncomment the following lines --> 
-    <!--
     <servlet>
-        <display-name>XXXServlet</display-name>
-        <servlet-name>XXXServlet</servlet-name>
+        <display-name>RaceServlet</display-name>
+        <servlet-name>RaceServlet</servlet-name>
         <servlet-class>
-            es.udc.ws.app.restservice.servlets.XXXServlet
+            es.udc.ws.runfic.rest.servlets.RaceServlet
         </servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>XXXServlet</servlet-name>
-        <url-pattern>/xxx/*</url-pattern>
+        <servlet-name>RaceServlet</servlet-name>
+        <url-pattern>/race/*</url-pattern>
     </servlet-mapping>
-    -->
+    <servlet>
+        <display-name>InscriptionServlet</display-name>
+        <servlet-name>InscriptionServlet</servlet-name>
+        <servlet-class>
+            es.udc.ws.runfic.rest.servlets.InscriptionServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>InscriptionServlet</servlet-name>
+        <url-pattern>/inscription/*</url-pattern>
+    </servlet-mapping>
+
 
    <!-- Thrift service -->
    <!-- Fill XXX and uncomment the following lines --> 

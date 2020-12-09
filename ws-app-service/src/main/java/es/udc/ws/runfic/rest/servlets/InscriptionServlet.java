@@ -23,25 +23,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InscriptionServlet extends HttpServlet {
+    //Carlos
+    //Corresponde al Caso de Uso 5 - findAllFromUser
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         super.doGet(req, resp);
     }
 
+    //Para CU 4 - POST a /inscription
+    //Para CU 6 - POST a /inscription/id?user=email&ccn=ccn
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
-        if (path != null && path.length() > 0){
-            //Si han hecho un post que no sea directamente contra el recurso colección de inscripciones, se considera que está mal
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    JsonToExceptionConversor.toInputValidationException(new InputValidationException("Invalid Request: invalid path" + path)),
-            null);
-            return;
+        if (path != null && path.length() > 0) {
+            //Un POST contra una inscripción concreta podría ser para obtener el dorsal
+            doGetRunnerRunnerNumber(req, resp);
+        } else {
+            doCreateInscription(req, resp);
         }
+    }
+
+    //Carlos
+    //Corresponde al Caso de Uso 4 - inscribe
+    private void doCreateInscription(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        //Si estamos en este punto, es porque la petición fue exactamente "POST /inscription", sin nada más
         RestInscriptionDto inscriptionDto;
-        try{
+        try {
             inscriptionDto = JsonToRestInscriptionDtoConversor.toServiceInscriptionDto(req.getInputStream());
-        }catch (ParsingException ex){
+        } catch (ParsingException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(
                             new InputValidationException(ex.getMessage())),
@@ -49,7 +58,7 @@ public class InscriptionServlet extends HttpServlet {
             return;
         }
         Inscription modelIns = null;
-        try{
+        try {
             modelIns = RunServiceFactory.getService().inscribe(inscriptionDto.getRaceID(), inscriptionDto.getUser(), inscriptionDto.getCreditCardNumber());
         } catch (InscriptionClosedException e) {
             JsonToExceptionConversor.toInscriptionClosedException(e);
@@ -70,16 +79,10 @@ public class InscriptionServlet extends HttpServlet {
 
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
                 JsonToRestInscriptionDtoConversor.toObjectNode(inscriptionDto), headers);
-    
     }
 
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPut(req, resp);
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doDelete(req, resp);
+    //Isma
+    //Corresponde al Caso de Uso 6 - getRunnerNumber
+    private void doGetRunnerRunnerNumber(HttpServletRequest req, HttpServletResponse resp) {
     }
 }

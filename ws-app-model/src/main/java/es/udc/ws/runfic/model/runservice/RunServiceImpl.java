@@ -37,6 +37,7 @@ public class RunServiceImpl implements RunService{
     }
 
     //Caso de Uso 1 - Brais
+    //Equivalente REST -> POST a /race
     @Override
     public Race addRace(String city, String description, LocalDateTime startDateTime, float price, int maxParticipants) throws InputValidationException {
         PropertyValidator.validateMandatoryString("city", city);
@@ -79,6 +80,7 @@ public class RunServiceImpl implements RunService{
     }
 
     //Caso de Uso 2 - Isma
+    //Equivalente REST -> GET a /race/id
     @Override
     public Race findRace(Long raceID) throws InstanceNotFoundException {
 
@@ -90,6 +92,7 @@ public class RunServiceImpl implements RunService{
     }
 
     //Caso de Uso 3 - Brais
+    //Equivalente REST -> GET a /race?date=date&city=city
     @Override
     public List<Race> findByDate(LocalDateTime date, String city) {
         try (Connection connection = datasource.getConnection()) {
@@ -100,6 +103,7 @@ public class RunServiceImpl implements RunService{
     }
 
     //Caso de Uso 4 - Carlos
+    //Equivalente REST -> POST a /inscription
     @Override
     public Inscription inscribe(Long raceID, String email, String creditCard)
             throws InputValidationException, InscriptionClosedException, InstanceNotFoundException, RaceFullException, AlreadyInscribedException {
@@ -153,6 +157,7 @@ public class RunServiceImpl implements RunService{
     }
 
     //Caso de Uso 5 - Carlos
+    //Equivalente REST a -> GET a /inscription?user=email
     @Override
     public List<Inscription> findAllFromUser(String email) throws InputValidationException {
         validateEmail(email);
@@ -165,6 +170,7 @@ public class RunServiceImpl implements RunService{
     }
 
     //Caso de Uso 6 - Isma
+    //Equivalente REST -> Overloaded POST a /inscription/id?get_number
     @Override
     public int getRunnerNumber(String email, Long inscriptionID, String creditCard) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
         String creditCardNumber =  creditCard.replaceAll("\\s+", ""); //Removes all spaces inside

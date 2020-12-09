@@ -11,24 +11,31 @@ import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.json.exceptions.ParsingException;
 import es.udc.ws.util.servlet.ServletUtils;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class RaceServlet extends HttpServlet {
-    //Isma
+
+    //Para CU 2, es GET /race/id
+    //Para CU 3, es GET /race?params
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
         if (path == null || path.length() == 0) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    JsonToExceptionConversor.toInputValidationException(
-                            new InputValidationException("Invalid Request: " + "invalid race id")),
-                    null);
-            return;
+            //No se pasó un ID de carrera
+            doFindById(req, resp);
+        } else {
+            //Sí se pasó un ID de carrera
+            doFindByDateAndCity(req, resp);
         }
+    }
+
+    //Isma
+    //Corresponde al Caso de Uso 2 -> findRace
+    private void doFindById(HttpServletRequest req, HttpServletResponse resp) throws IOException{
+        String path = ServletUtils.normalizePath(req.getPathInfo());
         String raceIdAsString = path.substring(1);
         Long raceId;
         try {
@@ -48,16 +55,20 @@ public class RaceServlet extends HttpServlet {
                     JsonToExceptionConversor.toInstanceNotFoundException(ex), null);
             return;
         }
-
         RestRaceDto raceDto = RaceToRestRaceDtoConversor.toRestRaceDto(race);
-
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
                 JsonToRestRaceDtoConversor.toObjectNode(raceDto), null);
+    }
 
+    //Brais
+    //Corresponde al Caso de Uso 3 -> findByDate(and City)
+    private void doFindByDateAndCity(HttpServletRequest req, HttpServletResponse resp) throws IOException{
 
     }
 
 
+    //Brais
+    //Corresponde al Caso de Uso 1 - addRace
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
@@ -76,10 +87,4 @@ public class RaceServlet extends HttpServlet {
                     .toInputValidationException(new InputValidationException(ex.getMessage())), null);
         }
     }
-
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPut(req, resp);
-    }
-
 }
