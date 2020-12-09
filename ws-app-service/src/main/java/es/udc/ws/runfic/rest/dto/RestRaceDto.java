@@ -27,22 +27,59 @@ public class RestRaceDto {
         this.maxParticipants = maxParticipants;
     }
 
-    public static RestRaceDto from(Race modelRace){
-        return new RestRaceDto(modelRace.getRaceID(), modelRace.getCity(), modelRace.getDescription(),
-                modelRace.getStartDateTime(), modelRace.getPrice(),
-                modelRace.getParticipants(), modelRace.getMaxParticipants());
+    public Long getRaceID() {
+        return raceID;
     }
 
-    public Race toRace(){
-        return new Race(this.raceID, this.city, this.description, this.startDateTime,
-                this.price, this.participants, this.maxParticipants, null);
+    public void setRaceID(Long raceID) {
+        this.raceID = raceID;
     }
 
-    public static RestRaceDto from(ObjectNode jsonNode){
-        throw new UnsupportedOperationException();
+    public String getCity() {
+        return city;
     }
 
-    public ObjectNode toJson(){
-        throw new UnsupportedOperationException();
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(LocalDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    public int getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(int participants) {
+        this.participants = participants;
+    }
+
+    public int getMaxParticipants() {
+        return maxParticipants;
+    }
+
+    public void setMaxParticipants(int maxParticipants) {
+        this.maxParticipants = maxParticipants;
     }
 }

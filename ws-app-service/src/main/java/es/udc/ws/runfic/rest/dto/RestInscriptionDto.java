@@ -25,22 +25,51 @@ public class RestInscriptionDto {
         this.isNumberTaken = isNumberTaken;
     }
 
-    public static RestInscriptionDto from(Inscription modelIns){
-        return new RestInscriptionDto(modelIns.getInscriptionID(), modelIns.getUser(),
-                modelIns.getCreditCardNumber(), modelIns.getRaceID(),
-                modelIns.getRunnerNumber(), modelIns.isNumberTaken());
+    public Long getInscriptionID() {
+        return inscriptionID;
     }
 
-    public Inscription toInscription(){
-        return new Inscription(this.inscriptionID, this.user, this.creditCardNumber, this.raceID,
-                null, this.runnerNumber, this.isNumberTaken);
+    public void setInscriptionID(Long inscriptionID) {
+        this.inscriptionID = inscriptionID;
     }
 
-    public static RestInscriptionDto from(ObjectNode jsonNode){
-        throw new UnsupportedOperationException();
+    public String getUser() {
+        return user;
     }
 
-    public ObjectNode toJson(){
-        throw new UnsupportedOperationException();
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getCreditCardNumber() {
+        return creditCardNumber;
+    }
+
+    public void setCreditCardNumber(String creditCardNumber) {
+        this.creditCardNumber = creditCardNumber;
+    }
+
+    public Long getRaceID() {
+        return raceID;
+    }
+
+    public void setRaceID(Long raceID) {
+        this.raceID = raceID;
+    }
+
+    public int getRunnerNumber() {
+        return runnerNumber;
+    }
+
+    public void setRunnerNumber(int runnerNumber) {
+        this.runnerNumber = runnerNumber;
+    }
+
+    public boolean isNumberTaken() {
+        return isNumberTaken;
+    }
+
+    public void setNumberTaken(boolean numberTaken) {
+        isNumberTaken = numberTaken;
     }
 }
