@@ -91,16 +91,6 @@ public class RunServiceImpl implements RunService{
 
     //Caso de Uso 3 - Brais
     @Override
-    public List<Race> findByDate(LocalDateTime date) {
-        try (Connection connection = datasource.getConnection()) {
-            return raceDao.findByDate(connection, date);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    //Caso de Uso 3 - Brais
-    @Override
     public List<Race> findByDate(LocalDateTime date, String city) {
         try (Connection connection = datasource.getConnection()) {
             return raceDao.findByDateCity(connection, date, city);

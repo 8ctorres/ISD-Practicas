@@ -194,7 +194,7 @@ public class RunServiceTest {
         LocalDateTime date = LocalDateTime.of(2022, Month.JANUARY, 6, 10, 30);
 
             // Find Race
-            List<Race> list = runService.findByDate(date);
+            List<Race> list = runService.findByDate(date, null);
 
             for(Race foundRace: list){
                 assertEquals(foundRace, race);

@@ -25,7 +25,6 @@ public interface RunService {
     //que aún no se han celebrado). Opcionalmente, se podrá indicar el nombre de una ciudad, en cuyo caso se devolverán solamente las carreras que se
     //celebren en esa ciudad. Al igual que en el punto anterior, la información devuelta de cada carrera incluirá, además de la información
     //proporcionada al darla de alta, el número de inscritos en ella
-    List<Race> findByDate(LocalDateTime date);
     List<Race> findByDate(LocalDateTime date, String city);
 
     //Será posible que un usuario se inscriba en una carrera hasta 24 horas antes de su celebración. Además de otros parámetros que puedan ser

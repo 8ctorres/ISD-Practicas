@@ -47,58 +47,23 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
         }
     }
 
-    //Isma
-    @Override
-    public List<Race> findByDate(Connection connection, LocalDateTime date) {
-        String queryStr =
-                "SELECT raceID, city, description, startDateTime, price, participants, maxParticipants, addedDateTime" +
-                        " FROM Race WHERE startDateTime <= ?";
-
-        Timestamp timestamp = Timestamp.valueOf(date);
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
-            preparedStatement.setTimestamp(1,timestamp);
-
-            ResultSet results = preparedStatement.executeQuery();
-
-            List<Race> list = new ArrayList<>();
-
-            while (results.next()) {
-                int i = 1;
-                Long id = results.getLong(i++);
-                String city = results.getString(i++);
-                String description = results.getString(i++);
-                LocalDateTime startDateTime = results.getTimestamp(i++).toLocalDateTime();
-                float price = results.getFloat(i++);
-                int participants = results.getInt(i++);
-                int maxParticipants = results.getInt(i++);
-                LocalDateTime addedDateTime = results.getTimestamp(i).toLocalDateTime();
-
-                if(startDateTime.compareTo(LocalDateTime.now().withNano(0)) >= 0) {
-                    Race race = new Race(id, city, description, startDateTime, price, participants, maxParticipants, addedDateTime);
-                    list.add(race);
-                }
-            }
-
-            return list;
-
-        }catch(SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     //Brais
     @Override
     public List<Race> findByDateCity(Connection connection, LocalDateTime date, String city) {
         String queryStr =
                 "SELECT raceID, city, description, startDateTime, price, participants, maxParticipants, addedDateTime" +
-                        " FROM Race WHERE startDateTime <= ? AND city = ?";
+                        " FROM Race WHERE startDateTime <= ?";
+        if (city != null){
+            queryStr = queryStr + " AND city = ?";
+        }
 
         Timestamp timestamp = Timestamp.valueOf(date);
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
             preparedStatement.setTimestamp(1,timestamp);
-            preparedStatement.setString(2, city);
+            if (city != null) {
+                preparedStatement.setString(2, city);
+            }
 
             ResultSet results = preparedStatement.executeQuery();
 

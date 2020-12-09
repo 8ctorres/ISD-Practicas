@@ -13,8 +13,7 @@ public interface SqlRaceDao {
     //Encuentra una carrera según el ID
     Race find(Connection connection, Long raceID) throws InstanceNotFoundException;
 
-    //Encuentra una carrera según fecha y/o ciudad
-    List<Race> findByDate(Connection connection, LocalDateTime date);
+    //Encuentra una carrera según fecha y opcionalmente ciudad
     List<Race> findByDateCity(Connection connection, LocalDateTime date, String city);
 
     //Actualiza los datos de una carrera
