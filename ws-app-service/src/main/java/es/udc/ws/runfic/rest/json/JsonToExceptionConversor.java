@@ -2,15 +2,14 @@ package es.udc.ws.runfic.rest.json;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import es.udc.ws.runfic.model.inscription.Inscription;
 import es.udc.ws.runfic.model.runservice.exceptions.*;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
-public class ExceptionToJsonConverter {
-    private ExceptionToJsonConverter(){}
+public class JsonToExceptionConversor {
+    private JsonToExceptionConversor(){}
 
-    public static ObjectNode from(InputValidationException ex){
+    public static ObjectNode toInputValidationException(InputValidationException ex){
 
         ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
 
@@ -20,7 +19,7 @@ public class ExceptionToJsonConverter {
         return exceptionObject;
     }
 
-    public static ObjectNode from(InstanceNotFoundException ex){
+    public static ObjectNode toInstanceNotFoundException(InstanceNotFoundException ex){
 
         ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
 
@@ -33,7 +32,7 @@ public class ExceptionToJsonConverter {
         return exceptionObject;
     }
 
-    public static ObjectNode from(AlreadyInscribedException ex){
+    public static ObjectNode toAlreadyInscribedException(AlreadyInscribedException ex){
 
         ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
 
@@ -43,7 +42,7 @@ public class ExceptionToJsonConverter {
         return exceptionObject;
     }
 
-    public static ObjectNode from(InscriptionClosedException ex){
+    public static ObjectNode toInscriptionClosedException(InscriptionClosedException ex){
 
         ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
 
@@ -53,7 +52,7 @@ public class ExceptionToJsonConverter {
         return exceptionObject;
     }
 
-    public static ObjectNode from(InvalidUserException ex){
+    public static ObjectNode toInvalidUserException(InvalidUserException ex){
 
         ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
 
@@ -63,7 +62,7 @@ public class ExceptionToJsonConverter {
         return exceptionObject;
     }
 
-    public static ObjectNode from(NumberTakenException ex){
+    public static ObjectNode toNumberTakenException(NumberTakenException ex){
 
         ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
 
@@ -73,7 +72,7 @@ public class ExceptionToJsonConverter {
         return exceptionObject;
     }
 
-    public static ObjectNode from(RaceFullException ex){
+    public static ObjectNode toRaceFullException(RaceFullException ex){
 
         ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
 

@@ -1,14 +1,13 @@
 package es.udc.ws.runfic.rest.servlets;
 
 import es.udc.ws.runfic.model.inscription.Inscription;
-import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.runfic.model.runservice.RunServiceFactory;
 import es.udc.ws.runfic.model.runservice.exceptions.AlreadyInscribedException;
 import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
 import es.udc.ws.runfic.model.runservice.exceptions.RaceFullException;
 import es.udc.ws.runfic.rest.dto.InscriptionToRestInscriptionDtoConversor;
 import es.udc.ws.runfic.rest.dto.RestInscriptionDto;
-import es.udc.ws.runfic.rest.json.ExceptionToJsonConverter;
+import es.udc.ws.runfic.rest.json.JsonToExceptionConversor;
 import es.udc.ws.runfic.rest.json.JsonToRestInscriptionDtoConversor;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
@@ -30,12 +29,12 @@ public class InscriptionServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
         if (path != null && path.length() > 0){
             //Si han hecho un post que no sea directamente contra el recurso colección de inscripciones, se considera que está mal
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    ExceptionToJsonConverter.from(new InputValidationException("Invalid Request: invalid path" + path)),
+                    JsonToExceptionConversor.toInputValidationException(new InputValidationException("Invalid Request: invalid path" + path)),
             null);
             return;
         }
@@ -44,16 +43,24 @@ public class InscriptionServlet extends HttpServlet {
             inscriptionDto = JsonToRestInscriptionDtoConversor.toServiceInscriptionDto(req.getInputStream());
         }catch (ParsingException ex){
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    ExceptionToJsonConverter.from(
+                    JsonToExceptionConversor.toInputValidationException(
                             new InputValidationException(ex.getMessage())),
                     null);
             return;
         }
-        Inscription modelIns;
+        Inscription modelIns = null;
         try{
             modelIns = RunServiceFactory.getService().inscribe(inscriptionDto.getRaceID(), inscriptionDto.getUser(), inscriptionDto.getCreditCardNumber());
-        } catch (InscriptionClosedException | InstanceNotFoundException | AlreadyInscribedException | InputValidationException | RaceFullException e) {
-            ExceptionToJsonConverter.from(e);
+        } catch (InscriptionClosedException e) {
+            JsonToExceptionConversor.toInscriptionClosedException(e);
+        } catch (InstanceNotFoundException e) {
+            JsonToExceptionConversor.toInstanceNotFoundException(e);
+        } catch (AlreadyInscribedException e) {
+            JsonToExceptionConversor.toAlreadyInscribedException(e);
+        } catch (InputValidationException e) {
+            JsonToExceptionConversor.toInputValidationException(e);
+        } catch (RaceFullException e) {
+            JsonToExceptionConversor.toRaceFullException(e);
         }
         inscriptionDto = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(modelIns);
 

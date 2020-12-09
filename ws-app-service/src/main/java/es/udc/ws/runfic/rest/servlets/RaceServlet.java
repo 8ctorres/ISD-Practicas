@@ -2,11 +2,9 @@ package es.udc.ws.runfic.rest.servlets;
 
 import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.runfic.model.runservice.RunServiceFactory;
-import es.udc.ws.runfic.model.runservice.exceptions.AlreadyInscribedException;
-import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
 import es.udc.ws.runfic.rest.dto.RaceToRestRaceDtoConversor;
 import es.udc.ws.runfic.rest.dto.RestRaceDto;
-import es.udc.ws.runfic.rest.json.ExceptionToJsonConverter;
+import es.udc.ws.runfic.rest.json.JsonToExceptionConversor;
 import es.udc.ws.runfic.rest.json.JsonToRestRaceDtoConversor;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
@@ -22,11 +20,11 @@ import java.io.IOException;
 public class RaceServlet extends HttpServlet {
     //Isma
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
         if (path == null || path.length() == 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    ExceptionToJsonConverter.from(
+                    JsonToExceptionConversor.toInputValidationException(
                             new InputValidationException("Invalid Request: " + "invalid race id")),
                     null);
             return;
@@ -37,7 +35,7 @@ public class RaceServlet extends HttpServlet {
             raceId = Long.valueOf(raceIdAsString);
         } catch (NumberFormatException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    ExceptionToJsonConverter.from(
+                    JsonToExceptionConversor.toInputValidationException(
                             new InputValidationException("Invalid Request: " + "invalid race id '" + raceIdAsString)),
                     null);
             return;
@@ -47,7 +45,7 @@ public class RaceServlet extends HttpServlet {
             race = RunServiceFactory.getService().findRace(raceId);
         } catch (InstanceNotFoundException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                    ExceptionToJsonConverter.from(ex), null);
+                    JsonToExceptionConversor.toInstanceNotFoundException(ex), null);
             return;
         }
 
@@ -61,11 +59,11 @@ public class RaceServlet extends HttpServlet {
 
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
         if (path != null && path.length() > 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    ExceptionToJsonConverter.from(
+                    JsonToExceptionConversor.toInputValidationException(
                             new InputValidationException("Invalid Request: " + "invalid path " + path)),
                     null);
             return;
@@ -74,9 +72,8 @@ public class RaceServlet extends HttpServlet {
         try {
             raceDto = JsonToRestRaceDtoConversor.toServiceRaceDto(req.getInputStream());
         } catch (ParsingException ex) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, ExceptionToJsonConverter
-                    .from(new InputValidationException(ex.getMessage())), null);
-            return;
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, JsonToExceptionConversor
+                    .toInputValidationException(new InputValidationException(ex.getMessage())), null);
         }
     }
 
