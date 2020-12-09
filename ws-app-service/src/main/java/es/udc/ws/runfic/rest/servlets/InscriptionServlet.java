@@ -14,20 +14,53 @@ import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.json.exceptions.ParsingException;
 import es.udc.ws.util.servlet.ServletUtils;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class InscriptionServlet extends HttpServlet {
     //Carlos
     //Corresponde al Caso de Uso 5 - findAllFromUser
+    //GET /inscription?user=email
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String path = ServletUtils.normalizePath(req.getPathInfo());
+        if(path != null && path.length() > 0){
+            //Si hay algo tras /inscription -> Bad Request
+            ServletUtils.writeServiceResponse(resp,
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(new InputValidationException("Invalid arguments " + path)),
+                    null);
+            return;
+        }
+        String email = req.getParameter("user");
+        List<Inscription> modelInss = null;
+        try {
+            modelInss = RunServiceFactory.getService().findAllFromUser(email);
+        } catch (InputValidationException e) {
+            ServletUtils.writeServiceResponse(resp,
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(e),
+                    null);
+            return;
+        }
+
+        List<RestInscriptionDto> restInss = new ArrayList<>();
+        for(Inscription ins: modelInss){
+            restInss.add(InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(ins));
+        }
+
+        ServletUtils.writeServiceResponse(resp,
+                HttpServletResponse.SC_OK,
+                JsonToRestInscriptionDtoConversor.toArrayNode(restInss),
+                null);
     }
 
     //Para CU 4 - POST a /inscription

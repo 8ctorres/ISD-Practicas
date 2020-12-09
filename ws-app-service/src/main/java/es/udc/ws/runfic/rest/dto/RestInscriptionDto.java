@@ -1,10 +1,5 @@
 package es.udc.ws.runfic.rest.dto;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import es.udc.ws.runfic.model.inscription.Inscription;
-
-import java.time.LocalDateTime;
-
 public class RestInscriptionDto {
     public RestInscriptionDto(){}
     private Long inscriptionID;

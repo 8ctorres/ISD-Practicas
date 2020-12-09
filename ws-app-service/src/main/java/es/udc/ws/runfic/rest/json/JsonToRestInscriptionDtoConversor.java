@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import es.udc.ws.runfic.rest.dto.RestInscriptionDto;
-import es.udc.ws.runfic.rest.dto.RestRaceDto;
 import es.udc.ws.util.json.ObjectMapperFactory;
 import es.udc.ws.util.json.exceptions.ParsingException;
 
@@ -34,8 +33,7 @@ public class JsonToRestInscriptionDtoConversor {
     public static ArrayNode toArrayNode(List<RestInscriptionDto> inscriptions) {
 
         ArrayNode inscriptionsNode = JsonNodeFactory.instance.arrayNode();
-        for (int i = 0; i < inscriptions.size(); i++) {
-            RestInscriptionDto inscriptionDto = inscriptions.get(i);
+        for (RestInscriptionDto inscriptionDto : inscriptions) {
             ObjectNode inscriptionObject = toObjectNode(inscriptionDto);
             inscriptionsNode.add(inscriptionObject);
         }

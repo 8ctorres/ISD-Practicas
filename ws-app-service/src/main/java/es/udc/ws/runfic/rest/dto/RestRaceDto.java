@@ -1,10 +1,5 @@
 package es.udc.ws.runfic.rest.dto;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import es.udc.ws.runfic.model.race.Race;
-
-import java.time.LocalDateTime;
-
 public class RestRaceDto {
     public RestRaceDto(){}
     private Long raceID;

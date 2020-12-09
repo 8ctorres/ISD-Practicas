@@ -37,9 +37,9 @@ public class RaceServlet extends HttpServlet {
     private void doFindById(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         String path = ServletUtils.normalizePath(req.getPathInfo());
         String raceIdAsString = path.substring(1);
-        Long raceId;
+        long raceId;
         try {
-            raceId = Long.valueOf(raceIdAsString);
+            raceId = Long.parseLong(raceIdAsString);
         } catch (NumberFormatException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(

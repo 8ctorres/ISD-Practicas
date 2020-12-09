@@ -11,7 +11,6 @@ import es.udc.ws.util.json.ObjectMapperFactory;
 import es.udc.ws.util.json.exceptions.ParsingException;
 
 import java.io.InputStream;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class JsonToRestRaceDtoConversor {
@@ -36,8 +35,7 @@ public class JsonToRestRaceDtoConversor {
     public static ArrayNode toArrayNode(List<RestRaceDto> races) {
 
         ArrayNode racesNode = JsonNodeFactory.instance.arrayNode();
-        for (int i = 0; i < races.size(); i++) {
-            RestRaceDto raceDto = races.get(i);
+        for (RestRaceDto raceDto : races) {
             ObjectNode raceObject = toObjectNode(raceDto);
             racesNode.add(raceObject);
         }
