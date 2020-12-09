@@ -60,7 +60,7 @@ public class JsonToRestRaceDtoConversor {
 
                 String city = raceObject.get("city").textValue().trim();
                 String description = raceObject.get("description").textValue().trim();
-                LocalDateTime startDateTime =  raceObject.get("startDateTime").;
+                String startDateTime =  raceObject.get("startDateTime").textValue().trim();
                 float price = raceObject.get("price").floatValue();
                 int participants = raceObject.get("participants").intValue();
                 int maxParticipants = raceObject.get("maxParticipants").intValue();
