@@ -10,13 +10,13 @@ public class RestRaceDto {
     private Long raceID;
     private String city;
     private String description;
-    private LocalDateTime startDateTime;
+    private String startDateTime;
     private float price;
     private int participants;
     private int maxParticipants;
 
     public RestRaceDto(Long raceID, String city, String description,
-                       LocalDateTime startDateTime, float price,
+                       String startDateTime, float price,
                        int participants, int maxParticipants) {
         this.raceID = raceID;
         this.city = city;
@@ -51,11 +51,11 @@ public class RestRaceDto {
         this.description = description;
     }
 
-    public LocalDateTime getStartDateTime() {
+    public String getStartDateTime() {
         return startDateTime;
     }
 
-    public void setStartDateTime(LocalDateTime startDateTime) {
+    public void setStartDateTime(String startDateTime) {
         this.startDateTime = startDateTime;
     }
 
