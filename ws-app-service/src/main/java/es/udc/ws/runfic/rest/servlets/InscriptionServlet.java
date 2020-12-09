@@ -1,10 +1,9 @@
 package es.udc.ws.runfic.rest.servlets;
 
 import es.udc.ws.runfic.model.inscription.Inscription;
+import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.runfic.model.runservice.RunServiceFactory;
-import es.udc.ws.runfic.model.runservice.exceptions.AlreadyInscribedException;
-import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
-import es.udc.ws.runfic.model.runservice.exceptions.RaceFullException;
+import es.udc.ws.runfic.model.runservice.exceptions.*;
 import es.udc.ws.runfic.rest.dto.InscriptionToRestInscriptionDtoConversor;
 import es.udc.ws.runfic.rest.dto.RestInscriptionDto;
 import es.udc.ws.runfic.rest.json.JsonToExceptionConversor;
@@ -116,6 +115,61 @@ public class InscriptionServlet extends HttpServlet {
 
     //Isma
     //Corresponde al Caso de Uso 6 - getRunnerNumber
-    private void doGetRunnerRunnerNumber(HttpServletRequest req, HttpServletResponse resp) {
+    private void doGetRunnerRunnerNumber(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+        String InscriptionIdParameter = req.getParameter("inscriptionID");
+        if (InscriptionIdParameter == null) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(
+                            new InputValidationException("Invalid Request: " + "parameter 'inscriptionId' is mandatory")),
+                    null);
+            return;
+        }
+        long inscriptionID;
+        try {
+            inscriptionID = Long.parseLong(InscriptionIdParameter);
+        } catch (NumberFormatException ex) {
+            ServletUtils
+                    .writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                            JsonToExceptionConversor.toInputValidationException(new InputValidationException(
+                                    "Invalid Request: " + "parameter 'InscriptionID' is invalid '" + InscriptionIdParameter + "'")),
+                            null);
+
+            return;
+        }
+
+        String user = req.getParameter("user");
+        if (user == null) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(
+                            new InputValidationException("Invalid Request: " + "parameter 'user' is mandatory")),
+                    null);
+            return;
+        }
+
+        String creditCardNumber = req.getParameter("creditCardNumber");
+        if (creditCardNumber == null) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(
+                            new InputValidationException("Invalid Request: " + "parameter 'creditCardNumber' is mandatory")),
+                    null);
+            return;
+        }
+
+        int runnerNumber;
+        try {
+            runnerNumber = RunServiceFactory.getService().getRunnerNumber(user, inscriptionID, creditCardNumber);
+        } catch (InstanceNotFoundException ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                    JsonToExceptionConversor.toInstanceNotFoundException(ex), null);
+            return;
+        } catch (InputValidationException ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(ex), null);
+            return;
+        } catch (InvalidUserException | NumberTakenException e) {
+            e.printStackTrace();
+        }
+
     }
 }
