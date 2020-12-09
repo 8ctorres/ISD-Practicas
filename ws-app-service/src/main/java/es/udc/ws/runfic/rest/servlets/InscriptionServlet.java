@@ -1,5 +1,6 @@
 package es.udc.ws.runfic.rest.servlets;
 
+import com.fasterxml.jackson.core.exc.InputCoercionException;
 import es.udc.ws.runfic.model.inscription.Inscription;
 import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.runfic.model.runservice.RunServiceFactory;
@@ -8,10 +9,12 @@ import es.udc.ws.runfic.rest.dto.InscriptionToRestInscriptionDtoConversor;
 import es.udc.ws.runfic.rest.dto.RestInscriptionDto;
 import es.udc.ws.runfic.rest.json.JsonToExceptionConversor;
 import es.udc.ws.runfic.rest.json.JsonToRestInscriptionDtoConversor;
+import es.udc.ws.runfic.utils.RunficPropertyValidator;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.json.exceptions.ParsingException;
 import es.udc.ws.util.servlet.ServletUtils;
+import es.udc.ws.util.validation.PropertyValidator;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -23,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static es.udc.ws.runfic.utils.ModelConstants.MAX_PRICE;
 
 public class InscriptionServlet extends HttpServlet {
     //Carlos
@@ -116,49 +121,57 @@ public class InscriptionServlet extends HttpServlet {
     //Isma
     //Corresponde al Caso de Uso 6 - getRunnerNumber
     private void doGetRunnerRunnerNumber(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
+        //Inscription ID Checking
         String InscriptionIdParameter = req.getParameter("inscriptionID");
-        if (InscriptionIdParameter == null) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    JsonToExceptionConversor.toInputValidationException(
-                            new InputValidationException("Invalid Request: " + "parameter 'inscriptionId' is mandatory")),
-                    null);
-            return;
-        }
-        long inscriptionID;
+        Long inscriptionID = null;
         try {
             inscriptionID = Long.parseLong(InscriptionIdParameter);
+            PropertyValidator.validateLong("Inscription ID", inscriptionID, 0, MAX_PRICE);
+        }catch (InputValidationException ex){
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(ex),
+                    null);
         } catch (NumberFormatException ex) {
             ServletUtils
                     .writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                             JsonToExceptionConversor.toInputValidationException(new InputValidationException(
                                     "Invalid Request: " + "parameter 'InscriptionID' is invalid '" + InscriptionIdParameter + "'")),
                             null);
-
-            return;
         }
 
+        //User email checking
         String user = req.getParameter("user");
-        if (user == null) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    JsonToExceptionConversor.toInputValidationException(
-                            new InputValidationException("Invalid Request: " + "parameter 'user' is mandatory")),
+        try{
+            if (user == null){
+                throw new InputValidationException("Parameter user is invalid: " + user);
+            }
+            RunficPropertyValidator.validateEmail(user);
+        }
+        catch (InputValidationException ex){
+            ServletUtils.writeServiceResponse(resp,
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(ex),
                     null);
-            return;
         }
 
-        String creditCardNumber = req.getParameter("creditCardNumber");
-        if (creditCardNumber == null) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    JsonToExceptionConversor.toInputValidationException(
-                            new InputValidationException("Invalid Request: " + "parameter 'creditCardNumber' is mandatory")),
+        //CreditCardNumber checking
+        String ccn = req.getParameter("ccn");
+        try{
+            if (ccn == null){
+                throw new InputValidationException("Parameter Credit Card Number is invalid: " + ccn);
+            }
+            PropertyValidator.validateCreditCard(ccn);
+        }
+        catch (InputValidationException ex){
+            ServletUtils.writeServiceResponse(resp,
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(ex),
                     null);
-            return;
         }
 
         int runnerNumber;
         try {
-            runnerNumber = RunServiceFactory.getService().getRunnerNumber(user, inscriptionID, creditCardNumber);
+            runnerNumber = RunServiceFactory.getService().getRunnerNumber(user, inscriptionID, ccn);
         } catch (InstanceNotFoundException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
                     JsonToExceptionConversor.toInstanceNotFoundException(ex), null);
@@ -167,9 +180,15 @@ public class InscriptionServlet extends HttpServlet {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(ex), null);
             return;
-        } catch (InvalidUserException | NumberTakenException e) {
-            e.printStackTrace();
+        } catch (InvalidUserException ex){
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInvalidUserException(ex), null);
+        } catch(NumberTakenException ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toNumberTakenException(ex), null);
         }
 
+        //If everything went just fine, send an OK
+        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK, null, null);
     }
 }
