@@ -20,8 +20,8 @@ public class JsonToRestRaceDtoConversor {
 
         ObjectNode raceObject = JsonNodeFactory.instance.objectNode();
 
-        if (race.getRaceId() != null) {
-            raceObject.put("raceId", race.getRaceId());
+        if (race.getRaceID() != null) {
+            raceObject.put("raceId", race.getRaceID());
         }
         raceObject.put("city", race.getCity()).
                 put("startDateTime", race.getStartDateTime()).
