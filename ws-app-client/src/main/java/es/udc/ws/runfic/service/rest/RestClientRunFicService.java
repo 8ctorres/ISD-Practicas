@@ -1,15 +1,36 @@
 package es.udc.ws.runfic.service.rest;
 
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.jdi.InvalidStackFrameException;
 import es.udc.ws.runfic.service.ClientRunFicService;
 import es.udc.ws.runfic.service.dto.ClientInscriptionDto;
 import es.udc.ws.runfic.service.dto.ClientRaceDto;
+import es.udc.ws.runfic.service.rest.json.JsonToClientExceptionConversor;
+import es.udc.ws.runfic.service.rest.json.JsonToClientInscriptionDtoConversor;
+import es.udc.ws.util.configuration.ConfigurationParametersManager;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
+import es.udc.ws.util.json.ObjectMapperFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.fluent.Form;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RestClientRunFicService implements ClientRunFicService {
+
+    private final static String ENDPOINT_ADDRESS_PARAMETER = "RestClientRunFicService.endpointAddress";
+    private String endpointAddress = null;
 
     @Override
     //Caso de Uso 1 - Brais
@@ -32,13 +53,47 @@ public class RestClientRunFicService implements ClientRunFicService {
     @Override
     //Caso de Uso 4 - Carlos
     public ClientInscriptionDto inscribe(Long raceID, String email, String creditCardNumber) throws InputValidationException, InstanceNotFoundException {
-        throw new UnsupportedOperationException();
+        try {
+            HttpResponse response = Request.Post(getEndpointAddres() + "inscription")
+                    .bodyForm(
+                            Form.form()
+                                    .add("raceID", raceID.toString())
+                                    .add("user", email)
+                                    .add("creditCard", creditCardNumber)
+                                    .build()
+                    )
+                    .execute().returnResponse();
+
+            validateStatusCode(HttpStatus.SC_CREATED, response);
+
+            return JsonToClientInscriptionDtoConversor.toClientInscriptionDto(
+                    response.getEntity().getContent());
+
+        }catch(InputValidationException | InstanceNotFoundException e){
+            throw e;
+        }catch(Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     //Caso de Uso 5 - Carlos
     public List<ClientInscriptionDto> findAllFromUser(String email) throws InputValidationException {
-        throw new UnsupportedOperationException();
+        try {
+
+            HttpResponse response = Request.Get(getEndpointAddres() + "inscription/?user="
+                    + URLEncoder.encode(email, "UTF-8"))
+                    .execute().returnResponse();
+
+            validateStatusCode(HttpStatus.SC_OK, response);
+
+            return JsonToClientInscriptionDtoConversor.toClientInscriptionDtos(
+                    response.getEntity().getContent()
+            );
+
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -46,4 +101,67 @@ public class RestClientRunFicService implements ClientRunFicService {
     public int getRunnerNumber(String email, Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException {
         throw new UnsupportedOperationException();
     }
+
+    private InputStream toInputStream(ClientInscriptionDto movie) {
+
+        try {
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ObjectMapper objectMapper = ObjectMapperFactory.instance();
+            objectMapper.writer(new DefaultPrettyPrinter()).writeValue(outputStream,
+                    JsonToClientInscriptionDtoConversor.toObjectNode(movie));
+
+            return new ByteArrayInputStream(outputStream.toByteArray());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private synchronized String getEndpointAddres() {
+        if (endpointAddress == null) {
+            endpointAddress = ConfigurationParametersManager
+                    .getParameter(ENDPOINT_ADDRESS_PARAMETER);
+        }
+        return endpointAddress;
+    }
+
+    private void validateStatusCode(int successCode, HttpResponse response) throws Exception {
+
+        try {
+
+            int statusCode = response.getStatusLine().getStatusCode();
+
+            /* Success? */
+            if (statusCode == successCode) {
+                return;
+            }
+
+            /* Handler error. */
+            switch (statusCode) {
+
+                case HttpStatus.SC_NOT_FOUND:
+                    throw JsonToClientExceptionConversor.fromNotFoundErrorCode(
+                            response.getEntity().getContent());
+
+                case HttpStatus.SC_BAD_REQUEST:
+                    throw JsonToClientExceptionConversor.fromBadRequestErrorCode(
+                            response.getEntity().getContent());
+
+                case HttpStatus.SC_GONE:
+                    throw JsonToClientExceptionConversor.fromGoneErrorCode(
+                            response.getEntity().getContent());
+
+                default:
+                    throw new RuntimeException("HTTP error; status code = "
+                            + statusCode);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 }
