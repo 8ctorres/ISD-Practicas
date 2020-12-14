@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RaceServlet extends HttpServlet {
 
@@ -66,7 +68,6 @@ public class RaceServlet extends HttpServlet {
 
     }
 
-
     //Brais
     //Corresponde al Caso de Uso 1 - addRace
     @Override
@@ -85,6 +86,23 @@ public class RaceServlet extends HttpServlet {
         } catch (ParsingException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, JsonToExceptionConversor
                     .toInputValidationException(new InputValidationException(ex.getMessage())), null);
+            return;
         }
+        Race race = RaceToRestRaceDtoConversor.toRace(raceDto);
+        try {
+            race = RunServiceFactory.getService().addRace(race);
+        } catch (InputValidationException ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(ex), null);
+            return;
+        }
+        raceDto = RaceToRestRaceDtoConversor.toRestRaceDto(race);
+
+        String raceURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + race.getRaceID();
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put("Location", raceURL);
+
+        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
+                JsonToRestRaceDtoConversor.toObjectNode(raceDto), headers);
     }
 }
