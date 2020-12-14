@@ -3,7 +3,7 @@ package es.udc.ws.runfic.model.race;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import static es.udc.ws.runfic.utils.RunFicDateTimeUtils.roundToMinute;
+import static es.udc.ws.runfic.model.utils.RunFicDateTimeUtils.roundToMinute;
 
 public class Race {
     private Long raceID;
@@ -111,6 +111,6 @@ public class Race {
 
     @Override
     public int hashCode() {
-        return Objects.hash(raceID, city, description, startDateTime, price, participants, maxParticipants, addedDateTime);
+        return Objects.hash(raceID, city, description, roundToMinute(startDateTime), price, participants, maxParticipants, addedDateTime);
     }
 }

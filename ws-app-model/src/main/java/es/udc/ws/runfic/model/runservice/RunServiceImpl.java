@@ -13,15 +13,14 @@ import es.udc.ws.util.sql.DataSourceLocator;
 import es.udc.ws.util.validation.PropertyValidator;
 
 import javax.sql.DataSource;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static es.udc.ws.runfic.utils.ModelConstants.*;
-import static es.udc.ws.runfic.utils.RunficPropertyValidator.validateFloat;
-import static es.udc.ws.runfic.utils.RunficPropertyValidator.validateEmail;
+import static es.udc.ws.runfic.model.utils.ModelConstants.*;
+import static es.udc.ws.runfic.model.utils.RunficPropertyValidator.validateFloat;
+import static es.udc.ws.runfic.model.utils.RunficPropertyValidator.validateEmail;
 import static es.udc.ws.util.validation.PropertyValidator.validateCreditCard;
 
 public class RunServiceImpl implements RunService{

@@ -19,13 +19,11 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.Month;
 import java.util.List;
 
-import static es.udc.ws.runfic.utils.ModelConstants.RUNFIC_DATA_SOURCE;
+import static es.udc.ws.runfic.model.utils.ModelConstants.RUNFIC_DATA_SOURCE;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RunServiceTest {

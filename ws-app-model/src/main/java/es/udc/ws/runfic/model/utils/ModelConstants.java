@@ -1,4 +1,4 @@
-package es.udc.ws.runfic.utils;
+package es.udc.ws.runfic.model.utils;
 
 public final class ModelConstants {
     private ModelConstants(){}

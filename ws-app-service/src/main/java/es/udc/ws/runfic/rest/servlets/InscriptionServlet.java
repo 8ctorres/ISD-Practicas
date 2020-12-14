@@ -1,23 +1,19 @@
 package es.udc.ws.runfic.rest.servlets;
 
-import com.fasterxml.jackson.core.exc.InputCoercionException;
 import es.udc.ws.runfic.model.inscription.Inscription;
-import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.runfic.model.runservice.RunServiceFactory;
 import es.udc.ws.runfic.model.runservice.exceptions.*;
 import es.udc.ws.runfic.rest.dto.InscriptionToRestInscriptionDtoConversor;
 import es.udc.ws.runfic.rest.dto.RestInscriptionDto;
 import es.udc.ws.runfic.rest.json.JsonToExceptionConversor;
 import es.udc.ws.runfic.rest.json.JsonToRestInscriptionDtoConversor;
-import es.udc.ws.runfic.utils.RunficPropertyValidator;
+import es.udc.ws.runfic.model.utils.RunficPropertyValidator;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.json.exceptions.ParsingException;
 import es.udc.ws.util.servlet.ServletUtils;
 import es.udc.ws.util.validation.PropertyValidator;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static es.udc.ws.runfic.utils.ModelConstants.MAX_PRICE;
+import static es.udc.ws.runfic.model.utils.ModelConstants.MAX_PRICE;
 
 public class InscriptionServlet extends HttpServlet {
     //Carlos

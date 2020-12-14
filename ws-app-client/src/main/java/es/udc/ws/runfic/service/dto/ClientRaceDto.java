@@ -1,12 +1,11 @@
-package es.udc.ws.runfic.rest.dto;
+package es.udc.ws.runfic.service.dto;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import static es.udc.ws.runfic.model.utils.RunFicDateTimeUtils.roundToMinute;
+import static es.udc.ws.runfic.service.utils.RunServiceDateTimeUtils.roundToMinute;
 
-public class RestRaceDto {
-    public RestRaceDto(){}
+public class ClientRaceDto {
     private Long raceID;
     private String city;
     private String description;
@@ -15,9 +14,9 @@ public class RestRaceDto {
     private int participants;
     private int maxParticipants;
 
-    public RestRaceDto(Long raceID, String city, String description,
-                       LocalDateTime startDateTime, float price,
-                       int participants, int maxParticipants) {
+    public ClientRaceDto(Long raceID, String city, String description,
+                         LocalDateTime startDateTime, float price,
+                         int participants, int maxParticipants) {
         this.raceID = raceID;
         this.city = city;
         this.description = description;
@@ -87,7 +86,7 @@ public class RestRaceDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RestRaceDto that = (RestRaceDto) o;
+        ClientRaceDto that = (ClientRaceDto) o;
         return Float.compare(that.price, price) == 0 &&
                 participants == that.participants &&
                 maxParticipants == that.maxParticipants &&

@@ -11,6 +11,7 @@ import es.udc.ws.util.json.ObjectMapperFactory;
 import es.udc.ws.util.json.exceptions.ParsingException;
 
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class JsonToRestRaceDtoConversor {
@@ -23,7 +24,7 @@ public class JsonToRestRaceDtoConversor {
             raceObject.put("raceId", race.getRaceID());
         }
         raceObject.put("city", race.getCity()).
-                put("startDateTime", race.getStartDateTime()).
+                put("startDateTime", race.getStartDateTime().toString()).
                 put("price", race.getPrice()).
                 put("description", race.getDescription()).
                 put("participants", race.getParticipants()).
@@ -58,7 +59,8 @@ public class JsonToRestRaceDtoConversor {
 
                 String city = raceObject.get("city").textValue().trim();
                 String description = raceObject.get("description").textValue().trim();
-                String startDateTime =  raceObject.get("startDateTime").textValue().trim();
+                String strStartDateTime =  raceObject.get("startDateTime").textValue().trim();
+                LocalDateTime startDateTime = LocalDateTime.parse(strStartDateTime);
                 float price = raceObject.get("price").floatValue();
                 int participants = raceObject.get("participants").intValue();
                 int maxParticipants = raceObject.get("maxParticipants").intValue();

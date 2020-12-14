@@ -3,7 +3,7 @@ package es.udc.ws.runfic.model.inscription;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import static es.udc.ws.runfic.utils.RunFicDateTimeUtils.roundToMinute;
+import static es.udc.ws.runfic.model.utils.RunFicDateTimeUtils.roundToMinute;
 
 public class Inscription {
     private Long inscriptionID;
@@ -103,6 +103,6 @@ public class Inscription {
 
     @Override
     public int hashCode() {
-        return Objects.hash(inscriptionID, user, creditCardNumber, raceID, inscriptionDateTime, runnerNumber, isNumberTaken);
+        return Objects.hash(inscriptionID, user, creditCardNumber, raceID, roundToMinute(inscriptionDateTime), runnerNumber, isNumberTaken);
     }
 }

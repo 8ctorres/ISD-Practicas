@@ -1,9 +1,9 @@
-package es.udc.ws.runfic.rest.dto;
+package es.udc.ws.runfic.service.dto;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class RestInscriptionDto {
-    public RestInscriptionDto(){}
+public class ClientInscriptionDto {
     private Long inscriptionID;
     private String user;
     private String creditCardNumber;
@@ -11,9 +11,7 @@ public class RestInscriptionDto {
     private int runnerNumber;
     private boolean isNumberTaken;
 
-    public RestInscriptionDto(Long inscriptionID, String user, String creditCardNumber,
-                              Long raceID,
-                              int runnerNumber, boolean isNumberTaken) {
+    public ClientInscriptionDto(Long inscriptionID, String user, String creditCardNumber, Long raceID, int runnerNumber, boolean isNumberTaken) {
         this.inscriptionID = inscriptionID;
         this.user = user;
         this.creditCardNumber = creditCardNumber;
@@ -74,7 +72,7 @@ public class RestInscriptionDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RestInscriptionDto that = (RestInscriptionDto) o;
+        ClientInscriptionDto that = (ClientInscriptionDto) o;
         return runnerNumber == that.runnerNumber &&
                 isNumberTaken == that.isNumberTaken &&
                 Objects.equals(inscriptionID, that.inscriptionID) &&

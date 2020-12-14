@@ -1,4 +1,4 @@
-package es.udc.ws.runfic.utils;
+package es.udc.ws.runfic.model.utils;
 
 import es.udc.ws.util.exceptions.InputValidationException;
 
