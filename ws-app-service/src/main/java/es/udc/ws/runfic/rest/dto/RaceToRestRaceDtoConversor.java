@@ -8,12 +8,12 @@ public class RaceToRestRaceDtoConversor {
 
     public static RestRaceDto toRestRaceDto(Race modelRace){
         return new RestRaceDto(modelRace.getRaceID(), modelRace.getCity(), modelRace.getDescription(),
-                modelRace.getStartDateTime().toString(), modelRace.getPrice(),
+                modelRace.getStartDateTime(), modelRace.getPrice(),
                 modelRace.getParticipants(), modelRace.getMaxParticipants());
     }
 
-    public Race toRace(RestRaceDto restRace){
-        return new Race(restRace.getRaceID(), restRace.getCity(), restRace.getDescription(), LocalDateTime.parse(restRace.getStartDateTime()),
+    public static Race toRace(RestRaceDto restRace){
+        return new Race(restRace.getRaceID(), restRace.getCity(), restRace.getDescription(), restRace.getStartDateTime(),
                 restRace.getPrice(), restRace.getParticipants(), restRace.getMaxParticipants(), null);
     }
 }

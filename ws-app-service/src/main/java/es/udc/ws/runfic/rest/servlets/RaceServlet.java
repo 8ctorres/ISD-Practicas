@@ -90,7 +90,7 @@ public class RaceServlet extends HttpServlet {
         }
         Race race = RaceToRestRaceDtoConversor.toRace(raceDto);
         try {
-            race = RunServiceFactory.getService().addRace(race);
+            race = RunServiceFactory.getService().addRace(race.getCity(), race.getDescription(), race.getStartDateTime(), race.getPrice(), race.getMaxParticipants());
         } catch (InputValidationException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(ex), null);
