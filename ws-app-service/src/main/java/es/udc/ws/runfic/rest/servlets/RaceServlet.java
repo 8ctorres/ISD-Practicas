@@ -84,13 +84,8 @@ public class RaceServlet extends HttpServlet {
             return;
         }
         List<Race> raceList;
-        try {
-            raceList = RunServiceFactory.getService().findByDate(dateTime, raceCity);
-        } catch (InstanceNotFoundException ex) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                    JsonToExceptionConversor.toInstanceNotFoundException(ex), null);
-            return;
-        }
+        raceList = RunServiceFactory.getService().findByDate(dateTime, raceCity);
+
         List<RestRaceDto> raceDtoList = new ArrayList<>();;
         RestRaceDto raceDto;
         for (Race race : raceList) {
