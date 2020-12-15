@@ -15,7 +15,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RaceServlet extends HttpServlet {
@@ -65,7 +69,36 @@ public class RaceServlet extends HttpServlet {
     //Brais
     //Corresponde al Caso de Uso 3 -> findByDate(and City)
     private void doFindByDateAndCity(HttpServletRequest req, HttpServletResponse resp) throws IOException{
-
+        String path = ServletUtils.normalizePath(req.getPathInfo());
+        String raceCity = path.substring(2);
+        String raceDateTime = path.substring(4);
+        LocalDateTime dateTime;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            dateTime =  LocalDateTime.parse(raceDateTime,formatter);
+        } catch (NumberFormatException ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(
+                            new InputValidationException("Invalid Request: " + "invalid startDateTime '" + raceDateTime)),
+                    null);
+            return;
+        }
+        List<Race> raceList;
+        try {
+            raceList = RunServiceFactory.getService().findByDate(dateTime, raceCity);
+        } catch (InstanceNotFoundException ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                    JsonToExceptionConversor.toInstanceNotFoundException(ex), null);
+            return;
+        }
+        List<RestRaceDto> raceDtoList = new ArrayList<>();;
+        RestRaceDto raceDto;
+        for (Race race : raceList) {
+            raceDto = RaceToRestRaceDtoConversor.toRestRaceDto(race);
+            raceDtoList.add(raceDto);
+        }
+        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                JsonToRestRaceDtoConversor.toArrayNode(raceDtoList), null);
     }
 
     //Brais
