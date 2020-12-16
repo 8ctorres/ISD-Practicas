@@ -596,33 +596,13 @@ public class RunServiceTest {
 //
 //        Relativos al CU 6 - Indicar que usuario ha recogido un dorsal correspondiente a una inscripción
 //
-//        CP 1 - Recoger dorsal con email inválido
-//        CP 2 - Recoger dorsal con tarjeta de crédito inválida
-//        CP 3 - Recoger dorsal de una carrera que no existe
-//        CP 4 - El dorsal ya ha sido entregado
-//        CP 5 - Recoge el dorsal y todo en orden
+//        CP 1 - Recoger dorsal con tarjeta de crédito inválida
+//        CP 2 - Recoger dorsal de una carrera que no existe
+//        CP 3 - El dorsal ya ha sido entregado
+//        CP 4 - Recoge el dorsal y está en orden
 
 
     //Caso de Prueba 1
-    @Test
-    public void testGetDorsalWithInvalidEmail()
-            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException, AlreadyInscribedException {
-
-        //Creamos una carrera
-        Race createdRace = runService.addRace("Domaio", "Carrera espacial", LocalDateTime.of(2021, Month.JULY, 24, 17, 30), 8f, 700);
-
-        //Inscribimos a una persona
-        Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
-
-        //Intenta obtener el dorsal pero se equivoca de correo
-        assertThrows(InstanceNotFoundException.class, () -> runService.getRunnerNumber("notismael.verdec@udc.es", createdRace.getRaceID(), "4944 9485 4849 8426"));
-
-        //Borramos los elementos creados
-        removeInscription(createdIns.getInscriptionID());
-        removeRace(createdRace.getRaceID());
-    }
-
-    //Caso de Prueba 2
     @Test
     public void testGetDorsalWithInvalidCreditCard()
             throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException, AlreadyInscribedException {
@@ -634,7 +614,7 @@ public class RunServiceTest {
         Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
 
         //Intenta obtener el dorsal pero se equivoca de tarjeta
-        assertThrows(InputValidationException.class, () -> runService.getRunnerNumber("ismael.verdec@udc.es", createdRace.getRaceID(), "tarjeta metropolitana"));
+        assertThrows(InputValidationException.class, () -> runService.getRunnerNumber(createdRace.getRaceID(), "tarjeta metropolitana"));
 
         //Borramos los elementos creados
         removeInscription(createdIns.getInscriptionID());
@@ -653,7 +633,7 @@ public class RunServiceTest {
         Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
 
         //Intenta obtener el dorsal pero se equivoca de codigo de carrera
-        assertThrows(InstanceNotFoundException.class, () -> runService.getRunnerNumber("ismael.verdec@udc.es", NON_EXISTENT_RACE_ID, "4944 9485 4849 8426"));
+        assertThrows(InstanceNotFoundException.class, () -> runService.getRunnerNumber(NON_EXISTENT_RACE_ID, "4944 9485 4849 8426"));
 
         //Borramos los elementos creados
         removeInscription(createdIns.getInscriptionID());
@@ -672,8 +652,8 @@ public class RunServiceTest {
         Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
 
         //Obtiene el dorsal y luego vuelve a por otro para colar a su primo en la carrera
-        runService.getRunnerNumber("ismael.verdec@udc.es", createdIns.getInscriptionID(), "4944 9485 4849 8426");
-        assertThrows(NumberTakenException.class, () -> runService.getRunnerNumber("ismael.verdec@udc.es", createdIns.getInscriptionID(), "4944 9485 4849 8426"));
+        runService.getRunnerNumber(createdIns.getInscriptionID(), "4944 9485 4849 8426");
+        assertThrows(NumberTakenException.class, () -> runService.getRunnerNumber(createdIns.getInscriptionID(), "4944 9485 4849 8426"));
 
         //Borramos los elementos creados
         removeInscription(createdIns.getInscriptionID());
@@ -692,7 +672,7 @@ public class RunServiceTest {
         Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
 
         //Obtiene el dorsal 1 de la carrera y este aparece como recogido
-        runService.getRunnerNumber("ismael.verdec@udc.es", createdIns.getInscriptionID(), "4944 9485 4849 8426");
+        runService.getRunnerNumber(createdIns.getInscriptionID(), "4944 9485 4849 8426");
 
         Inscription foundIns;
         try (Connection connection = dataSource.getConnection()){

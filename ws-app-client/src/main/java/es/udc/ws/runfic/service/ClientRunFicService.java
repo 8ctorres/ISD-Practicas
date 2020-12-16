@@ -32,5 +32,5 @@ public interface ClientRunFicService {
     //a una inscripción en el local de RunFic, presentando el código o identificador obtenido al realizar la inscripción y el número de tarjeta
     //de crédito utilizada para pagarla. A partir de esos datos, un empleado de RunFic podrá indicar que el dorsal correspondiente a esa inscripción
     //se ha entregado
-    int getRunnerNumber(String email, Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException;
+    int getRunnerNumber(Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException;
 }

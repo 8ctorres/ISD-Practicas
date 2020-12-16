@@ -135,21 +135,6 @@ public class InscriptionServlet extends HttpServlet {
                             null);
         }
 
-        //User email checking
-        String user = req.getParameter("user");
-        try{
-            if (user == null){
-                throw new InputValidationException("Parameter user is invalid: " + user);
-            }
-            RunficPropertyValidator.validateEmail(user);
-        }
-        catch (InputValidationException ex){
-            ServletUtils.writeServiceResponse(resp,
-                    HttpServletResponse.SC_BAD_REQUEST,
-                    JsonToExceptionConversor.toInputValidationException(ex),
-                    null);
-        }
-
         //CreditCardNumber checking
         String ccn = req.getParameter("creditCardNumber");
         try{
@@ -167,7 +152,7 @@ public class InscriptionServlet extends HttpServlet {
 
         int runnerNumber;
         try {
-            runnerNumber = RunServiceFactory.getService().getRunnerNumber(user, inscriptionID, ccn);
+            runnerNumber = RunServiceFactory.getService().getRunnerNumber(inscriptionID, ccn);
         } catch (InstanceNotFoundException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
                     JsonToExceptionConversor.toInstanceNotFoundException(ex), null);

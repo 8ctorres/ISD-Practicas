@@ -170,9 +170,8 @@ public class RunServiceImpl implements RunService{
     //Caso de Uso 6 - Isma
     //Equivalente REST -> Overloaded POST a /inscription/id?creditCardNumber="ccn"
     @Override
-    public int getRunnerNumber(String email, Long inscriptionID, String creditCard) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
+    public int getRunnerNumber(Long inscriptionID, String creditCard) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
         String creditCardNumber =  creditCard.replaceAll("\\s+", ""); //Removes all spaces inside
-        validateEmail(email);
         validateCreditCard(creditCardNumber);
         try (Connection connection = this.datasource.getConnection()) {
             Inscription thisInscription = this.inscriptionDao.find(connection, inscriptionID);
@@ -182,8 +181,8 @@ public class RunServiceImpl implements RunService{
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
                 //Comprueba que los datos del usuario se corresponden con la inscripción
-                if (!((thisInscription.getCreditCardNumber().equals(creditCardNumber)) && (thisInscription.getUser().equals(email)))) {
-                    throw new InvalidUserException("This user code and credit card don't match with the inscription");
+                if (!((thisInscription.getCreditCardNumber().equals(creditCardNumber)))) {
+                    throw new InvalidUserException("This user credit card doesn't match with the inscription");
                 }
                 //Comprueba que el número de inscripción no ha sido entregado previamente
                 if (thisInscription.isNumberTaken()) {
