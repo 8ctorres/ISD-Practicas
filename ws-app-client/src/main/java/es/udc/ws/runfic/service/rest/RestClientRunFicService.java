@@ -127,7 +127,7 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     @Override
     //Caso de Uso 6 - Isma
-    public int getRunnerNumber(String email, Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException {
+    public int getRunnerNumber(Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException {
         throw new UnsupportedOperationException();
     }
 
