@@ -39,4 +39,13 @@ public class RunficPropertyValidator{
                     " and lower than " + upperValidLimit + "): " +
                     input);
     }
+
+    public static void validateInt(String propertyName, int input, int lowerValidLimit, int upperValidLimit)
+            throws InputValidationException{
+        if ((input < lowerValidLimit) || (input > upperValidLimit))
+            throw new InputValidationException("Invalid " + propertyName +
+                    " value (it must be greater than " + lowerValidLimit +
+                    " and lower than " + upperValidLimit + "): " +
+                    input);
+    }
 }

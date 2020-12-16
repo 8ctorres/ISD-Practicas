@@ -15,8 +15,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +34,10 @@ public class RaceServlet extends HttpServlet {
         String path = ServletUtils.normalizePath(req.getPathInfo());
         if (path == null || path.length() == 0) {
             //No se pasó un ID de carrera
-            doFindById(req, resp);
+            doFindByDateAndCity(req, resp);
         } else {
             //Sí se pasó un ID de carrera
-            doFindByDateAndCity(req, resp);
+            doFindById(req, resp);
         }
     }
 
@@ -69,22 +72,21 @@ public class RaceServlet extends HttpServlet {
     //Brais
     //Corresponde al Caso de Uso 3 -> findByDate(and City)
     private void doFindByDateAndCity(HttpServletRequest req, HttpServletResponse resp) throws IOException{
-        String path = ServletUtils.normalizePath(req.getPathInfo());
-        String raceCity = path.substring(2);
-        String raceDateTime = path.substring(4);
-        LocalDateTime dateTime;
+        String raceCity = req.getParameter("city");
+        String raceDate = req.getParameter("date");
+        LocalDateTime date;
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            dateTime =  LocalDateTime.parse(raceDateTime,formatter);
-        } catch (NumberFormatException ex) {
+            //Consideramos el final del día para que entren en la búsqueda también las carreras de ese mismo día
+            date = LocalDate.parse(raceDate).atTime(23, 59, 59);
+        } catch (DateTimeParseException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(
-                            new InputValidationException("Invalid Request: " + "invalid startDateTime '" + raceDateTime)),
+                            new InputValidationException("Invalid Request: invalid start date :" + raceDate)),
                     null);
             return;
         }
         List<Race> raceList;
-        raceList = RunServiceFactory.getService().findByDate(dateTime, raceCity);
+        raceList = RunServiceFactory.getService().findByDate(date, raceCity);
 
         List<RestRaceDto> raceDtoList = new ArrayList<>();;
         RestRaceDto raceDto;

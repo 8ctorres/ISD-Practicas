@@ -19,8 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static es.udc.ws.runfic.model.utils.ModelConstants.*;
-import static es.udc.ws.runfic.model.utils.RunficPropertyValidator.validateFloat;
-import static es.udc.ws.runfic.model.utils.RunficPropertyValidator.validateEmail;
+import static es.udc.ws.runfic.model.utils.RunficPropertyValidator.*;
 import static es.udc.ws.util.validation.PropertyValidator.validateCreditCard;
 
 public class RunServiceImpl implements RunService{
@@ -42,7 +41,7 @@ public class RunServiceImpl implements RunService{
         PropertyValidator.validateMandatoryString("city", city);
         PropertyValidator.validateMandatoryString("description", description);
         validateFloat("price", price, 0, MAX_PRICE);
-        PropertyValidator.validateDouble("maxParticipants", maxParticipants, 0, MAX_PARTICIPANTS);
+        validateInt("maxParticipants", maxParticipants, 1, MAX_PARTICIPANTS);
 
         if (startDateTime.compareTo(LocalDateTime.now().withNano(0).plusHours(24)) <= 0){
             throw new InputValidationException("La fecha de inicio de la carrera no puede ser anterior a 24 desde ahora mismo");
@@ -169,7 +168,7 @@ public class RunServiceImpl implements RunService{
     }
 
     //Caso de Uso 6 - Isma
-    //Equivalente REST -> Overloaded POST a /inscription/id?get_number
+    //Equivalente REST -> Overloaded POST a /inscription/id?creditCardNumber="ccn"
     @Override
     public int getRunnerNumber(String email, Long inscriptionID, String creditCard) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
         String creditCardNumber =  creditCard.replaceAll("\\s+", ""); //Removes all spaces inside
