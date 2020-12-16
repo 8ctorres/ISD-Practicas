@@ -44,7 +44,7 @@ public class RestClientRunFicService implements ClientRunFicService {
 
             validateStatusCode(HttpStatus.SC_CREATED, response);
 
-            return JsonToClientRaceDtoConversor.toClientRaceDto(response.getEntity().getContent()).getRaceId();
+            return JsonToClientRaceDtoConversor.toClientRaceDto(response.getEntity().getContent()).getRaceID();
 
         } catch (InputValidationException e) {
             throw e;
@@ -69,7 +69,7 @@ public class RestClientRunFicService implements ClientRunFicService {
     //Caso de Uso 4 - Carlos
     public ClientInscriptionDto inscribe(Long raceID, String email, String creditCardNumber) throws InputValidationException, InstanceNotFoundException {
         try {
-            HttpResponse response = Request.Post(getEndpointAddres() + "inscription")
+            HttpResponse response = Request.Post(getEndpointAddress() + "inscription")
                     .bodyForm(
                             Form.form()
                                     .add("raceID", raceID.toString())
@@ -96,7 +96,7 @@ public class RestClientRunFicService implements ClientRunFicService {
     public List<ClientInscriptionDto> findAllFromUser(String email) throws InputValidationException {
         try {
 
-            HttpResponse response = Request.Get(getEndpointAddres() + "inscription/?user="
+            HttpResponse response = Request.Get(getEndpointAddress() + "inscription/?user="
                     + URLEncoder.encode(email, "UTF-8"))
                     .execute().returnResponse();
 
@@ -117,14 +117,14 @@ public class RestClientRunFicService implements ClientRunFicService {
         throw new UnsupportedOperationException();
     }
 
-    private InputStream toInputStream(ClientInscriptionDto movie) {
+    private InputStream toInputStream(ClientRaceDto race) {
 
         try {
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ObjectMapper objectMapper = ObjectMapperFactory.instance();
             objectMapper.writer(new DefaultPrettyPrinter()).writeValue(outputStream,
-                    JsonToClientInscriptionDtoConversor.toObjectNode(movie));
+                    JsonToClientRaceDtoConversor.toObjectNode(race));
 
             return new ByteArrayInputStream(outputStream.toByteArray());
 
@@ -134,7 +134,7 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     }
 
-    private synchronized String getEndpointAddres() {
+    private synchronized String getEndpointAddress() {
         if (endpointAddress == null) {
             endpointAddress = ConfigurationParametersManager
                     .getParameter(ENDPOINT_ADDRESS_PARAMETER);
