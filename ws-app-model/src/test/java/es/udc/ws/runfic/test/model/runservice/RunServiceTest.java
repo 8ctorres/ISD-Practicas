@@ -596,33 +596,13 @@ public class RunServiceTest {
 //
 //        Relativos al CU 6 - Indicar que usuario ha recogido un dorsal correspondiente a una inscripción
 //
-//        CP 1 - Recoger dorsal con email inválido
-//        CP 2 - Recoger dorsal con tarjeta de crédito inválida
-//        CP 3 - Recoger dorsal de una carrera que no existe
-//        CP 4 - El dorsal ya ha sido entregado
-//        CP 5 - Recoge el dorsal y todo en orden
+//        CP 1 - Recoger dorsal con tarjeta de crédito inválida
+//        CP 2 - Recoger dorsal de una carrera que no existe
+//        CP 3 - El dorsal ya ha sido entregado
+//        CP 4 - Recoge el dorsal y está en orden
 
 
     //Caso de Prueba 1
-    @Test
-    public void testGetDorsalWithInvalidEmail()
-            throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException, AlreadyInscribedException {
-
-        //Creamos una carrera
-        Race createdRace = runService.addRace("Domaio", "Carrera espacial", LocalDateTime.of(2021, Month.JULY, 24, 17, 30), 8f, 700);
-
-        //Inscribimos a una persona
-        Inscription createdIns = runService.inscribe(createdRace.getRaceID(), "ismael.verdec@udc.es", "4944 9485 4849 8426");
-
-        //Intenta obtener el dorsal pero se equivoca de correo
-        assertThrows(InstanceNotFoundException.class, () -> runService.getRunnerNumber(createdRace.getRaceID(), "4944 9485 4849 8426"));
-
-        //Borramos los elementos creados
-        removeInscription(createdIns.getInscriptionID());
-        removeRace(createdRace.getRaceID());
-    }
-
-    //Caso de Prueba 2
     @Test
     public void testGetDorsalWithInvalidCreditCard()
             throws InputValidationException, InvalidUserException, InstanceNotFoundException, NumberTakenException, RaceFullException, InscriptionClosedException, AlreadyInscribedException {
