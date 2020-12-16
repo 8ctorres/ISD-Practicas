@@ -8,6 +8,7 @@ import es.udc.ws.runfic.service.dto.ClientInscriptionDto;
 import es.udc.ws.runfic.service.dto.ClientRaceDto;
 import es.udc.ws.runfic.service.rest.json.JsonToClientExceptionConversor;
 import es.udc.ws.runfic.service.rest.json.JsonToClientInscriptionDtoConversor;
+import es.udc.ws.runfic.service.rest.json.JsonToClientRaceDtoConversor;
 import es.udc.ws.util.configuration.ConfigurationParametersManager;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;

@@ -1,14 +1,34 @@
 package es.udc.ws.runfic.service.rest.json;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import es.udc.ws.runfic.service.dto.ClientRaceDto;
+import es.udc.ws.util.json.ObjectMapperFactory;
 import es.udc.ws.util.json.exceptions.ParsingException;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 
 public class JsonToClientRaceDtoConversor {
-    public static ObjectNode toObjectNode(ClientRaceDto race){
-        throw new UnsupportedOperationException();
+    //Isma
+    public static ObjectNode toObjectNode(ClientRaceDto race) throws IOException {
+        ObjectNode raceObject = JsonNodeFactory.instance.objectNode();
+
+        if (race.getRaceID() != null) {
+            raceObject.put("raceID", race.getRaceID());
+        }
+        raceObject.put("city", race.getCity()).
+                put("description", race.getDescription()).
+                put("startDateTime", race.getStartDateTime().toString()).
+                put("price", race.getPrice()).
+                put("participants", race.getParticipants()).
+                put("maxParticipants", race.getMaxParticipants());
+
+        return raceObject;
     }
 
     public static ClientRaceDto toClientRaceDto(InputStream jsonRace) throws ParsingException{
