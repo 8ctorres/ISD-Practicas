@@ -62,7 +62,8 @@ public class JsonToRestRaceDtoConversor {
                 String strStartDateTime =  raceObject.get("startDateTime").textValue().trim();
                 LocalDateTime startDateTime = LocalDateTime.parse(strStartDateTime);
                 float price = raceObject.get("price").floatValue();
-                int participants = raceObject.get("participants").intValue();
+                JsonNode participantsNode = raceObject.get("participants");
+                int participants = (participantsNode == null) ? null : participantsNode.intValue();
                 int maxParticipants = raceObject.get("maxParticipants").intValue();
 
                 return new RestRaceDto(raceId, city, description, startDateTime, price, participants, maxParticipants);

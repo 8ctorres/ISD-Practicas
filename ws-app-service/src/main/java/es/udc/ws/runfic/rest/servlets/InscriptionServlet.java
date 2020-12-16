@@ -64,7 +64,7 @@ public class InscriptionServlet extends HttpServlet {
     }
 
     //Para CU 4 - POST a /inscription
-    //Para CU 6 - POST a /inscription/id?user=email&ccn=ccn
+    //Para CU 6 - POST a /inscription/id&creditCardNumber=ccn
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
@@ -151,7 +151,7 @@ public class InscriptionServlet extends HttpServlet {
         }
 
         //CreditCardNumber checking
-        String ccn = req.getParameter("ccn");
+        String ccn = req.getParameter("creditCardNumber");
         try{
             if (ccn == null){
                 throw new InputValidationException("Parameter Credit Card Number is invalid: " + ccn);

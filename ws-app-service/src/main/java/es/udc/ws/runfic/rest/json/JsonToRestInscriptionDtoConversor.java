@@ -57,8 +57,10 @@ public class JsonToRestInscriptionDtoConversor {
                 String user = inscriptionObject.get("user").textValue().trim();
                 String creditCardNumber = inscriptionObject.get("creditCardNumber").textValue().trim();
                 Long raceID =  inscriptionObject.get("raceID").longValue();
-                int runnerNumber = inscriptionObject.get("runnerNumber").intValue();
-                boolean isNumberTaken = inscriptionObject.get("isNumberTaken").booleanValue();
+                JsonNode runnerNumberNode = inscriptionObject.get("runnerNumber");
+                int runnerNumber = (runnerNumberNode == null) ? null : runnerNumberNode.intValue();
+                JsonNode isNumberTakenNode = inscriptionObject.get("isNumberTaken");
+                boolean isNumberTaken = (isNumberTakenNode == null) ? null : isNumberTakenNode.booleanValue();
 
                 return new RestInscriptionDto(inscriptionID, user, creditCardNumber,
                         raceID, runnerNumber, isNumberTaken);
