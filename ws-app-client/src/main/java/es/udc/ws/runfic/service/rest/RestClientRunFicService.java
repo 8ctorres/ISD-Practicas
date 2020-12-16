@@ -56,7 +56,21 @@ public class RestClientRunFicService implements ClientRunFicService {
     @Override
     //Caso de Uso 2 - Isma
     public ClientRaceDto findRace(Long raceID) throws InputValidationException, InstanceNotFoundException {
-        throw new UnsupportedOperationException();
+        try {
+
+            HttpResponse response = Request.Get(getEndpointAddress() + "race/" + raceID)
+                    .execute().returnResponse();
+
+            validateStatusCode(HttpStatus.SC_OK, response);
+
+            return JsonToClientRaceDtoConversor.toClientRaceDto(
+                    response.getEntity().getContent());
+
+        } catch (InputValidationException | InstanceNotFoundException e){
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
