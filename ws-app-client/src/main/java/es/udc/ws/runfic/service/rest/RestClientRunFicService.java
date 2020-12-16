@@ -35,7 +35,21 @@ public class RestClientRunFicService implements ClientRunFicService {
     @Override
     //Caso de Uso 1 - Brais
     public Long addRace(ClientRaceDto race) throws InputValidationException {
-        throw new UnsupportedOperationException();
+        try {
+
+            HttpResponse response = Request.Post(getEndpointAddress() + "race").
+                    bodyStream(toInputStream(race), ContentType.create("application/json")).
+                    execute().returnResponse();
+
+            validateStatusCode(HttpStatus.SC_CREATED, response);
+
+            return JsonToClientRaceDtoConversor.toClientRaceDto(response.getEntity().getContent()).getRaceId();
+
+        } catch (InputValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
