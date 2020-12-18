@@ -128,7 +128,23 @@ public class RestClientRunFicService implements ClientRunFicService {
     @Override
     //Caso de Uso 6 - Isma
     public int getRunnerNumber(Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException {
-        throw new UnsupportedOperationException();
+        try {
+            HttpResponse response = Request.Post(getEndpointAddress() + "inscription").bodyForm(
+                    Form.form()
+                            .add("inscriptionID", inscriptionID.toString())
+                            .add("creditCard", creditCardNumber)
+                            .build()).
+                    execute().returnResponse();
+
+            validateStatusCode(HttpStatus.SC_CREATED, response);
+
+            return JsonToClientInscriptionDtoConversor.toClientInscriptionDto(response.getEntity().getContent()).getRunnerNumber();
+
+        }catch(InputValidationException | InstanceNotFoundException e){
+            throw e;
+        }catch(Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     private InputStream toInputStream(ClientRaceDto race) {
