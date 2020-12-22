@@ -2,11 +2,13 @@ package es.udc.ws.runfic.ui;
 
 import es.udc.ws.runfic.service.ClientRunFicService;
 import es.udc.ws.runfic.service.ClientRunFicServiceFactory;
+import es.udc.ws.runfic.service.dto.ClientInscriptionDto;
 import es.udc.ws.runfic.service.dto.ClientRaceDto;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class RunFicServiceClient {
     public static void main(String[] args) {
@@ -39,10 +41,10 @@ public class RunFicServiceClient {
 
         // [findRace] RaceServiceClient -f <raceID>
 
-        try {
-            ClientRaceDto race = clientRunFicService.findRace(Long.parseLong(args[1]));
+            try {
+                ClientRaceDto race = clientRunFicService.findRace(Long.parseLong(args[1]));
 
-            System.out.println("Id: " + race.getRaceID() +
+                System.out.println("Id: " + race.getRaceID() +
                     ", City: " + race.getCity() +
                     ", Description: " + race.getDescription() +
                     ", StartDateTime: " + race.getStartDateTime() +
@@ -50,13 +52,58 @@ public class RunFicServiceClient {
                     ", Participants: " + race.getParticipants() +
                     ", MaxParticipants: " + race.getMaxParticipants());
 
-        } catch (NumberFormatException | InstanceNotFoundException ex) {
+            } catch (NumberFormatException | InstanceNotFoundException ex) {
             ex.printStackTrace(System.err);
-        } catch (Exception ex) {
+            } catch (Exception ex) {
             ex.printStackTrace(System.err);
+            }
+        } else if("-d".equalsIgnoreCase(args[0])) {
+            validateArgs(args, 3, new int[] {});
+
+            // [findByDate] RaceServiceClient -d <date> <city>
+
+            try {
+                List<ClientRaceDto> races = clientRunFicService.findByDate(LocalDateTime.parse(args[1]), args[2]);
+                System.out.println("Found " + races.size() +
+                        " race(s) on date '" + args[1] + "'");
+                for (int i = 0; i < races.size(); i++) {
+                    ClientRaceDto raceDto = races.get(i);
+                    System.out.println("Id: " + raceDto.getRaceID() +
+                            ", City: " + raceDto.getCity() +
+                            ", Description: " + raceDto.getDescription() +
+                            ", StartDateTime: " + raceDto.getStartDateTime() +
+                            ", Price: " + raceDto.getPrice() +
+                            ", Participants: " + raceDto.getParticipants() +
+                            ", MaxParticipants: " + raceDto.getMaxParticipants());
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace(System.err);
+            }
+
+        } else if("-i".equalsIgnoreCase(args[0])) {
+            validateArgs(args, 4, new int[] {1});
+
+            // [inscribe] RaceServiceClient -i <raceID> <email> <creditCardNumber>
+
+            ClientInscriptionDto inscription;
+            try {
+                inscription = clientRunFicService.inscribe(Long.parseLong(args[1]),
+                        args[2], args[3]);
+
+                System.out.println("Inscribed successfully in race " + args[1] +
+                        " with inscription ID " +
+                        inscription.getInscriptionID());
+
+            } catch (NumberFormatException | InstanceNotFoundException |
+                    InputValidationException ex) {
+                ex.printStackTrace(System.err);
+            } catch (Exception ex) {
+                ex.printStackTrace(System.err);
+            }
+
         }
     }
-    }
+
     public static void validateArgs(String[] args, int expectedArgs, int[] numericArguments) {
         if(expectedArgs != args.length) {
             printUsageAndExit();
@@ -80,7 +127,7 @@ public class RunFicServiceClient {
                 "    [addRace]          RaceServiceClient -a <city> <description> <startDateTime> <price> <maxParticipants>\n" +
                 "    [findRace]         RaceServiceClient -f <raceID>\n" +
                 "    [findByDate]       RaceServiceClient -d <date> <city>\n" +
-                "    [inscribe]         RaceServiceClient -i <inscriptionID> <email> <creditCardNumber>\n" +
+                "    [inscribe]         RaceServiceClient -i <raceID> <email> <creditCardNumber>\n" +
                 "    [findAllFromUser]  RaceServiceClient -u <email>\n" +
                 "    [getRunnerNumber]  RaceServiceClient -g <inscriptionID> <creditCardNumber>\n");
     }
