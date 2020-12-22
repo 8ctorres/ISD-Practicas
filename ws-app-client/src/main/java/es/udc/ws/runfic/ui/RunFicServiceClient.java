@@ -8,6 +8,7 @@ import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RunFicServiceClient {
@@ -68,13 +69,7 @@ public class RunFicServiceClient {
                         " race(s) on date '" + args[1] + "'");
                 for (int i = 0; i < races.size(); i++) {
                     ClientRaceDto raceDto = races.get(i);
-                    System.out.println("Id: " + raceDto.getRaceID() +
-                            ", City: " + raceDto.getCity() +
-                            ", Description: " + raceDto.getDescription() +
-                            ", StartDateTime: " + raceDto.getStartDateTime() +
-                            ", Price: " + raceDto.getPrice() +
-                            ", Participants: " + raceDto.getParticipants() +
-                            ", MaxParticipants: " + raceDto.getMaxParticipants());
+                    printRace(raceDto);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
@@ -101,6 +96,47 @@ public class RunFicServiceClient {
                 ex.printStackTrace(System.err);
             }
 
+        } else if("-u".equalsIgnoreCase(args[0])){
+            validateArgs(args, 2, new int[] {});
+
+            // [findAllFromUser] RaceServiceClient -u <email>
+
+            List<ClientInscriptionDto> inscriptions = new ArrayList<>();
+            try{
+                inscriptions = clientRunFicService.findAllFromUser(args[1]);
+
+                for (ClientInscriptionDto ins : inscriptions){
+                    printInscription(ins);
+                }
+
+            } catch (InputValidationException e) {
+                e.printStackTrace();
+            } catch (Exception ex){
+                ex.printStackTrace();
+            }
+
+        } else if("-g".equalsIgnoreCase(args[0])){
+            validateArgs(args, 3, new int[] {1});
+
+            // [getRunnerNumber] RaceServiceClient -g <inscriptionID> <creditCardNumber>
+
+            int runnerNumber;
+
+            try{
+                runnerNumber = clientRunFicService.getRunnerNumber(Long.parseLong(args[1]), args[2]);
+
+                System.out.println("Dorsal número " + runnerNumber + " entregado con éxito");
+                
+            } catch (InputValidationException e) {
+                e.printStackTrace();
+            } catch (InstanceNotFoundException e) {
+                e.printStackTrace();
+            } catch (Exception ex){
+                ex.printStackTrace();
+            }
+
+        } else{
+            printUsageAndExit();
         }
     }
 
@@ -115,6 +151,25 @@ public class RunFicServiceClient {
                 printUsageAndExit();
             }
         }
+    }
+
+    public static void printRace(ClientRaceDto raceDto){
+        System.out.println("Id: " + raceDto.getRaceID() +
+                "\nCity: " + raceDto.getCity() +
+                "\nDescription: " + raceDto.getDescription() +
+                "\nStartDateTime: " + raceDto.getStartDateTime() +
+                "\nPrice: " + raceDto.getPrice() +
+                "\nParticipants: " + raceDto.getParticipants() +
+                "\nMaxParticipants: " + raceDto.getMaxParticipants());
+    }
+
+    public static void printInscription(ClientInscriptionDto inscriptionDto){
+        System.out.println("Id: " + inscriptionDto.getRaceID() +
+                "\nUser: " + inscriptionDto.getUser() +
+                "\nCredit Card Number: " + inscriptionDto.getCreditCardNumber() +
+                "\nRace ID: " + inscriptionDto.getRaceID() +
+                "\nRunner Number: " + inscriptionDto.getRunnerNumber() +
+                "\nIs number Taken?: " + inscriptionDto.isNumberTaken());
     }
 
     public static void printUsageAndExit() {
