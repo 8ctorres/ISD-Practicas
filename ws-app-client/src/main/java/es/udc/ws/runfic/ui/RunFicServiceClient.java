@@ -31,10 +31,12 @@ public class RunFicServiceClient {
 
                 System.out.println("Race " + raceID + " created successfully");
 
-            } catch (NumberFormatException | InputValidationException ex) {
-                ex.printStackTrace(System.err);
+            } catch (NumberFormatException ex) {
+                printErrorMsgAndExit("Invalid input (not a number): " + ex.getLocalizedMessage());
+            } catch (InputValidationException ex) {
+                printErrorMsgAndExit("Invalid arguments: " + ex.getLocalizedMessage());
             } catch (Exception ex) {
-                ex.printStackTrace(System.err);
+                printErrorMsgAndExit(ex.getLocalizedMessage());
             }
 
         } else if("-f".equalsIgnoreCase(args[0])) {
@@ -53,10 +55,12 @@ public class RunFicServiceClient {
                     ", Participants: " + race.getParticipants() +
                     ", MaxParticipants: " + race.getMaxParticipants());
 
-            } catch (NumberFormatException | InstanceNotFoundException ex) {
-            ex.printStackTrace(System.err);
+            } catch (NumberFormatException ex) {
+                printErrorMsgAndExit("Invalid input (not a number): " + ex.getLocalizedMessage());
+            } catch (InstanceNotFoundException ex) {
+                printErrorMsgAndExit("Instance not found: " + ex.getLocalizedMessage());
             } catch (Exception ex) {
-            ex.printStackTrace(System.err);
+                printErrorMsgAndExit(ex.getLocalizedMessage());
             }
         } else if("-d".equalsIgnoreCase(args[0])) {
             validateArgs(args, 3, new int[] {});
@@ -72,7 +76,7 @@ public class RunFicServiceClient {
                     printRace(raceDto);
                 }
             } catch (Exception ex) {
-                ex.printStackTrace(System.err);
+                printErrorMsgAndExit(ex.getLocalizedMessage());
             }
 
         } else if("-i".equalsIgnoreCase(args[0])) {
@@ -89,11 +93,14 @@ public class RunFicServiceClient {
                         " with inscription ID " +
                         inscription.getInscriptionID());
 
-            } catch (NumberFormatException | InstanceNotFoundException |
-                    InputValidationException ex) {
-                ex.printStackTrace(System.err);
+            } catch (NumberFormatException ex) {
+                printErrorMsgAndExit("Invalid input (not a number): " + ex.getLocalizedMessage());
+            } catch (InstanceNotFoundException ex) {
+                printErrorMsgAndExit("Instance not found: " + ex.getLocalizedMessage());
+            } catch (InputValidationException ex) {
+                printErrorMsgAndExit("Invalid arguments: " + ex.getLocalizedMessage());
             } catch (Exception ex) {
-                ex.printStackTrace(System.err);
+                printErrorMsgAndExit(ex.getLocalizedMessage());
             }
 
         } else if("-u".equalsIgnoreCase(args[0])){
@@ -109,10 +116,10 @@ public class RunFicServiceClient {
                     printInscription(ins);
                 }
 
-            } catch (InputValidationException e) {
-                e.printStackTrace();
+            } catch (InputValidationException ex) {
+                printErrorMsgAndExit("Invalid arguments: " + ex.getLocalizedMessage());
             } catch (Exception ex){
-                ex.printStackTrace();
+                printErrorMsgAndExit(ex.getLocalizedMessage());
             }
 
         } else if("-g".equalsIgnoreCase(args[0])){
@@ -127,12 +134,12 @@ public class RunFicServiceClient {
 
                 System.out.println("Dorsal número " + runnerNumber + " entregado con éxito");
                 
-            } catch (InputValidationException e) {
-                e.printStackTrace();
-            } catch (InstanceNotFoundException e) {
-                e.printStackTrace();
+            } catch (InputValidationException ex) {
+                printErrorMsgAndExit("Invalid arguments: " + ex.getLocalizedMessage());
+            } catch (InstanceNotFoundException ex) {
+                printErrorMsgAndExit("Instance not found: " + ex.getLocalizedMessage());
             } catch (Exception ex){
-                ex.printStackTrace();
+                printErrorMsgAndExit(ex.getLocalizedMessage());
             }
 
         } else{
@@ -148,7 +155,7 @@ public class RunFicServiceClient {
             try {
                 Double.parseDouble(args[position]);
             } catch (NumberFormatException n) {
-                printUsageAndExit();
+                printErrorMsgAndExit("Invalid input (not a number): " + n.getLocalizedMessage());
             }
         }
     }
@@ -174,6 +181,11 @@ public class RunFicServiceClient {
 
     public static void printUsageAndExit() {
         printUsage();
+        System.exit(-1);
+    }
+
+    public static void printErrorMsgAndExit(String err){
+        System.err.println("Error: " + err);
         System.exit(-1);
     }
 
