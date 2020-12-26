@@ -122,20 +122,16 @@ public class InscriptionServlet extends HttpServlet {
     //Corresponde al Caso de Uso 6 - getRunnerNumber
     private void doGetRunnerRunnerNumber(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         //Inscription ID Checking
-        String InscriptionIdParameter = req.getParameter("inscriptionID");
+        String path = ServletUtils.normalizePath(req.getPathInfo());
+        String raceIdAsString = path.substring(1);
         Long inscriptionID = null;
         try {
-            inscriptionID = Long.parseLong(InscriptionIdParameter);
-            PropertyValidator.validateLong("Inscription ID", inscriptionID, 0, MAX_PRICE);
-        }catch (InputValidationException ex){
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    JsonToExceptionConversor.toInputValidationException(ex),
-                    null);
+            inscriptionID = Long.parseLong(raceIdAsString);
         } catch (NumberFormatException ex) {
             ServletUtils
                     .writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                             JsonToExceptionConversor.toInputValidationException(new InputValidationException(
-                                    "Invalid Request: " + "parameter 'InscriptionID' is invalid '" + InscriptionIdParameter + "'")),
+                                    "Invalid Request: " + "parameter 'InscriptionID' is invalid '" + raceIdAsString + "'")),
                             null);
         }
 
