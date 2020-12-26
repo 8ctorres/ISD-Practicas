@@ -1,0 +1,28 @@
+mvn exec:java -Dexec.mainClass="es.udc.ws.runfic.ui.RunFicServiceClient" -Dexec.args=""
+
+raceId=1 creada 
+mvn exec:java -Dexec.mainClass="es.udc.ws.runfic.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' '10Km. Campus Elviña' '2021-08-15T11:00' 10 2"
+
+raceId=2 creado 
+mvn exec:java -Dexec.mainClass="es.udc.ws.runfic.ui.RunFicServiceClient" -Dexec.args="-a 'Santiago' '5Km. Plaza Obradoiro' '2021-08-25T11:00' 5 100"
+
+raceId=3 creado 
+mvn exec:java -Dexec.mainClass="es.udc.ws.runfic.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' '7Km. Playa Riazor' '2021-10-15T11:00' 7 200"
+
+raceId=4 creado 
+mvn exec:java -Dexec.mainClass="es.udc.ws.runfic.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' '20Km. Obelisco' '2021-10-25T11:00' 20 300"
+
+Falla (fecha inválida)
+mvn exec:java -Dexec.mainClass="es.udc.ws.runfic.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' '10Km. Torre Hércules' '2020-08-14T11:00' 10 100"
+
+Falla (precio inválido)
+mvn exec:java -Dexec.mainClass="es.udc.ws.runfic.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' '10Km. Torre Hércules' '2021-08-14T11:00' -2 100"
+
+Falla (partic. inválidos)
+mvn exec:java -Dexec.mainClass="es.udc.ws.runfic.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' '10Km. Torre Hércules' '2021-08-14T11:00' 10 0"
+
+Falla (ciudad inválida) 
+mvn exec:java -Dexec.mainClass="es.udc.ws.runfic.ui.RunFicServiceClient" -Dexec.args="-a ' ' '10Km. Torre Hércules' '2021-08-14T11:00' 10 100"
+
+Falla (descripción inválida)
+mvn exec:java -Dexec.mainClass="es.udc.ws.runfic.ui.RunFicServiceClient" -Dexec.args="-a 'A Coruña' ' ' '2021-08-14T11:00' 10 1000"
