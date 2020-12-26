@@ -76,7 +76,26 @@ public class RestClientRunFicService implements ClientRunFicService {
     @Override
     //Caso de Uso 3 - Brais
     public List<ClientRaceDto> findByDate(LocalDateTime date, String city) {
-        throw new UnsupportedOperationException();
+        try {
+
+            HttpResponse response = null;
+
+            if (city == null) {
+                response = Request.Get(getEndpointAddress() + "race?date="
+                        + URLEncoder.encode(date, "UTF-8")).
+                        execute().returnResponse();
+            } else {
+                response = Request.Get(getEndpointAddress() + "race?city="
+                        + URLEncoder.encode(city, "UTF-8")).
+                        execute().returnResponse();
+            }
+            validateStatusCode(HttpStatus.SC_OK, response);
+
+            return JsonToClientRaceDtoConversor.toClientRaceDtos(
+                    response.getEntity().getContent());
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

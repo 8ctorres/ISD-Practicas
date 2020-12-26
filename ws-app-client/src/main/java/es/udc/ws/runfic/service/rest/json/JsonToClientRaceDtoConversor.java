@@ -2,6 +2,7 @@ package es.udc.ws.runfic.service.rest.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -12,6 +13,8 @@ import es.udc.ws.util.json.exceptions.ParsingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JsonToClientRaceDtoConversor {
     //Isma
@@ -39,6 +42,29 @@ public class JsonToClientRaceDtoConversor {
                 throw new ParsingException("Unrecognized JSON (object expected)");
             } else {
                 return toClientRaceDto(rootNode);
+            }
+        } catch (ParsingException ex) {
+            throw ex;
+        } catch (Exception e) {
+            throw new ParsingException(e);
+        }
+    }
+
+    public static List<ClientRaceDto> toClientRaceDtos(InputStream jsonRace) throws ParsingException {
+        try {
+
+            ObjectMapper objectMapper = ObjectMapperFactory.instance();
+            JsonNode rootNode = objectMapper.readTree(jsonRace);
+            if (rootNode.getNodeType() != JsonNodeType.ARRAY) {
+                throw new ParsingException("Unrecognized JSON (array expected)");
+            } else {
+                ArrayNode racesArray = (ArrayNode) rootNode;
+                List<ClientRaceDto> raceDtos = new ArrayList<>(racesArray.size());
+                for (JsonNode raceNode : racesArray) {
+                    raceDtos.add(toClientRaceDto(raceNode));
+                }
+
+                return raceDtos;
             }
         } catch (ParsingException ex) {
             throw ex;
