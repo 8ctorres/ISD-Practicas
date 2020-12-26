@@ -44,6 +44,15 @@ public class InscriptionServlet extends HttpServlet {
         List<Inscription> modelInss = null;
         try {
             modelInss = RunServiceFactory.getService().findAllFromUser(email);
+            List<RestInscriptionDto> restInss = new ArrayList<>();
+            for(Inscription ins: modelInss){
+                restInss.add(InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(ins));
+            }
+
+            ServletUtils.writeServiceResponse(resp,
+                    HttpServletResponse.SC_OK,
+                    JsonToRestInscriptionDtoConversor.toArrayNode(restInss),
+                    null);
         } catch (InputValidationException e) {
             ServletUtils.writeServiceResponse(resp,
                     HttpServletResponse.SC_BAD_REQUEST,
@@ -51,16 +60,6 @@ public class InscriptionServlet extends HttpServlet {
                     null);
             return;
         }
-
-        List<RestInscriptionDto> restInss = new ArrayList<>();
-        for(Inscription ins: modelInss){
-            restInss.add(InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(ins));
-        }
-
-        ServletUtils.writeServiceResponse(resp,
-                HttpServletResponse.SC_OK,
-                JsonToRestInscriptionDtoConversor.toArrayNode(restInss),
-                null);
     }
 
     //Para CU 4 - POST a /inscription
@@ -93,25 +92,30 @@ public class InscriptionServlet extends HttpServlet {
         Inscription modelIns = null;
         try {
             modelIns = RunServiceFactory.getService().inscribe(inscriptionDto.getRaceID(), inscriptionDto.getUser(), inscriptionDto.getCreditCardNumber());
+            inscriptionDto = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(modelIns);
+
+            String inscriptionURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + inscriptionDto.getInscriptionID();
+            Map<String, String> headers = new HashMap<>(1);
+            headers.put("Location", inscriptionURL);
+
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
+                    JsonToRestInscriptionDtoConversor.toObjectNode(inscriptionDto), headers);
         } catch (InscriptionClosedException e) {
-            JsonToExceptionConversor.toInscriptionClosedException(e);
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                JsonToExceptionConversor.toInscriptionClosedException(e), null);
         } catch (InstanceNotFoundException e) {
-            JsonToExceptionConversor.toInstanceNotFoundException(e);
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                JsonToExceptionConversor.toInstanceNotFoundException(e), null);
         } catch (AlreadyInscribedException e) {
-            JsonToExceptionConversor.toAlreadyInscribedException(e);
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                JsonToExceptionConversor.toAlreadyInscribedException(e), null);
         } catch (InputValidationException e) {
-            JsonToExceptionConversor.toInputValidationException(e);
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                JsonToExceptionConversor.toInputValidationException(e), null);
         } catch (RaceFullException e) {
-            JsonToExceptionConversor.toRaceFullException(e);
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                JsonToExceptionConversor.toRaceFullException(e), null);
         }
-        inscriptionDto = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(modelIns);
-
-        String inscriptionURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + inscriptionDto.getInscriptionID();
-        Map<String, String> headers = new HashMap<>(1);
-        headers.put("Location", inscriptionURL);
-
-        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
-                JsonToRestInscriptionDtoConversor.toObjectNode(inscriptionDto), headers);
     }
 
     //Isma
