@@ -79,10 +79,11 @@ public class RestClientRunFicService implements ClientRunFicService {
         try {
 
             HttpResponse response = null;
+            String dateStr = date.toString();
 
             if (city == null) {
                 response = Request.Get(getEndpointAddress() + "race?date="
-                        + URLEncoder.encode(date, "UTF-8")).
+                        + URLEncoder.encode(dateStr, "UTF-8")).
                         execute().returnResponse();
             } else {
                 response = Request.Get(getEndpointAddress() + "race?city="
