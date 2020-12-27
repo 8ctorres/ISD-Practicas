@@ -15,6 +15,7 @@ import es.udc.ws.util.validation.PropertyValidator;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -92,7 +93,7 @@ public class RunServiceImpl implements RunService{
     //Caso de Uso 3 - Brais
     //Equivalente REST -> GET a /race?date=date&city=city
     @Override
-    public List<Race> findByDate(LocalDateTime date, String city) {
+    public List<Race> findByDate(LocalDate date, String city) {
         try (Connection connection = datasource.getConnection()) {
             return raceDao.findByDateCity(connection, date, city);
         } catch (SQLException e) {

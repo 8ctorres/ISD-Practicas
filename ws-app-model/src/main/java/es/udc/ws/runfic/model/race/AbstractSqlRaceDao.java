@@ -3,7 +3,9 @@ package es.udc.ws.runfic.model.race;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +51,7 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
 
     //Brais
     @Override
-    public List<Race> findByDateCity(Connection connection, LocalDateTime date, String city) {
+    public List<Race> findByDateCity(Connection connection, LocalDate date, String city) {
         String queryStr =
                 "SELECT raceID, city, description, startDateTime, price, participants, maxParticipants, addedDateTime" +
                         " FROM Race WHERE startDateTime <= ?";
@@ -57,7 +59,10 @@ public abstract class AbstractSqlRaceDao implements SqlRaceDao{
             queryStr = queryStr + " AND city = ?";
         }
 
-        Timestamp timestamp = Timestamp.valueOf(date);
+        //Consideramos el final del día para que entren en la búsqueda también las carreras de ese mismo día
+        LocalDateTime datetime = LocalDateTime.of(date, LocalTime.of(23,59,59));
+
+        Timestamp timestamp = Timestamp.valueOf(datetime);
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryStr)){
             preparedStatement.setTimestamp(1,timestamp);

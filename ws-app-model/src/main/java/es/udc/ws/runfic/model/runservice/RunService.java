@@ -6,6 +6,7 @@ import es.udc.ws.runfic.model.runservice.exceptions.*;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,7 +26,7 @@ public interface RunService {
     //que aún no se han celebrado). Opcionalmente, se podrá indicar el nombre de una ciudad, en cuyo caso se devolverán solamente las carreras que se
     //celebren en esa ciudad. Al igual que en el punto anterior, la información devuelta de cada carrera incluirá, además de la información
     //proporcionada al darla de alta, el número de inscritos en ella
-    List<Race> findByDate(LocalDateTime date, String city);
+    List<Race> findByDate(LocalDate date, String city);
 
     //Será posible que un usuario se inscriba en una carrera hasta 24 horas antes de su celebración. Además de otros parámetros que puedan ser
     //necesarios, recibe como entrada un e-mail para identificar al usuario, y un número de tarjeta de crédito. En caso de ejecutarse con éxito,

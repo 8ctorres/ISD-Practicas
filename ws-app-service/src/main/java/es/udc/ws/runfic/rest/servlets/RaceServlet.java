@@ -74,10 +74,10 @@ public class RaceServlet extends HttpServlet {
     private void doFindByDateAndCity(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         String raceCity = req.getParameter("city");
         String raceDate = req.getParameter("date");
-        LocalDateTime date;
+        LocalDate date;
         try {
             //Consideramos el final del día para que entren en la búsqueda también las carreras de ese mismo día
-            date = LocalDate.parse(raceDate).atTime(23, 59, 59);
+            date = LocalDate.parse(raceDate);
         } catch (DateTimeParseException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(

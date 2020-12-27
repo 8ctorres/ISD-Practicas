@@ -19,7 +19,9 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.util.List;
 
@@ -189,7 +191,7 @@ public class RunServiceTest {
         float price = race.getPrice();
         LocalDateTime startDateTime = race.getStartDateTime();
 
-        LocalDateTime date = LocalDateTime.of(2022, Month.JANUARY, 6, 10, 30);
+        LocalDate date = LocalDate.of(2022, Month.JANUARY, 6);
 
             // Find Race
             List<Race> list = runService.findByDate(date, null);
@@ -201,7 +203,8 @@ public class RunServiceTest {
                 assertEquals(foundRace.getDescription(), description);
                 assertEquals(foundRace.getMaxParticipants(), maxParticipants);
                 assertEquals(foundRace.getPrice(), price);
-                assertTrue((foundRace.getStartDateTime().compareTo(date) <= 0) &&
+                assertTrue((foundRace.getStartDateTime().compareTo(
+                        LocalDateTime.of(date, LocalTime.of(23,59,59))) <= 0) &&
                         (foundRace.getStartDateTime().compareTo(LocalDateTime.now().withNano(0)) >= 0));
             }
 
@@ -221,7 +224,7 @@ public class RunServiceTest {
         float price = race.getPrice();
         LocalDateTime startDateTime = race.getStartDateTime();
 
-        LocalDateTime date = LocalDateTime.of(2022, Month.JANUARY, 6, 10, 30);
+        LocalDate date = LocalDate.of(2022, Month.JANUARY, 6);
 
             // Find Race
             List<Race> list = runService.findByDate(date, city);
@@ -233,7 +236,8 @@ public class RunServiceTest {
                 assertEquals(foundRace.getDescription(), description);
                 assertEquals(foundRace.getMaxParticipants(), maxParticipants);
                 assertEquals(foundRace.getPrice(), price);
-                assertTrue((foundRace.getStartDateTime().compareTo(date) <= 0) &&
+                assertTrue((foundRace.getStartDateTime().compareTo(
+                        LocalDateTime.of(date, LocalTime.of(23,59,59))) <= 0) &&
                         (foundRace.getStartDateTime().compareTo(LocalDateTime.now().withNano(0)) >= 0));
             }
 
