@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,21 +76,21 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     @Override
     //Caso de Uso 3 - Brais
-    public List<ClientRaceDto> findByDate(LocalDateTime date, String city) {
+    public List<ClientRaceDto> findByDate(LocalDate date, String city) {
         try {
 
             HttpResponse response = null;
             String dateStr = date.toString();
 
-            if (city == null) {
-                response = Request.Get(getEndpointAddress() + "race?date="
-                        + URLEncoder.encode(dateStr, "UTF-8")).
-                        execute().returnResponse();
-            } else {
-                response = Request.Get(getEndpointAddress() + "race?city="
-                        + URLEncoder.encode(city, "UTF-8")).
-                        execute().returnResponse();
+            String requestStr = getEndpointAddress() + "race?date="
+                    + URLEncoder.encode(dateStr, "UTF-8");
+
+            if (city != null) {
+                requestStr += "?city=" + URLEncoder.encode(city, "UTF-8");
             }
+
+            response = Request.Get(requestStr).execute().returnResponse();
+
             validateStatusCode(HttpStatus.SC_OK, response);
 
             return JsonToClientRaceDtoConversor.toClientRaceDtos(

@@ -7,6 +7,7 @@ import es.udc.ws.runfic.service.dto.ClientRaceDto;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public class RunFicServiceClient {
             // [findByDate] RaceServiceClient -d <date> <city>
 
             try {
-                List<ClientRaceDto> races = clientRunFicService.findByDate(LocalDateTime.parse(args[1]), args[2]);
+                List<ClientRaceDto> races = clientRunFicService.findByDate(LocalDate.parse(args[1]), args[2]);
                 System.out.println("Found " + races.size() +
                         " race(s) on date '" + args[1] + "'");
                 for (int i = 0; i < races.size(); i++) {
