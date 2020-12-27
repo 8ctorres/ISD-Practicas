@@ -18,7 +18,7 @@ public interface ClientRunFicService {
 
     // Será posible buscar carreras que se celebren antes de una fecha (debe ser una fecha futura y el resultado contendrá únicamente las carreras
     //que aún no se han celebrado) y una ciudad.
-    List<ClientRaceDto> findByDate(LocalDate date, String city);
+    List<ClientRaceDto> findByDate(LocalDate date, String city) throws InputValidationException;
 
     //Será posible que un usuario se inscriba en una carrera hasta 24 horas antes de su celebración. Además de otros parámetros que puedan ser
     //necesarios, recibe como entrada un e-mail para identificar al usuario, y un número de tarjeta de crédito. En caso de ejecutarse con éxito,

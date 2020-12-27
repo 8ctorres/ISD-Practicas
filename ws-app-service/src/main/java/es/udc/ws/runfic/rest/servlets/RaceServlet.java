@@ -77,10 +77,10 @@ public class RaceServlet extends HttpServlet {
         String raceDate = req.getParameter("date");
 
         try{
-            if (raceCity == null)
-                throw new InputValidationException("City can not be null or empty");
             if (raceDate == null)
                 throw new InputValidationException("Date can not be null or empty");
+            if (raceCity == null)
+                throw new InputValidationException("City can not be null or empty");
         } catch (InputValidationException e) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(e), null);

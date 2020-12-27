@@ -21,14 +21,14 @@ public class RunFicServiceClient {
         ClientRunFicService clientRunFicService =
                 ClientRunFicServiceFactory.getService();
         if("-a".equalsIgnoreCase(args[0])) {
-            validateArgs(args, 6, new int[] {2, 3, 5});
+            validateArgs(args, 6, new int[] {4, 5});
 
             // [addRace] RaceServiceClient -a <city> <description> <startDateTime> <price> <maxParticipants>
 
             try {
-                Long raceID = clientRunFicService.addRace(new ClientRaceDto(null,
-                        args[1], args[2], LocalDateTime.parse(args[3]),
-                        Float.parseFloat(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6])));
+                Long raceID = clientRunFicService.addRace(
+                        new ClientRaceDto(null, args[1], args[2], LocalDateTime.parse(args[3]),
+                        Float.parseFloat(args[4]), 0, Integer.parseInt(args[5])));
 
                 System.out.println("Race " + raceID + " created successfully");
 
@@ -67,7 +67,6 @@ public class RunFicServiceClient {
             validateArgs(args, 3, new int[] {});
 
             // [findByDate] RaceServiceClient -d <date> <city>
-
             try {
                 List<ClientRaceDto> races = clientRunFicService.findByDate(LocalDate.parse(args[1]), args[2]);
                 System.out.println("Found " + races.size() +
@@ -113,6 +112,7 @@ public class RunFicServiceClient {
             try{
                 inscriptions = clientRunFicService.findAllFromUser(args[1]);
 
+                System.out.println("Found " + inscriptions.size() + " inscriptions from user " + args[1]);
                 for (ClientInscriptionDto ins : inscriptions){
                     printInscription(ins);
                 }

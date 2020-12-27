@@ -67,7 +67,7 @@ public class InscriptionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
-        if (path != null && path.length() > 0) {
+        if ((path != null) && (path.length() > 0)) {
             //Un POST contra una inscripción concreta podría ser para obtener el dorsal
             doGetRunnerRunnerNumber(req, resp);
         } else {
@@ -79,20 +79,23 @@ public class InscriptionServlet extends HttpServlet {
     //Corresponde al Caso de Uso 4 - inscribe
     private void doCreateInscription(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         //Si estamos en este punto, es porque la petición fue exactamente "POST /inscription", sin nada más
-        RestInscriptionDto inscriptionDto;
         try {
-            inscriptionDto = JsonToRestInscriptionDtoConversor.toServiceInscriptionDto(req.getInputStream());
-        } catch (ParsingException ex) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    JsonToExceptionConversor.toInputValidationException(
-                            new InputValidationException(ex.getMessage())),
-                    null);
-            return;
-        }
-        Inscription modelIns = null;
-        try {
-            modelIns = RunServiceFactory.getService().inscribe(inscriptionDto.getRaceID(), inscriptionDto.getUser(), inscriptionDto.getCreditCardNumber());
-            inscriptionDto = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(modelIns);
+            String inputRaceIDStr = req.getParameter("raceID");
+            if (inputRaceIDStr == null) {
+                throw new InputValidationException("RaceID cannot be null nor empty");
+            }
+            String inputEmail = req.getParameter("user");
+            if (inputEmail == null) {
+                throw new InputValidationException("Email cannot be null nor empty");
+            }
+            String inputCreditCard = req.getParameter("creditCard");
+            if (inputCreditCard == null) {
+                throw new InputValidationException("Credit Card Number cannot be null nor empty");
+            }
+            Long inputRaceID = Long.parseLong(inputRaceIDStr);
+
+            Inscription modelIns = RunServiceFactory.getService().inscribe(inputRaceID, inputEmail, inputCreditCard);
+            RestInscriptionDto inscriptionDto = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(modelIns);
 
             String inscriptionURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + inscriptionDto.getInscriptionID();
             Map<String, String> headers = new HashMap<>(1);
@@ -100,6 +103,10 @@ public class InscriptionServlet extends HttpServlet {
 
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
                     JsonToRestInscriptionDtoConversor.toObjectNode(inscriptionDto), headers);
+        } catch (NumberFormatException ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(
+                            new InputValidationException(ex.getLocalizedMessage())), null);
         } catch (InscriptionClosedException e) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                 JsonToExceptionConversor.toInscriptionClosedException(e), null);
@@ -123,16 +130,17 @@ public class InscriptionServlet extends HttpServlet {
     private void doGetRunnerRunnerNumber(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         //Inscription ID Checking
         String path = ServletUtils.normalizePath(req.getPathInfo());
-        String raceIdAsString = path.substring(1);
+        String inscIdAsString = path.substring(1);
         Long inscriptionID = null;
         try {
-            inscriptionID = Long.parseLong(raceIdAsString);
+            inscriptionID = Long.parseLong(inscIdAsString);
         } catch (NumberFormatException ex) {
             ServletUtils
                     .writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                             JsonToExceptionConversor.toInputValidationException(new InputValidationException(
-                                    "Invalid Request: " + "parameter 'InscriptionID' is invalid '" + raceIdAsString + "'")),
+                                    "Invalid Request: " + "parameter 'InscriptionID' is invalid '" + inscIdAsString + "'")),
                             null);
+            return;
         }
 
         //CreditCardNumber checking
@@ -148,19 +156,22 @@ public class InscriptionServlet extends HttpServlet {
                     HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(ex),
                     null);
+            return;
         }
 
         int runnerNumber;
         try {
             runnerNumber = RunServiceFactory.getService().getRunnerNumber(inscriptionID, ccn);
+
+            //If everything went just fine, send an OK
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK, null, null);
+            return;
         } catch (InstanceNotFoundException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
                     JsonToExceptionConversor.toInstanceNotFoundException(ex), null);
-            return;
         } catch (InputValidationException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInputValidationException(ex), null);
-            return;
         } catch (InvalidUserException ex){
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toInvalidUserException(ex), null);
@@ -168,8 +179,5 @@ public class InscriptionServlet extends HttpServlet {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     JsonToExceptionConversor.toNumberTakenException(ex), null);
         }
-
-        //If everything went just fine, send an OK
-        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK, null, null);
     }
 }

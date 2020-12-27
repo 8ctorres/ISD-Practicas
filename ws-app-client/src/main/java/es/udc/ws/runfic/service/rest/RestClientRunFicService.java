@@ -39,7 +39,7 @@ public class RestClientRunFicService implements ClientRunFicService {
     public Long addRace(ClientRaceDto race) throws InputValidationException {
         try {
 
-            HttpResponse response = Request.Post(getEndpointAddress() + "race").
+            HttpResponse response = Request.Post(getEndpointAddress() + "/race").
                     bodyStream(toInputStream(race), ContentType.create("application/json")).
                     execute().returnResponse();
 
@@ -59,7 +59,7 @@ public class RestClientRunFicService implements ClientRunFicService {
     public ClientRaceDto findRace(Long raceID) throws InputValidationException, InstanceNotFoundException {
         try {
 
-            HttpResponse response = Request.Get(getEndpointAddress() + "race/" + raceID)
+            HttpResponse response = Request.Get(getEndpointAddress() + "/race/" + raceID)
                     .execute().returnResponse();
 
             validateStatusCode(HttpStatus.SC_OK, response);
@@ -76,14 +76,21 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     @Override
     //Caso de Uso 3 - Brais
-    public List<ClientRaceDto> findByDate(LocalDate date, String city) {
+    public List<ClientRaceDto> findByDate(LocalDate date, String city) throws InputValidationException {
         try {
+            if (date == null) {
+                throw new InputValidationException("Date can not be null");
+            }
+            if ((city == null) || (city.strip() == "")) {
+                throw new InputValidationException("City can not be null nor empty");
+            }
+
             HttpResponse response = null;
             String dateStr = date.toString();
 
-            String requestStr = getEndpointAddress() + "race?date="
+            String requestStr = getEndpointAddress() + "/race?date="
                     + URLEncoder.encode(dateStr, "UTF-8")
-                    + "?city=" + URLEncoder.encode(city, "UTF-8");
+                    + "&city=" + URLEncoder.encode(city, "UTF-8");
 
             response = Request.Get(requestStr).execute().returnResponse();
 
@@ -91,6 +98,8 @@ public class RestClientRunFicService implements ClientRunFicService {
 
             return JsonToClientRaceDtoConversor.toClientRaceDtos(
                     response.getEntity().getContent());
+        } catch (InputValidationException e){
+            throw e;
         } catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -100,7 +109,7 @@ public class RestClientRunFicService implements ClientRunFicService {
     //Caso de Uso 4 - Carlos
     public ClientInscriptionDto inscribe(Long raceID, String email, String creditCardNumber) throws InputValidationException, InstanceNotFoundException {
         try {
-            HttpResponse response = Request.Post(getEndpointAddress() + "inscription")
+            HttpResponse response = Request.Post(getEndpointAddress() + "/inscription")
                     .bodyForm(
                             Form.form()
                                     .add("raceID", raceID.toString())
@@ -127,7 +136,7 @@ public class RestClientRunFicService implements ClientRunFicService {
     public List<ClientInscriptionDto> findAllFromUser(String email) throws InputValidationException {
         try {
 
-            HttpResponse response = Request.Get(getEndpointAddress() + "inscription/?user="
+            HttpResponse response = Request.Get(getEndpointAddress() + "/inscription/?user="
                     + URLEncoder.encode(email, "UTF-8"))
                     .execute().returnResponse();
 
@@ -146,10 +155,10 @@ public class RestClientRunFicService implements ClientRunFicService {
     //Caso de Uso 6 - Isma
     public int getRunnerNumber(Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException {
         try {
-            HttpResponse response = Request.Post(getEndpointAddress() + "inscription").bodyForm(
-                    Form.form()
-                            .add("inscriptionID", inscriptionID.toString())
-                            .add("creditCard", creditCardNumber)
+            HttpResponse response = Request.Post(
+                    getEndpointAddress() + "/inscription/" + inscriptionID.toString())
+                    .bodyForm(Form.form()
+                            .add("creditCardNumber", creditCardNumber)
                             .build()).
                     execute().returnResponse();
 

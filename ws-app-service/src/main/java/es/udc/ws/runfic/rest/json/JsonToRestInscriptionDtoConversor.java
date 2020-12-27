@@ -21,10 +21,12 @@ public class JsonToRestInscriptionDtoConversor {
         ObjectNode inscriptionNode = JsonNodeFactory.instance.objectNode();
 
         if (inscription != null) {
-            inscriptionNode.put("InscriptionId", inscription.getInscriptionID());
-            inscriptionNode.put("user", inscription.getUser()).
-                    put("creditCard", inscription.getCreditCardNumber()).
-                    put("raceID", inscription.getRaceID());
+            inscriptionNode.put("inscriptionID", inscription.getInscriptionID());
+            inscriptionNode.put("user", inscription.getUser())
+                    .put("creditCardNumber", inscription.getCreditCardNumber())
+                    .put("raceID", inscription.getRaceID())
+                    .put("runnerNumber", inscription.getRunnerNumber())
+                    .put("isNumberTaken", inscription.isNumberTaken());
         }
 
         return inscriptionNode;
