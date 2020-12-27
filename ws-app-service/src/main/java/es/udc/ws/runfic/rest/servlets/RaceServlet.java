@@ -1,5 +1,6 @@
 package es.udc.ws.runfic.rest.servlets;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.runfic.model.runservice.RunServiceFactory;
 import es.udc.ws.runfic.rest.dto.RaceToRestRaceDtoConversor;
@@ -74,6 +75,17 @@ public class RaceServlet extends HttpServlet {
     private void doFindByDateAndCity(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         String raceCity = req.getParameter("city");
         String raceDate = req.getParameter("date");
+
+        try{
+            if (raceCity == null)
+                throw new InputValidationException("City can not be null or empty");
+            if (raceDate == null)
+                throw new InputValidationException("Date can not be null or empty");
+        } catch (InputValidationException e) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    JsonToExceptionConversor.toInputValidationException(e), null);
+        }
+
         LocalDate date;
         try {
             //Consideramos el final del día para que entren en la búsqueda también las carreras de ese mismo día
