@@ -78,16 +78,12 @@ public class RestClientRunFicService implements ClientRunFicService {
     //Caso de Uso 3 - Brais
     public List<ClientRaceDto> findByDate(LocalDate date, String city) {
         try {
-
             HttpResponse response = null;
             String dateStr = date.toString();
 
             String requestStr = getEndpointAddress() + "race?date="
-                    + URLEncoder.encode(dateStr, "UTF-8");
-
-            if (city != null) {
-                requestStr += "?city=" + URLEncoder.encode(city, "UTF-8");
-            }
+                    + URLEncoder.encode(dateStr, "UTF-8")
+                    + "?city=" + URLEncoder.encode(city, "UTF-8");
 
             response = Request.Get(requestStr).execute().returnResponse();
 
