@@ -108,7 +108,7 @@ public class InscriptionServlet extends HttpServlet {
                     JsonToExceptionConversor.toInputValidationException(
                             new InputValidationException(ex.getLocalizedMessage())), null);
         } catch (InscriptionClosedException e) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_GONE,
                 JsonToExceptionConversor.toInscriptionClosedException(e), null);
         } catch (InstanceNotFoundException e) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
@@ -120,7 +120,7 @@ public class InscriptionServlet extends HttpServlet {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                 JsonToExceptionConversor.toInputValidationException(e), null);
         } catch (RaceFullException e) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_GONE,
                 JsonToExceptionConversor.toRaceFullException(e), null);
         }
     }
@@ -159,13 +159,16 @@ public class InscriptionServlet extends HttpServlet {
             return;
         }
 
-        int runnerNumber;
+        Inscription inscription;
+        RestInscriptionDto inscriptionDto;
         try {
-            runnerNumber = RunServiceFactory.getService().getRunnerNumber(inscriptionID, ccn);
+            inscription = RunServiceFactory.getService().getRunnerNumber(inscriptionID, ccn);
+            inscriptionDto = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(inscription);
 
             //If everything went just fine, send an OK
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK, null, null);
-            return;
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                    JsonToRestInscriptionDtoConversor.toObjectNode(inscriptionDto), null);
+
         } catch (InstanceNotFoundException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
                     JsonToExceptionConversor.toInstanceNotFoundException(ex), null);

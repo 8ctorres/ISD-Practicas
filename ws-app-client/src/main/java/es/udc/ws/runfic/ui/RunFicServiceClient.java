@@ -60,6 +60,8 @@ public class RunFicServiceClient {
                 printErrorMsgAndExit("Invalid input (not a number): " + ex.getLocalizedMessage());
             } catch (InstanceNotFoundException ex) {
                 printErrorMsgAndExit("Instance not found: " + ex.getLocalizedMessage());
+            } catch (InputValidationException ex){
+                printErrorMsgAndExit("Invalid arguments: " + ex.getLocalizedMessage());
             } catch (Exception ex) {
                 printErrorMsgAndExit(ex.getLocalizedMessage());
             }
@@ -75,6 +77,8 @@ public class RunFicServiceClient {
                     ClientRaceDto raceDto = races.get(i);
                     printRace(raceDto);
                 }
+            } catch (InputValidationException ex){
+                printErrorMsgAndExit("Invalid arguments: " + ex.getLocalizedMessage());
             } catch (Exception ex) {
                 printErrorMsgAndExit(ex.getLocalizedMessage());
             }
@@ -115,6 +119,7 @@ public class RunFicServiceClient {
                 System.out.println("Found " + inscriptions.size() + " inscriptions from user " + args[1]);
                 for (ClientInscriptionDto ins : inscriptions){
                     printInscription(ins);
+                    System.out.println();
                 }
 
             } catch (InputValidationException ex) {
@@ -172,7 +177,7 @@ public class RunFicServiceClient {
     }
 
     public static void printInscription(ClientInscriptionDto inscriptionDto){
-        System.out.println("Id: " + inscriptionDto.getRaceID() +
+        System.out.println("Id: " + inscriptionDto.getInscriptionID() +
                 "\nUser: " + inscriptionDto.getUser() +
                 "\nCredit Card Number: " + inscriptionDto.getCreditCardNumber() +
                 "\nRace ID: " + inscriptionDto.getRaceID() +

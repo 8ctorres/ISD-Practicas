@@ -6,6 +6,7 @@ import com.sun.jdi.InvalidStackFrameException;
 import es.udc.ws.runfic.service.ClientRunFicService;
 import es.udc.ws.runfic.service.dto.ClientInscriptionDto;
 import es.udc.ws.runfic.service.dto.ClientRaceDto;
+import es.udc.ws.runfic.service.dto.ServerException;
 import es.udc.ws.runfic.service.rest.json.JsonToClientExceptionConversor;
 import es.udc.ws.runfic.service.rest.json.JsonToClientInscriptionDtoConversor;
 import es.udc.ws.runfic.service.rest.json.JsonToClientRaceDtoConversor;
@@ -107,7 +108,7 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     @Override
     //Caso de Uso 4 - Carlos
-    public ClientInscriptionDto inscribe(Long raceID, String email, String creditCardNumber) throws InputValidationException, InstanceNotFoundException {
+    public ClientInscriptionDto inscribe(Long raceID, String email, String creditCardNumber) throws InputValidationException, InstanceNotFoundException, ServerException {
         try {
             HttpResponse response = Request.Post(getEndpointAddress() + "/inscription")
                     .bodyForm(
@@ -124,7 +125,7 @@ public class RestClientRunFicService implements ClientRunFicService {
             return JsonToClientInscriptionDtoConversor.toClientInscriptionDto(
                     response.getEntity().getContent());
 
-        }catch(InputValidationException | InstanceNotFoundException e){
+        }catch(InputValidationException | InstanceNotFoundException | ServerException e){
             throw e;
         }catch(Exception e){
             throw new RuntimeException(e);
@@ -145,7 +146,8 @@ public class RestClientRunFicService implements ClientRunFicService {
             return JsonToClientInscriptionDtoConversor.toClientInscriptionDtos(
                     response.getEntity().getContent()
             );
-
+        } catch (InputValidationException ex){
+            throw ex;
         } catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -153,7 +155,7 @@ public class RestClientRunFicService implements ClientRunFicService {
 
     @Override
     //Caso de Uso 6 - Isma
-    public int getRunnerNumber(Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException {
+    public int getRunnerNumber(Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException, ServerException {
         try {
             HttpResponse response = Request.Post(
                     getEndpointAddress() + "/inscription/" + inscriptionID.toString())
@@ -162,11 +164,11 @@ public class RestClientRunFicService implements ClientRunFicService {
                             .build()).
                     execute().returnResponse();
 
-            validateStatusCode(HttpStatus.SC_CREATED, response);
+            validateStatusCode(HttpStatus.SC_OK, response);
 
             return JsonToClientInscriptionDtoConversor.toClientInscriptionDto(response.getEntity().getContent()).getRunnerNumber();
 
-        }catch(InputValidationException | InstanceNotFoundException e){
+        }catch(InputValidationException | InstanceNotFoundException | ServerException e){
             throw e;
         }catch(Exception e){
             throw new RuntimeException(e);
@@ -211,7 +213,6 @@ public class RestClientRunFicService implements ClientRunFicService {
 
             /* Handler error. */
             switch (statusCode) {
-
                 case HttpStatus.SC_NOT_FOUND:
                     throw JsonToClientExceptionConversor.fromNotFoundErrorCode(
                             response.getEntity().getContent());

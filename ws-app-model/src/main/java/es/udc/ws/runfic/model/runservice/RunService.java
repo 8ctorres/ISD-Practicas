@@ -8,7 +8,6 @@ import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -43,6 +42,6 @@ public interface RunService {
     //de crédito utilizada para pagarla. A partir de esos datos, un empleado de RunFic podrá indicar que el dorsal correspondiente a esa inscripción
     //se ha entregado. Es necesario contemplar todos los posibles casos de error, como que el código de inscripción y el número de tarjeta no se
     //correspondan con ninguna inscripción, o que el dorsal correspondiente a esa inscripción ya ha sido entregado previamente
-    int getRunnerNumber(Long inscriptionID, String creditCardNumber) throws InputValidationException,
+    Inscription getRunnerNumber(Long inscriptionID, String creditCardNumber) throws InputValidationException,
             InstanceNotFoundException, NumberTakenException, InvalidUserException;
 }

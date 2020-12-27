@@ -2,6 +2,7 @@ package es.udc.ws.runfic.service;
 
 import es.udc.ws.runfic.service.dto.ClientInscriptionDto;
 import es.udc.ws.runfic.service.dto.ClientRaceDto;
+import es.udc.ws.runfic.service.dto.ServerException;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
@@ -24,7 +25,7 @@ public interface ClientRunFicService {
     //necesarios, recibe como entrada un e-mail para identificar al usuario, y un número de tarjeta de crédito. En caso de ejecutarse con éxito,
     //devuelve un código que será necesario para recoger el dorsal, y se almacena la inscripción, quedando registrado el número de dorsal
     //asignado al participante y la fecha y hora a la que se hizo la inscripción
-    ClientInscriptionDto inscribe(Long raceID, String email, String creditCardNumber) throws InputValidationException, InstanceNotFoundException;
+    ClientInscriptionDto inscribe(Long raceID, String email, String creditCardNumber) throws InputValidationException, InstanceNotFoundException, ServerException;
 
     //Será posible obtener todas las inscripciones que un usuario ha realizado a lo largo del tiempo.
     List<ClientInscriptionDto> findAllFromUser(String email) throws InputValidationException;
@@ -33,5 +34,5 @@ public interface ClientRunFicService {
     //a una inscripción en el local de RunFic, presentando el código o identificador obtenido al realizar la inscripción y el número de tarjeta
     //de crédito utilizada para pagarla. A partir de esos datos, un empleado de RunFic podrá indicar que el dorsal correspondiente a esa inscripción
     //se ha entregado
-    int getRunnerNumber(Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException;
+    int getRunnerNumber(Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException, ServerException;
 }

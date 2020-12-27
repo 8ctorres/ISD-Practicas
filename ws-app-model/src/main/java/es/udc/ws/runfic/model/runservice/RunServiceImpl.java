@@ -111,7 +111,7 @@ public class RunServiceImpl implements RunService{
         validateCreditCard(creditCardNumber);
         try (Connection connection = datasource.getConnection()) {
             if (inscriptionDao.isUserInscribed(connection, raceID, email)){
-                throw new AlreadyInscribedException("User "+email+"already inscribed in race " + raceID.toString());
+                throw new AlreadyInscribedException("User "+email+" already inscribed in race " + raceID.toString());
             }
 
             Race thisRace = raceDao.find(connection, raceID);
@@ -171,7 +171,7 @@ public class RunServiceImpl implements RunService{
     //Caso de Uso 6 - Isma
     //Equivalente REST -> Overloaded POST a /inscription/id?creditCardNumber="ccn"
     @Override
-    public int getRunnerNumber(Long inscriptionID, String creditCard) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
+    public Inscription getRunnerNumber(Long inscriptionID, String creditCard) throws InputValidationException, InstanceNotFoundException, NumberTakenException, InvalidUserException {
         String creditCardNumber =  creditCard.replaceAll("\\s+", ""); //Removes all spaces inside
         validateCreditCard(creditCardNumber);
         try (Connection connection = this.datasource.getConnection()) {
@@ -194,7 +194,7 @@ public class RunServiceImpl implements RunService{
                 inscriptionDao.update(connection, thisInscription);
 
                 connection.commit();
-                return thisInscription.getRunnerNumber();
+                return thisInscription;
 
             }catch (SQLException | RuntimeException | Error err){
                 connection.rollback();

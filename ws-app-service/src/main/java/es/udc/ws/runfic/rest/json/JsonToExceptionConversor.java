@@ -36,7 +36,7 @@ public class JsonToExceptionConversor {
 
         ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
 
-        exceptionObject.put("errorType", "AlreadyInscribedException");
+        exceptionObject.put("errorType", "AlreadyInscribed");
         exceptionObject.put("message", ex.getMessage());
 
         return exceptionObject;
@@ -46,7 +46,7 @@ public class JsonToExceptionConversor {
 
         ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
 
-        exceptionObject.put("errorType", "InscriptionClosedException");
+        exceptionObject.put("errorType", "InscriptionClosed");
         exceptionObject.put("message", ex.getMessage());
 
         return exceptionObject;
@@ -56,7 +56,7 @@ public class JsonToExceptionConversor {
 
         ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
 
-        exceptionObject.put("errorType", "InvalidUserException");
+        exceptionObject.put("errorType", "InvalidUser");
         exceptionObject.put("message", ex.getMessage());
 
         return exceptionObject;
@@ -66,7 +66,7 @@ public class JsonToExceptionConversor {
 
         ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
 
-        exceptionObject.put("errorType", "NumberTakenException");
+        exceptionObject.put("errorType", "NumberTaken");
         exceptionObject.put("message", ex.getMessage());
 
         return exceptionObject;
@@ -76,7 +76,7 @@ public class JsonToExceptionConversor {
 
         ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
 
-        exceptionObject.put("errorType", "RaceFullException");
+        exceptionObject.put("errorType", "RaceFull");
         exceptionObject.put("message", ex.getMessage());
 
         return exceptionObject;
