@@ -53,7 +53,7 @@ service ThriftRunficService{
 
     ThriftInscriptionDto inscribe(1: i64 raceID, 2: string email, 3: string creditCardNumber) throws (1: ThriftInputValidationException e, 2: ThriftInscriptionClosedException ee, 3: ThriftInstanceNotFoundException eee, 4: ThriftRaceFullException eeee, 5: ThriftAlreadyInscribedException eeeee)
 
-    List<ThriftInscriptionDto> findAllFromUser(1: string email) throws (1: ThriftInputValidationException e)
+    list<ThriftInscriptionDto> findAllFromUser(1: string email) throws (1: ThriftInputValidationException e)
 
     ThriftInscriptionDto getRunnerNumber(1: i64 inscriptionID, 2: string creditCardNumber) throws (1: ThriftInputValidationException e, 2: ThriftInstanceNotFoundException ee, 3: ThriftNumberTakenException eee, 4: ThriftInvalidUserException eeee)
 }
