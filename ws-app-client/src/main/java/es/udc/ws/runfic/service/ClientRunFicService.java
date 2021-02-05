@@ -15,7 +15,7 @@ public interface ClientRunFicService {
     Long addRace(ClientRaceDto race) throws InputValidationException;
 
     //Buscar una carrera por su identificador.
-    ClientRaceDto findRace(Long raceID) throws InputValidationException, InstanceNotFoundException;
+    ClientRaceDto findRace(Long raceID) throws InstanceNotFoundException;
 
     // Será posible buscar carreras que se celebren antes de una fecha (debe ser una fecha futura y el resultado contendrá únicamente las carreras
     //que aún no se han celebrado) y una ciudad.

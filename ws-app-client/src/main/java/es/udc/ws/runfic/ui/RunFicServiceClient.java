@@ -60,8 +60,6 @@ public class RunFicServiceClient {
                 printErrorMsgAndExit("Invalid input (not a number): " + ex.getLocalizedMessage());
             } catch (InstanceNotFoundException ex) {
                 printErrorMsgAndExit("Instance not found: " + ex.getLocalizedMessage());
-            } catch (InputValidationException ex){
-                printErrorMsgAndExit("Invalid arguments: " + ex.getLocalizedMessage());
             } catch (Exception ex) {
                 printErrorMsgAndExit(ex.getLocalizedMessage());
             }
