@@ -40,13 +40,15 @@ public class ThriftClientRunficService implements ClientRunFicService {
     }
 
     @Override
-    public ClientRaceDto findRace(Long raceID) throws InputValidationException, InstanceNotFoundException {
+    public ClientRaceDto findRace(Long raceID) throws InstanceNotFoundException {
         ThriftRunficService.Client client = getClient();
 
         try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
-            //Do operation
-            throw new UnsupportedOperationException();
+            ThriftRaceDto race = client.findRace(raceID);
+            return ClientRaceDtoToThriftRaceDtoConversor.toClientRaceDto(race);
+        } catch (ThriftInstanceNotFoundException e) {
+            throw new InstanceNotFoundException(e.getMessage(), e.getInstanceId());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -105,8 +107,13 @@ public class ThriftClientRunficService implements ClientRunFicService {
 
         try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
-            //Do operation
-            throw new UnsupportedOperationException();
+            return client.getRunnerNumber(inscriptionID, creditCardNumber).getRunnerNumber();
+        } catch (ThriftInputValidationException e) {
+            throw new InputValidationException(e.getMessage());
+        } catch (ThriftInvalidUserException | ThriftNumberTakenException e) {
+            throw new ServerException(e.getLocalizedMessage());
+        } catch (ThriftInstanceNotFoundException e) {
+            throw new InstanceNotFoundException(e.getMessage(), e.getInstanceId());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
