@@ -1,11 +1,10 @@
 package es.udc.ws.runfic.thriftservice;
 
 import es.udc.ws.runfic.model.inscription.Inscription;
+import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.runfic.model.runservice.RunService;
 import es.udc.ws.runfic.model.runservice.RunServiceFactory;
-import es.udc.ws.runfic.model.runservice.exceptions.AlreadyInscribedException;
-import es.udc.ws.runfic.model.runservice.exceptions.InscriptionClosedException;
-import es.udc.ws.runfic.model.runservice.exceptions.RaceFullException;
+import es.udc.ws.runfic.model.runservice.exceptions.*;
 import es.udc.ws.runfic.thrift.*;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
@@ -15,8 +14,15 @@ import java.util.List;
 public class ThriftRunficServiceImpl implements ThriftRunficService.Iface{
 
     @Override
-    public ThriftRaceDto findRace(long var1) throws ThriftInstanceNotFoundException, TException{
-        return null;
+    public ThriftRaceDto findRace(long raceID) throws ThriftInstanceNotFoundException, TException{
+        try {
+
+            Race race = RunServiceFactory.getService().findRace(raceID);
+            return RaceToThriftRaceDtoConversor.toThriftRaceDto(race);
+
+        } catch (InstanceNotFoundException e) {
+            throw new ThriftInstanceNotFoundException(e.getMessage(), e.getInstanceType());
+        }
     }
 
     @Override
@@ -42,7 +48,18 @@ public class ThriftRunficServiceImpl implements ThriftRunficService.Iface{
     }
 
     @Override
-    public ThriftInscriptionDto getRunnerNumber(long var1, String var3) throws ThriftInputValidationException, ThriftInstanceNotFoundException, ThriftNumberTakenException, ThriftInvalidUserException, TException{
-        return null;
+    public ThriftInscriptionDto getRunnerNumber(long inscriptionID, String creditCardNumber) throws ThriftInputValidationException, ThriftInstanceNotFoundException, ThriftNumberTakenException, ThriftInvalidUserException, TException{
+        try{
+            Inscription inscription = RunServiceFactory.getService().getRunnerNumber(inscriptionID, creditCardNumber);
+            return InscriptionToThriftInscriptionDtoConversor.toThriftInscriptionDto(inscription);
+        } catch (InputValidationException e) {
+            throw new ThriftInputValidationException(e.getMessage());
+        } catch (NumberTakenException e) {
+            throw new ThriftNumberTakenException(e.getMessage());
+        } catch (InvalidUserException e) {
+            throw new ThriftInvalidUserException(e.getMessage());
+        } catch (InstanceNotFoundException e) {
+            throw new ThriftInstanceNotFoundException(e.getMessage(), e.getInstanceType());
+        }
     }
 }
