@@ -4,10 +4,11 @@ import es.udc.ws.runfic.service.ClientRunFicService;
 import es.udc.ws.runfic.service.dto.ClientInscriptionDto;
 import es.udc.ws.runfic.service.dto.ClientRaceDto;
 import es.udc.ws.runfic.service.dto.ServerException;
-import es.udc.ws.runfic.thrift.ThriftRunficService;
+import es.udc.ws.runfic.thrift.*;
 import es.udc.ws.util.configuration.ConfigurationParametersManager;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
+import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.THttpClient;
@@ -20,7 +21,7 @@ import java.util.List;
 public class ThriftClientRunficService implements ClientRunFicService {
     
     private final static String ENDPOINT_ADDRESS_PARAMETER =
-            "ThriftClientRunficService.endpointAddress";
+            "ThriftClientRunFicService.endpointAddress";
     
     private final static String endpointAddress =
             ConfigurationParametersManager.getParameter(ENDPOINT_ADDRESS_PARAMETER);
@@ -28,96 +29,86 @@ public class ThriftClientRunficService implements ClientRunFicService {
     @Override
     public Long addRace(ClientRaceDto race) throws InputValidationException {
         ThriftRunficService.Client client = getClient();
-        TTransport transport = client.getInputProtocol().getTransport();
 
-        try{
+        try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
             //Do operation
             throw new UnsupportedOperationException();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            transport.close();
         }
     }
 
     @Override
     public ClientRaceDto findRace(Long raceID) throws InputValidationException, InstanceNotFoundException {
         ThriftRunficService.Client client = getClient();
-        TTransport transport = client.getInputProtocol().getTransport();
 
-        try{
+        try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
             //Do operation
             throw new UnsupportedOperationException();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            transport.close();
         }
     }
 
     @Override
     public List<ClientRaceDto> findByDate(LocalDate date, String city) throws InputValidationException {
         ThriftRunficService.Client client = getClient();
-        TTransport transport = client.getInputProtocol().getTransport();
 
-        try{
+        try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
             //Do operation
             throw new UnsupportedOperationException();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            transport.close();
         }
     }
 
     @Override
     public ClientInscriptionDto inscribe(Long raceID, String email, String creditCardNumber) throws InputValidationException, InstanceNotFoundException, ServerException {
         ThriftRunficService.Client client = getClient();
-        TTransport transport = client.getInputProtocol().getTransport();
 
-        try{
+        try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
-            //Do operation
-            throw new UnsupportedOperationException();
+            ThriftInscriptionDto tinsc = client.inscribe(raceID, email, creditCardNumber);
+            return ClientInscriptionDtoToThriftInscriptionDtoConversor.toClientInscriptionDto(tinsc);
+        } catch (ThriftInputValidationException e) {
+            throw new InputValidationException(e.getMessage());
+        } catch (ThriftInstanceNotFoundException e) {
+            throw new InstanceNotFoundException(e.getMessage(), e.getInstanceId());
+        } catch (ThriftRaceFullException | ThriftAlreadyInscribedException | ThriftInscriptionClosedException e) {
+            throw new ServerException(e.getLocalizedMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            transport.close();
         }
     }
 
     @Override
     public List<ClientInscriptionDto> findAllFromUser(String email) throws InputValidationException {
         ThriftRunficService.Client client = getClient();
-        TTransport transport = client.getInputProtocol().getTransport();
 
-        try{
+        try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
-            //Do operation
-            throw new UnsupportedOperationException();
+            List<ThriftInscriptionDto> found = client.findAllFromUser(email);
+            return ClientInscriptionDtoToThriftInscriptionDtoConversor.toClientInscriptionDto(found);
+        } catch (ThriftInputValidationException e) {
+            throw new InputValidationException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            transport.close();
         }
     }
 
     @Override
     public int getRunnerNumber(Long inscriptionID, String creditCardNumber) throws InputValidationException, InstanceNotFoundException, ServerException {
         ThriftRunficService.Client client = getClient();
-        TTransport transport = client.getInputProtocol().getTransport();
 
-        try{
+        try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
             //Do operation
             throw new UnsupportedOperationException();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            transport.close();
         }
     }
     
@@ -125,7 +116,7 @@ public class ThriftClientRunficService implements ClientRunFicService {
         try{
             TTransport transport = new THttpClient(endpointAddress);
             TProtocol protocol = new TBinaryProtocol(transport);
-            
+
             return new ThriftRunficService.Client(protocol);
         } catch (TTransportException e){
             throw new RuntimeException(e);
