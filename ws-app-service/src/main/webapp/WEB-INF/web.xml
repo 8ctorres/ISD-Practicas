@@ -37,18 +37,16 @@
 
 
    <!-- Thrift service -->
-   <!-- Fill XXX and uncomment the following lines --> 
-   <!--
+
     <servlet>
-        <servlet-name>ThriftXXXServiceServlet</servlet-name>
-        <servlet-class>es.udc.ws.app.thriftservice.ThriftXXXServiceServlet</servlet-class>
+        <servlet-name>ThriftRunficServiceServlet</servlet-name>
+        <servlet-class>es.udc.ws.runfic.thriftservice.ThriftRunficServiceServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>ThriftXXXServiceServlet</servlet-name>
-        <url-pattern>/thrift/XXXservice</url-pattern>
+        <servlet-name>ThriftRunficServiceServlet</servlet-name>
+        <url-pattern>/thrift/runfic-service</url-pattern>
     </servlet-mapping>
-    -->
 
     <!-- General configuration -->
 

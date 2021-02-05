@@ -18,7 +18,7 @@ import org.apache.thrift.transport.TTransportException;
 import java.time.LocalDate;
 import java.util.List;
 
-public class ThriftClientRunficService implements ClientRunFicService {
+public class ThriftClientRunFicService implements ClientRunFicService {
     
     private final static String ENDPOINT_ADDRESS_PARAMETER =
             "ThriftClientRunFicService.endpointAddress";
