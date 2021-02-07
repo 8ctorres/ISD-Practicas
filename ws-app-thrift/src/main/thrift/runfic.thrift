@@ -49,7 +49,11 @@ exception ThriftRaceFullException {
 }
 
 service ThriftRunficService{
+    i64 addRace(1: ThriftRaceDto raceDto) throws (1: ThriftInputValidationException e)
+
     ThriftRaceDto findRace(1: i64 raceID) throws (1: ThriftInstanceNotFoundException e)
+
+    list<ThriftRaceDto> findByDate() throws (1: ThriftInputValidationException e)
 
     ThriftInscriptionDto inscribe(1: i64 raceID, 2: string email, 3: string creditCardNumber) throws (1: ThriftInputValidationException e, 2: ThriftInscriptionClosedException ee, 3: ThriftInstanceNotFoundException eee, 4: ThriftRaceFullException eeee, 5: ThriftAlreadyInscribedException eeeee)
 

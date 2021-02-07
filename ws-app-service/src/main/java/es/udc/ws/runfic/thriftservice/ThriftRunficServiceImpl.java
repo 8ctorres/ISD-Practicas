@@ -5,16 +5,40 @@ import es.udc.ws.runfic.model.race.Race;
 import es.udc.ws.runfic.model.runservice.RunService;
 import es.udc.ws.runfic.model.runservice.RunServiceFactory;
 import es.udc.ws.runfic.model.runservice.exceptions.*;
+import es.udc.ws.runfic.rest.json.JsonToExceptionConversor;
 import es.udc.ws.runfic.thrift.*;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
+import es.udc.ws.util.servlet.ServletUtils;
 import org.apache.thrift.TException;
+
+import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class ThriftRunficServiceImpl implements ThriftRunficService.Iface{
 
     @Override
-    public ThriftRaceDto findRace(long raceID) throws ThriftInstanceNotFoundException, TException{
+    public long addRace(ThriftRaceDto raceDto) throws ThriftInputValidationException {
+        Race race = RaceToThriftRaceDtoConversor.toRace(raceDto);
+        try {
+            String city = race.getCity();
+            String description = race.getDescription();
+            LocalDateTime startDateTime = race.getStartDateTime();
+            float price = race.getPrice();
+            int maxParticipants = race.getMaxParticipants();
+
+            return RunServiceFactory.getService().addRace(city, description, startDateTime, price, maxParticipants).getRaceID();
+        } catch (InputValidationException e) {
+            throw new ThriftInputValidationException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ThriftRaceDto findRace(long raceID) throws ThriftInstanceNotFoundException, TException {
         try {
 
             Race race = RunServiceFactory.getService().findRace(raceID);
@@ -22,6 +46,23 @@ public class ThriftRunficServiceImpl implements ThriftRunficService.Iface{
 
         } catch (InstanceNotFoundException e) {
             throw new ThriftInstanceNotFoundException(e.getMessage(), e.getInstanceType());
+        }
+    }
+
+    @Override
+    public List<ThriftRaceDto> findByDate(String city, String date) throws ThriftInputValidationException {
+        LocalDate finalDate = LocalDate.parse(date);
+
+        if (city.trim().isEmpty()) {
+            throw new ThriftInputValidationException("Parameter 'city' is mandatory");
+        } else {
+            List<Race> races;
+            try {
+                races = RunServiceFactory.getService().findByDate(finalDate, city);
+                return RaceToThriftRaceDtoConversor.toThriftRaceDtos(races);
+            } catch (InputValidationException e) {
+                throw new ThriftInputValidationException(e.getMessage());
+            }
         }
     }
 
