@@ -55,7 +55,7 @@ public class ThriftClientRunFicService implements ClientRunFicService {
             ThriftRaceDto race = client.findRace(raceID);
             return ClientRaceDtoToThriftRaceDtoConversor.toClientRaceDto(race);
         } catch (ThriftInstanceNotFoundException e) {
-            throw new InstanceNotFoundException(e.getMessage(), e.getInstanceId());
+            throw new InstanceNotFoundException(e.getInstanceId(), e.getInstanceType());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -63,6 +63,10 @@ public class ThriftClientRunFicService implements ClientRunFicService {
 
     @Override
     public List<ClientRaceDto> findByDate(LocalDate date, String city) throws InputValidationException {
+        if ((city == null) || (city.strip().equals(""))){
+            throw new InputValidationException("City is a mandatory parameter");
+        }
+
         ThriftRunficService.Client client = getClient();
 
         try (TTransport transport = client.getInputProtocol().getTransport()) {
@@ -86,7 +90,7 @@ public class ThriftClientRunFicService implements ClientRunFicService {
         } catch (ThriftInputValidationException e) {
             throw new InputValidationException(e.getMessage());
         } catch (ThriftInstanceNotFoundException e) {
-            throw new InstanceNotFoundException(e.getMessage(), e.getInstanceId());
+            throw new InstanceNotFoundException(e.getInstanceId(), e.getInstanceType());
         } catch (ThriftRaceFullException | ThriftAlreadyInscribedException | ThriftInscriptionClosedException e) {
             throw new ServerException(e.getLocalizedMessage());
         } catch (Exception e) {
@@ -121,7 +125,7 @@ public class ThriftClientRunFicService implements ClientRunFicService {
         } catch (ThriftInvalidUserException | ThriftNumberTakenException e) {
             throw new ServerException(e.getLocalizedMessage());
         } catch (ThriftInstanceNotFoundException e) {
-            throw new InstanceNotFoundException(e.getMessage(), e.getInstanceId());
+            throw new InstanceNotFoundException(e.getInstanceId(), e.getInstanceType());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

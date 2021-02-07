@@ -36,7 +36,7 @@ public class ThriftRunficServiceImpl implements ThriftRunficService.Iface{
             Race race = RunServiceFactory.getService().findRace(raceID);
             return RaceToThriftRaceDtoConversor.toThriftRaceDto(race);
         } catch (InstanceNotFoundException e) {
-            throw new ThriftInstanceNotFoundException(e.getMessage(), e.getInstanceType());
+            throw new ThriftInstanceNotFoundException(e.getInstanceId().toString(), e.getInstanceType());
         }
     }
 
@@ -56,7 +56,7 @@ public class ThriftRunficServiceImpl implements ThriftRunficService.Iface{
         } catch (InscriptionClosedException | AlreadyInscribedException | RaceFullException | InputValidationException e) {
             throw new ThriftInscriptionClosedException(e.getMessage());
         } catch (InstanceNotFoundException e) {
-            throw new ThriftInstanceNotFoundException(e.getMessage(), e.getInstanceType());
+            throw new ThriftInstanceNotFoundException(e.getInstanceId().toString(), e.getInstanceType());
         }
     }
 
@@ -82,7 +82,7 @@ public class ThriftRunficServiceImpl implements ThriftRunficService.Iface{
         } catch (InvalidUserException e) {
             throw new ThriftInvalidUserException(e.getMessage());
         } catch (InstanceNotFoundException e) {
-            throw new ThriftInstanceNotFoundException(e.getMessage(), e.getInstanceType());
+            throw new ThriftInstanceNotFoundException(e.getInstanceId().toString(), e.getInstanceType());
         }
     }
 }
