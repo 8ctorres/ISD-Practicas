@@ -44,15 +44,11 @@ public class ThriftRunficServiceImpl implements ThriftRunficService.Iface{
     }
 
     @Override
-    public List<ThriftRaceDto> findByDate(String city, String date) throws ThriftInputValidationException {
+    public List<ThriftRaceDto> findByDate(String date, String city) throws ThriftInputValidationException {
         LocalDate finalDate = LocalDate.parse(date);
         List<Race> races;
-        try {
-            races = RunServiceFactory.getService().findByDate(finalDate, city);
-            return RaceToThriftRaceDtoConversor.toThriftRaceDtos(races);
-        } catch (InputValidationException e) {
-            throw new ThriftInputValidationException(e.getMessage());
-        }
+        races = RunServiceFactory.getService().findByDate(finalDate, city);
+        return RaceToThriftRaceDtoConversor.toThriftRaceDtos(races);
     }
 
     @Override
