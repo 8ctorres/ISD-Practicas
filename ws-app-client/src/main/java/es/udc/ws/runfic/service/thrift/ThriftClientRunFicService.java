@@ -33,7 +33,6 @@ public class ThriftClientRunFicService implements ClientRunFicService {
         try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
             return client.addRace(ClientRaceDtoToThriftRaceDtoConversor.toThriftRaceDto(race));
-            throw new UnsupportedOperationException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -61,7 +60,6 @@ public class ThriftClientRunFicService implements ClientRunFicService {
         try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
             return ClientRaceDtoToThriftRaceDtoConversor.toClientRaceDto(client.findByDate(date, city));
-            throw new UnsupportedOperationException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

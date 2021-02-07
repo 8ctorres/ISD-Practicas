@@ -22,16 +22,10 @@ import java.util.List;
 public class ThriftRunficServiceImpl implements ThriftRunficService.Iface{
 
     @Override
-    public long addRace(ThriftRaceDto raceDto) throws ThriftInputValidationException {
-        Race race = RaceToThriftRaceDtoConversor.toRace(raceDto);
+    public long addRace(String city, String description, String startDateTime, double price, int maxParticipants ) throws ThriftInputValidationException {
         try {
-            String city = race.getCity();
-            String description = race.getDescription();
-            LocalDateTime startDateTime = race.getStartDateTime();
-            float price = race.getPrice();
-            int maxParticipants = race.getMaxParticipants();
 
-            return RunServiceFactory.getService().addRace(city, description, startDateTime, price, maxParticipants).getRaceID();
+            return RunServiceFactory.getService().addRace(city, description, LocalDateTime.parse(startDateTime), (float) price, maxParticipants).getRaceID();
         } catch (InputValidationException e) {
             throw new ThriftInputValidationException(e.getMessage());
         }
@@ -52,17 +46,12 @@ public class ThriftRunficServiceImpl implements ThriftRunficService.Iface{
     @Override
     public List<ThriftRaceDto> findByDate(String city, String date) throws ThriftInputValidationException {
         LocalDate finalDate = LocalDate.parse(date);
-
-        if (city.trim().isEmpty()) {
-            throw new ThriftInputValidationException("Parameter 'city' is mandatory");
-        } else {
-            List<Race> races;
-            try {
-                races = RunServiceFactory.getService().findByDate(finalDate, city);
-                return RaceToThriftRaceDtoConversor.toThriftRaceDtos(races);
-            } catch (InputValidationException e) {
-                throw new ThriftInputValidationException(e.getMessage());
-            }
+        List<Race> races;
+        try {
+            races = RunServiceFactory.getService().findByDate(finalDate, city);
+            return RaceToThriftRaceDtoConversor.toThriftRaceDtos(races);
+        } catch (InputValidationException e) {
+            throw new ThriftInputValidationException(e.getMessage());
         }
     }
 

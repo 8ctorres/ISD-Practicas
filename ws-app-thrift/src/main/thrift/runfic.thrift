@@ -49,7 +49,7 @@ exception ThriftRaceFullException {
 }
 
 service ThriftRunficService{
-    i64 addRace(1: ThriftRaceDto raceDto) throws (1: ThriftInputValidationException e)
+    i64 addRace(1:string city, 2: string description, 3: string startDateTime, 4: double price, 5: i32 maxParticipants ) throws (1: ThriftInputValidationException e)
 
     ThriftRaceDto findRace(1: i64 raceID) throws (1: ThriftInstanceNotFoundException e)
 
