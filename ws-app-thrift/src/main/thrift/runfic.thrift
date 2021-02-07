@@ -53,7 +53,7 @@ service ThriftRunficService{
 
     ThriftRaceDto findRace(1: i64 raceID) throws (1: ThriftInstanceNotFoundException e)
 
-    list<ThriftRaceDto> findByDate(1: string date, 2: string city) throws (1: ThriftInputValidationException e)
+    list<ThriftRaceDto> findByDate(1: string date, 2: string city)
 
     ThriftInscriptionDto inscribe(1: i64 raceID, 2: string email, 3: string creditCardNumber) throws (1: ThriftInputValidationException e, 2: ThriftInscriptionClosedException ee, 3: ThriftInstanceNotFoundException eee, 4: ThriftRaceFullException eeee, 5: ThriftAlreadyInscribedException eeeee)
 

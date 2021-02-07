@@ -24,7 +24,6 @@ public class ThriftRunficServiceImpl implements ThriftRunficService.Iface{
     @Override
     public long addRace(String city, String description, String startDateTime, double price, int maxParticipants ) throws ThriftInputValidationException {
         try {
-
             return RunServiceFactory.getService().addRace(city, description, LocalDateTime.parse(startDateTime), (float) price, maxParticipants).getRaceID();
         } catch (InputValidationException e) {
             throw new ThriftInputValidationException(e.getMessage());
@@ -34,17 +33,15 @@ public class ThriftRunficServiceImpl implements ThriftRunficService.Iface{
     @Override
     public ThriftRaceDto findRace(long raceID) throws ThriftInstanceNotFoundException, TException {
         try {
-
             Race race = RunServiceFactory.getService().findRace(raceID);
             return RaceToThriftRaceDtoConversor.toThriftRaceDto(race);
-
         } catch (InstanceNotFoundException e) {
             throw new ThriftInstanceNotFoundException(e.getMessage(), e.getInstanceType());
         }
     }
 
     @Override
-    public List<ThriftRaceDto> findByDate(String date, String city) throws ThriftInputValidationException {
+    public List<ThriftRaceDto> findByDate(String date, String city){
         LocalDate finalDate = LocalDate.parse(date);
         List<Race> races;
         races = RunServiceFactory.getService().findByDate(finalDate, city);

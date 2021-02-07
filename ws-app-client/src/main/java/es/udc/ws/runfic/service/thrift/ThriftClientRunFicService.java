@@ -32,7 +32,15 @@ public class ThriftClientRunFicService implements ClientRunFicService {
 
         try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
-            return client.addRace(ClientRaceDtoToThriftRaceDtoConversor.toThriftRaceDto(race));
+            return client.addRace(
+                    race.getCity(),
+                    race.getDescription(),
+                    race.getStartDateTime().toString(),
+                    (double) race.getPrice(),
+                    race.getMaxParticipants()
+            );
+        } catch (ThriftInputValidationException e) {
+            throw new InputValidationException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -59,7 +67,9 @@ public class ThriftClientRunFicService implements ClientRunFicService {
 
         try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
-            return ClientRaceDtoToThriftRaceDtoConversor.toClientRaceDto(client.findByDate(date, city));
+            return ClientRaceDtoToThriftRaceDtoConversor.toClientRaceDto(client.findByDate(date.toString(), city));
+        } catch (ThriftInputValidationException e) {
+            throw new InputValidationException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
