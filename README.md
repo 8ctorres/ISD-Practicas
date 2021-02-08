@@ -1,14 +1,6 @@
-# Running the project example
+# Prácticas ISD
 ---------------------------------------------------------------------
 
-## Running the ws-app service with Maven/Jetty.
+Práctica de la asignatura Internet y Sistemas Distribuídos
 
-	cd ws-app/ws-app-service
-	mvn jetty:run
-
-## Running the client application
-
-- Configure `ws-app/ws-app-client/src/main/resources/ConfigurationParameters.properties`
-  for specifying the client project service implementation (Rest or Thrift) and 
-  the port number of the web server in the endpoint address (9090 for Jetty, 8080
-  for Tomcat)
+Grado en Ingeniería Informática, UDC, Curso 2020-21
